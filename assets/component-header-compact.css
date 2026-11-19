@@ -54,8 +54,8 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   align-items: center;
   justify-content: space-between;
   height: var(--hc-height-desktop, 78px);
-  padding-left: var(--hc-pad-lr-desktop, 30px);
-  padding-right: var(--hc-pad-lr-desktop, 30px);
+  padding-left: var(--hc-pad-lr-desktop, 15px);
+  padding-right: var(--hc-pad-lr-desktop, 15px);
   padding-top: var(--hc-pad-tb-desktop, 0px);
   padding-bottom: var(--hc-pad-tb-desktop, 0px);
   margin-left: auto;
@@ -101,8 +101,8 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   display: flex;
   align-items: center;
   flex: 1 1 auto;
-  margin-left: 36px;
-  margin-right: 24px;
+  margin-left: 20px;
+  margin-right: 12px;
   position: static;
   /* Crucial: does not trap absolute mega menu */
   height: 100%;
