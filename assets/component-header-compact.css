@@ -450,24 +450,29 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
 
 /* Customer Links / GoKwik KwikPass Account Icon */
 .header-compact__icons .customer-links,
-.header-compact-mobile__icons .customer-links {
+.header-compact-mobile__icons .customer-links,
+.header-compact__customer {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   margin: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
   padding: 0 !important;
   line-height: 1 !important;
   vertical-align: middle !important;
+  gap: 0 !important;
 }
 
 .header-compact__icons .customer-links a.header__icon--account,
-.header-compact-mobile__icons .customer-links a.header__icon--account {
+.header-compact-mobile__icons .customer-links a.header__icon--account,
+.header-compact__account-link {
   position: relative !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 26px !important;
-  height: 26px !important;
+  width: 24px !important;
+  height: 24px !important;
   color: #111111 !important;
   text-decoration: none !important;
   line-height: 1 !important;
@@ -478,17 +483,53 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   cursor: pointer !important;
 }
 
-/* KwikPass Account Icon Size — matches cart icon 24px */
+/* Hide first unclickable account link when KwikPass button is injected */
+.header-compact__icons .customer-links:has(#kp-login-button-header-logo) > a.header__icon--account,
+.header-compact__icons .customer-links:has([id*="kp-login"]) > a.header__icon--account,
+.header-compact__icons .customer-links.has-kp-btn > a.header__icon--account,
+.header-compact-mobile__icons .customer-links:has(#kp-login-button-header-logo) > a.header__icon--account,
+.header-compact-mobile__icons .customer-links:has([id*="kp-login"]) > a.header__icon--account,
+.header-compact-mobile__icons .customer-links.has-kp-btn > a.header__icon--account {
+  display: none !important;
+}
+
+/* Account Icon SVG Styling — Solid dark #111111 in both Mobile & Desktop (never faint/white) */
+.header-compact__icons .customer-links svg.icon-account,
+.header-compact__icons .customer-links a.header__icon--account svg,
+.header-compact-mobile__icons .customer-links svg.icon-account,
+.header-compact-mobile__icons .customer-links a.header__icon--account svg,
+.header-compact__account-link svg {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  fill: #111111 !important;
+  stroke: none !important;
+  stroke-width: 0 !important;
+  color: #111111 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+}
+
+.header-compact__icons .customer-links svg.icon-account path,
+.header-compact__icons .customer-links a.header__icon--account svg path,
+.header-compact-mobile__icons .customer-links svg.icon-account path,
+.header-compact-mobile__icons .customer-links a.header__icon--account svg path,
+.header-compact__account-link svg path {
+  fill: #111111 !important;
+  stroke: none !important;
+  stroke-width: 0 !important;
+}
+
+/* KwikPass Injected Button & Logo Size — matches cart icon 24px */
 .header-compact__icons #kp-login-button-header-logo,
 .header-compact__icons #kp-login-button-header-logo svg,
 .header-compact__icons #svgkp,
-.header-compact__icons .header__icon--account svg,
-.header-compact__icons .customer-links svg,
 .header-compact-mobile__icons #kp-login-button-header-logo,
 .header-compact-mobile__icons #kp-login-button-header-logo svg,
-.header-compact-mobile__icons #svgkp,
-.header-compact-mobile__icons .header__icon--account svg,
-.header-compact-mobile__icons .customer-links svg {
+.header-compact-mobile__icons #svgkp {
   width: 24px !important;
   height: 24px !important;
   min-width: 24px !important;
@@ -499,16 +540,14 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   align-items: center !important;
   justify-content: center !important;
   vertical-align: middle !important;
-}
-
-.header-compact__icons #kp-login-button-header-logo,
-.header-compact-mobile__icons #kp-login-button-header-logo {
   line-height: 0 !important;
   margin: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
   padding: 0 !important;
 }
 
-/* Preserve KwikPass lightning bolt colors & paths */
+/* Preserve KwikPass lightning bolt colors & paths (black person + orange bolt) */
 .header-compact__icons #kp-login-button-header-logo svg,
 .header-compact__icons #kp-login-button-header-logo svg *,
 .header-compact__icons #svgkp,
