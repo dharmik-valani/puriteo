@@ -1051,7 +1051,7 @@
             "right_image": "shopify://shop_images/diwali-diya-decoration-for-the-right-side-banner.png",
             "right_alt": "Lifestyle",
             "show_pill": true,
-            "pill_text_1": "PURITEO Diwali Sale Is LIVE! ",
+            "pill_text_1": "Diwali Sale Is LIVE! ",
             "pill_text_1_color": "#e91e8c",
             "pill_text_2": "",
             "pill_text_2_color": "#e91e8c",
@@ -1098,6 +1098,7 @@
         },
         "product_gif_FhiYh4": {
           "type": "product_gif",
+          "disabled": true,
           "settings": {
             "show_left_image": true,
             "left_image": "shopify://shop_images/f821ffbf-75c0-4019-a75c-d1b90996ba38.png",
