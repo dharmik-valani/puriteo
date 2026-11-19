@@ -121,6 +121,7 @@
             "low_stock_threshold": 20,
             "font_size": 13,
             "font_size_mb": 12,
+            "font_weight": "700",
             "sales_text_color": "#1b3a6e",
             "stock_text_color": "#d32f2f",
             "divider_color": "#dcdcdc",

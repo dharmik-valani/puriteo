@@ -91,6 +91,7 @@
   assign sp_bottom_mb = block.settings.spacing_bottom_mb | default: 3
   assign fs = block.settings.font_size | default: 14
   assign fs_mb = block.settings.font_size_mb | default: 13
+  assign fw = block.settings.font_weight | default: '700'
   assign sales_color = block.settings.sales_text_color | default: '#444444'
   assign stock_color = block.settings.stock_text_color | default: '#d32f2f'
   assign divider_color = block.settings.divider_color | default: '#dcdcdc'
@@ -176,7 +177,7 @@
     gap: 0 4px !important;
     font-family: var(--font-body-family), inherit !important;
     font-size: var(--sales-stock-fs, 13px) !important;
-    font-weight: 500 !important;
+    font-weight: var(--sales-stock-fw, 700) !important;
     letter-spacing: normal !important;
     transform: translateY(var(--sales-stock-offset-y, 2px)) !important;
   }
@@ -185,6 +186,7 @@
     .npp-sales-stock-wrapper .npp-sales-stock-row,
     .npp-sales-stock-row {
       font-size: var(--sales-stock-fs-mb, 12px) !important;
+      font-weight: var(--sales-stock-fw, 700) !important;
       gap: 0 3px !important;
       transform: translateY(var(--sales-stock-offset-y-mb, 2px)) !important;
     }
@@ -205,7 +207,7 @@
     padding: 0 !important;
     font-family: var(--font-body-family), inherit !important;
     font-size: var(--sales-stock-fs, 13px) !important;
-    font-weight: 500 !important;
+    font-weight: var(--sales-stock-fw, 700) !important;
     letter-spacing: normal !important;
     white-space: nowrap !important;
   }
@@ -217,6 +219,7 @@
     .npp-sales-stock-divider,
     .npp-stock-message {
       font-size: var(--sales-stock-fs-mb, 12px) !important;
+      font-weight: var(--sales-stock-fw, 700) !important;
     }
   }
 </style>
@@ -233,6 +236,7 @@
          --sales-stock-sp-bottom-mb: {{ sp_bottom_mb }}px;
          --sales-stock-fs: {{ fs }}px;
          --sales-stock-fs-mb: {{ fs_mb }}px;
+         --sales-stock-fw: {{ fw }};
          --sales-text-color: {{ sales_color }};
          --stock-text-color: {{ stock_color }};
          --sales-stock-divider: {{ divider_color }};
