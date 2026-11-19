@@ -417,42 +417,6 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   stroke-width: 2 !important;
 }
 
-/* Preserve original fills and colors for KwikPass / GoKwik account icon */
-.header-compact__icons .customer-links svg,
-.header-compact__icons #kp-login-button-header-logo svg,
-.header-compact__icons #svgkp,
-.header-compact-mobile__icons .customer-links svg,
-.header-compact-mobile__icons #kp-login-button-header-logo svg,
-.header-compact-mobile__icons #svgkp {
-  fill: initial !important;
-  stroke: initial !important;
-  width: 24px !important;
-  height: 24px !important;
-  min-width: 24px !important;
-  min-height: 24px !important;
-}
-
-.header-compact__icons .customer-links svg path,
-.header-compact__icons #kp-login-button-header-logo svg path,
-.header-compact__icons #svgkp path,
-.header-compact-mobile__icons .customer-links svg path,
-.header-compact-mobile__icons #kp-login-button-header-logo svg path,
-.header-compact-mobile__icons #svgkp path {
-  fill: initial !important;
-  stroke: initial !important;
-}
-
-.header-compact__icons .customer-links,
-.header-compact__icons #kp-login-button-header-logo,
-.header-compact-mobile__icons .customer-links,
-.header-compact-mobile__icons #kp-login-button-header-logo {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  line-height: 0 !important;
-  vertical-align: middle !important;
-}
-
 /* Cart & Wishlist Count Bubbles matching Reference Image 3 */
 .header-compact__badge {
   position: absolute;
