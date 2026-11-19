@@ -541,7 +541,7 @@
               <div class="header__icon customer-links header-compact__customer" style="--text-color: {{ section.settings.customer_color | default: '#111111' }}">
                 <a
                   href="{{ routes.account_login_url }}"
-                  class="header__icon header__icon--account header-compact__icon-link link link--text focus-inset"
+                  class="header__icon header__icon--account header-compact__account-link link link--text focus-inset"
                   {% if is_contained %}data-open-auth-sidebar{% endif %}
                   aria-label="{{ 'customer.account_fallback' | t }}"
                   title="{{ 'customer.account_fallback' | t }}"
