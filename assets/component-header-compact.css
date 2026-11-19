@@ -423,7 +423,8 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
 .header-compact__icons #svgkp,
 .header-compact-mobile__icons .customer-links svg,
 .header-compact-mobile__icons #kp-login-button-header-logo svg,
-.header-compact-mobile__icons #svgkp {
+.header-compact-mobile__icons #svgkp,
+.header-compact-mobile__icons .kp-mobile-login-btn svg {
   fill: initial !important;
   stroke: initial !important;
   width: 24px !important;
@@ -437,7 +438,8 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
 .header-compact__icons #svgkp path,
 .header-compact-mobile__icons .customer-links svg path,
 .header-compact-mobile__icons #kp-login-button-header-logo svg path,
-.header-compact-mobile__icons #svgkp path {
+.header-compact-mobile__icons #svgkp path,
+.header-compact-mobile__icons .kp-mobile-login-btn svg path {
   fill: initial !important;
   stroke: initial !important;
 }
@@ -445,12 +447,29 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
 .header-compact__icons .customer-links,
 .header-compact__icons #kp-login-button-header-logo,
 .header-compact-mobile__icons .customer-links,
-.header-compact-mobile__icons #kp-login-button-header-logo {
+.header-compact-mobile__icons #kp-login-button-header-logo,
+.header-compact-mobile__icons .kp-mobile-login-btn {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   line-height: 0 !important;
   vertical-align: middle !important;
+}
+
+/* Hide fallback <a> when KwikPass button is injected to prevent 2 icons */
+.customer-links:has(#kp-login-button-header-logo) > a,
+.customer-links:has(#svgkp) > a,
+.customer-links:has(.kp-mobile-login-btn) > a,
+.customer-links.has-kp-btn > a,
+.customer-links #kp-login-button-header-logo ~ a,
+.customer-links a:has(~ #kp-login-button-header-logo) {
+  display: none !important;
+}
+
+/* Deduplicate multiple KwikPass buttons */
+.customer-links #kp-login-button-header-logo ~ #kp-login-button-header-logo,
+.header-compact__icons #kp-login-button-header-logo ~ #kp-login-button-header-logo {
+  display: none !important;
 }
 
 /* Cart & Wishlist Count Bubbles matching Reference Image 3 */
