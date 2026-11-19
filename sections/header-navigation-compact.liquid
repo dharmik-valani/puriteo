@@ -1113,6 +1113,76 @@
           });
         }
       }
+
+      // KwikPass / GoKwik Account Integration (Desktop Deduplication & Mobile Sync)
+      function setupKwikPassIntegration() {
+        function syncKwikPass() {
+          var sectionEl = document.getElementById('shopify-section-{{ section.id }}');
+          if (!sectionEl) return;
+
+          // 1. Desktop: Deduplicate & ensure fallback anchor is hidden when #kp-login-button-header-logo is present
+          var desktopLinks = sectionEl.querySelectorAll('.header-compact-desktop .customer-links');
+          desktopLinks.forEach(function(container) {
+            var kpButtons = container.querySelectorAll('#kp-login-button-header-logo');
+            if (kpButtons.length > 0) {
+              container.classList.add('has-kp-btn');
+              var fallbackA = container.querySelector('a.header__icon--account');
+              if (fallbackA) fallbackA.style.setProperty('display', 'none', 'important');
+              for (var i = 1; i < kpButtons.length; i++) {
+                kpButtons[i].style.setProperty('display', 'none', 'important');
+              }
+            }
+          });
+
+          // 2. Mobile: Sync KwikPass button and click action to mobile header
+          var desktopKp = sectionEl.querySelector('.header-compact-desktop #kp-login-button-header-logo');
+          var mobileContainer = sectionEl.querySelector('.header-compact-mobile__icons .customer-links');
+          if (desktopKp && mobileContainer) {
+            mobileContainer.classList.add('has-kp-btn');
+            var mobileA = mobileContainer.querySelector('a.header__icon--account');
+            if (mobileA) mobileA.style.setProperty('display', 'none', 'important');
+
+            var mobileBtn = mobileContainer.querySelector('.kp-mobile-login-btn');
+            if (!mobileBtn) {
+              mobileBtn = document.createElement('div');
+              mobileBtn.className = 'kp-mobile-login-btn';
+              mobileBtn.setAttribute('role', 'button');
+              mobileBtn.setAttribute('tabindex', '0');
+              mobileBtn.setAttribute('aria-label', 'Account');
+              mobileBtn.style.cursor = 'pointer';
+              mobileBtn.style.display = 'inline-flex';
+              mobileBtn.style.alignItems = 'center';
+              mobileBtn.style.justifyContent = 'center';
+              mobileBtn.style.lineHeight = '0';
+              mobileBtn.innerHTML = desktopKp.innerHTML;
+
+              mobileBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                desktopKp.click();
+              });
+
+              mobileContainer.appendChild(mobileBtn);
+            } else if (desktopKp.innerHTML.trim() !== '' && mobileBtn.innerHTML !== desktopKp.innerHTML) {
+              mobileBtn.innerHTML = desktopKp.innerHTML;
+            }
+          }
+        }
+
+        syncKwikPass();
+
+        if (window.MutationObserver) {
+          var obs = new MutationObserver(function() {
+            syncKwikPass();
+          });
+          var target = document.getElementById('shopify-section-{{ section.id }}');
+          if (target) {
+            obs.observe(target, { childList: true, subtree: true });
+          }
+        }
+      }
+
+      setupKwikPassIntegration();
     }
 
     if (document.readyState === 'loading') {
