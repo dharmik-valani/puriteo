@@ -27,6 +27,11 @@
     body.menu_open #shopify-section-{{ section.id }} {
       z-index: 100000 !important;
     }
+    body.search-style2-open .shopify-section-group-header-group:has(.announcement-bar) {
+      z-index: 0 !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
   {% endif %}
 
   {% if section.settings.enable_header_shadow %}
