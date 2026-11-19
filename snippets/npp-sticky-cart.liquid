@@ -15,7 +15,7 @@
     assign savings = compare_price | minus: price
   endif
 
-  assign ribbon_text = section.settings.sticky_ribbon_text | default: 'Control cravings & reduce overeating at just ₹41/day'
+  assign ribbon_text = section.settings.sticky_ribbon_text
   if product.metafields.custom.sticky_bar_banner != blank
     assign ribbon_text = product.metafields.custom.sticky_bar_banner
   elsif product.metafields.custom.per_day_cost != blank
@@ -786,11 +786,11 @@ body:has(#navigation-mobile.halo-sidebar.is-open) .productView-stickyCart {
 >
   <div class="npp-sticky-cart__inner">
     <!-- Tier 1: Top Ribbon -->
-    {% comment %} {%- if ribbon_text != blank -%}
+    {%- if ribbon_text != blank -%}
       <div class="npp-sticky-cart__ribbon">
         <p class="npp-sticky-cart__ribbon-text" data-sticky-ribbon>{{ ribbon_text | escape }}</p>
       </div>
-    {%- endif -%} {% endcomment %}
+    {%- endif -%}
 
     <!-- Tier 2: Main Conversion Bar -->
     <div class="npp-sticky-cart__main">
