@@ -27,9 +27,61 @@
     body.menu_open #shopify-section-{{ section.id }},
     body.menu-open #shopify-section-{{ section.id }},
     body:has(.header-compact-drawer.is-open) #shopify-section-{{ section.id }} {
-      z-index: 1000002 !important;
+      z-index: 100000 !important;
     }
   {% endif %}
+
+  /* KwikPass / GoKwik account icon — match cart & wishlist 22px-25px (overrides base.css svg 1rem) */
+  #shopify-section-{{ section.id }} #kp-login-button-header-logo,
+  #shopify-section-{{ section.id }} #kp-login-button-header-logo svg,
+  #shopify-section-{{ section.id }} #svgkp,
+  #shopify-section-{{ section.id }} .customer-links svg,
+  #shopify-section-{{ section.id }} .header__icon--account svg {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    max-width: 25px !important;
+    max-height: 25px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+  }
+  #shopify-section-{{ section.id }} .customer-links {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+  }
+  #shopify-section-{{ section.id }} .customer-links a.header__icon--account {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 26px !important;
+    height: 26px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: {{ section.settings.customer_color | default: '#111111' }} !important;
+    text-decoration: none !important;
+    line-height: 1 !important;
+  }
+  #shopify-section-{{ section.id }} #kp-login-button-header-logo {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #shopify-section-{{ section.id }} #kp-login-button-header-logo svg path,
+  #shopify-section-{{ section.id }} #svgkp path {
+    fill: revert !important;
+    stroke: revert !important;
+    stroke-width: revert !important;
+  }
 
   {% if section.settings.enable_header_shadow %}
     #shopify-section-{{ section.id }} .header-compact-wrapper {
