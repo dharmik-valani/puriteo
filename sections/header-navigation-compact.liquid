@@ -650,7 +650,7 @@
             <div class="header__icon customer-links header-compact__customer" style="--text-color: {{ section.settings.customer_color | default: '#111111' }}">
               <a
                 href="{{ routes.account_login_url }}"
-                class="header__icon header__icon--account header-compact__icon-link link link--text focus-inset"
+                class="header__icon header__icon--account header-compact__account-link link link--text focus-inset"
                 {% if is_contained %}data-open-auth-sidebar{% endif %}
                 aria-label="{{ 'customer.account_fallback' | t }}"
                 title="{{ 'customer.account_fallback' | t }}"
@@ -1183,6 +1183,38 @@
           });
         }
       }
+
+      // GoKwik / KwikPass account button duplicate handling & margin cleanup
+      function syncKwikpassAccountIcon() {
+        var wraps = document.querySelectorAll(
+          '#shopify-section-' + sectionId + ' .customer-links, #HeaderCompact-' + sectionId + ' .customer-links'
+        );
+        wraps.forEach(function(wrap) {
+          var kpBtn = wrap.querySelector('#kp-login-button-header-logo, [id*="kp-login"]');
+          var origLink = wrap.querySelector('a.header__icon--account');
+          if (kpBtn) {
+            wrap.classList.add('has-kp-btn');
+            if (origLink && origLink !== kpBtn) {
+              origLink.style.setProperty('display', 'none', 'important');
+            }
+            kpBtn.style.setProperty('margin-left', '0', 'important');
+            kpBtn.style.setProperty('margin-right', '0', 'important');
+            kpBtn.style.setProperty('margin', '0', 'important');
+            kpBtn.style.setProperty('padding', '0', 'important');
+          }
+        });
+      }
+      syncKwikpassAccountIcon();
+
+      var obsTarget = document.getElementById('HeaderCompact-' + sectionId) || document.getElementById('shopify-section-' + sectionId);
+      if (obsTarget && window.MutationObserver) {
+        var kpObserver = new MutationObserver(function() {
+          syncKwikpassAccountIcon();
+        });
+        kpObserver.observe(obsTarget, { childList: true, subtree: true });
+      }
+      window.addEventListener('load', syncKwikpassAccountIcon);
+      window.addEventListener('gokwikLoaded', syncKwikpassAccountIcon);
     }
 
     if (document.readyState === 'loading') {
