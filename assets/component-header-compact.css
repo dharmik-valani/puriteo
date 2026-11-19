@@ -1929,6 +1929,8 @@ body.search-style2-open {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  padding: 24px 20px !important;
+  box-sizing: border-box !important;
   visibility: hidden !important;
   opacity: 0 !important;
   transition: opacity 0.25s ease, visibility 0.25s ease !important;
@@ -1952,8 +1954,12 @@ body.search-style2-open {
   position: relative !important;
   z-index: 2 !important;
   width: min(calc(100vw - 32px), var(--hc-search2-max-width, 900px)) !important;
-  max-height: min(92vh, 820px) !important;
+  max-height: calc(100vh - 48px) !important;
+  max-height: calc(100dvh - 48px) !important;
   margin: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
   transform: scale(0.96) translateY(-10px) !important;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
@@ -1999,9 +2005,9 @@ body.search-style2-open {
 .header-search2-modal__card {
   background: var(--hc-search2-bg, #ffffff) !important;
   border-radius: var(--hc-search2-radius, 18px) !important;
-  padding: var(--hc-search2-padding, 28px) !important;
-  max-height: min(92vh, 820px) !important;
-  min-height: 480px !important;
+  padding: 24px 24px 28px !important;
+  max-height: calc(100vh - 48px) !important;
+  max-height: calc(100dvh - 48px) !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25) !important;
@@ -2302,6 +2308,7 @@ body.search-style2-open {
 .header-search2-modal__results {
   width: 100% !important;
   margin-top: 18px !important;
+  padding-bottom: 20px !important;
 }
 
 .header-search2-modal__results .predictive-search {
@@ -2767,8 +2774,9 @@ body.search-style2-open {
 
 /* View All Results footer matching Style 1 */
 .header-search2-modal__results .productViewAll {
-  margin-top: 14px !important;
-  padding-top: 14px !important;
+  margin-top: 12px !important;
+  padding-top: 12px !important;
+  padding-bottom: 24px !important;
   border-top: 1px solid #e6eef8 !important;
   text-align: center !important;
 }
