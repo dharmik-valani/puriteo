@@ -34,8 +34,7 @@
     #shopify-section-{{ section.id }} #kp-login-button-header-logo svg,
     #shopify-section-{{ section.id }} #svgkp,
     #shopify-section-{{ section.id }} .header__icon--account svg,
-    #shopify-section-{{ section.id }} .customer-links svg,
-    #shopify-section-{{ section.id }} .kp-mobile-login-btn svg {
+    #shopify-section-{{ section.id }} .customer-links svg {
       width: 24px !important;
       height: 24px !important;
       min-width: 24px !important;
@@ -47,28 +46,11 @@
     }
     #shopify-section-{{ section.id }} #kp-login-button-header-logo,
     #shopify-section-{{ section.id }} .customer-links,
-    #shopify-section-{{ section.id }} .kp-mobile-login-btn {
+    #shopify-section-{{ section.id }} .customer-links a {
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
       line-height: 0 !important;
-    }
-    #shopify-section-{{ section.id }} .customer-links a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 0;
-    }
-    #shopify-section-{{ section.id }} .customer-links:has(#kp-login-button-header-logo) > a,
-    #shopify-section-{{ section.id }} .customer-links:has(#svgkp) > a,
-    #shopify-section-{{ section.id }} .customer-links:has(.kp-mobile-login-btn) > a,
-    #shopify-section-{{ section.id }} .customer-links.has-kp-btn > a,
-    #shopify-section-{{ section.id }} .customer-links #kp-login-button-header-logo ~ a,
-    #shopify-section-{{ section.id }} .customer-links a:has(~ #kp-login-button-header-logo) {
-      display: none !important;
-    }
-    #shopify-section-{{ section.id }} #kp-login-button-header-logo ~ #kp-login-button-header-logo {
-      display: none !important;
     }
   {% endif %}
 
@@ -457,7 +439,7 @@
               </a>
             {%- endif -%}
 
-            <!-- 2. Customer Account Icon (Identical to header-basic.liquid) -->
+            <!-- 2. Customer Account Icon (KwikPass / GoKwik Integration) -->
             {%- if shop.customer_accounts_enabled and section.settings.show_customer -%}
               {%- liquid
                 assign is_contained = false
@@ -465,11 +447,11 @@
                   assign is_contained = true
                 endif
               -%}
-              <div class="header__icon customer-links" style="--text-color: {{ section.settings.customer_color | default: '#111111' }}">
+              <div class="header__icon customer-links header-compact__customer-links" style="--text-color: {{ section.settings.customer_color | default: '#111111' }}">
                 <a
-                  href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
-                  class="header__icon header__icon--account link link--text focus-inset"
-                  {% if is_contained and customer == nil %}data-open-auth-sidebar{% endif %}
+                  href="{{ routes.account_login_url }}"
+                  class="header__icon header__icon--account link link--text header-compact__icon-link header-compact__icon--account focus-inset"
+                  {% if is_contained %}data-open-auth-sidebar{% endif %}
                   aria-label="{{ 'customer.account_fallback' | t }}"
                   title="{{ 'customer.account_fallback' | t }}"
                 >
@@ -479,13 +461,7 @@
                     {% render 'icon-account-2' %}
                   {%- endif -%}
                   <span class="visually-hidden">
-                    {%- liquid
-                      if customer
-                        echo 'customer.account_fallback' | t
-                      else
-                        echo 'customer.log_in' | t
-                      endif
-                    -%}
+                    {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
                   </span>
                 </a>
               </div>
@@ -1119,76 +1095,6 @@
           });
         }
       }
-
-      // KwikPass / GoKwik Account Integration (Desktop Deduplication & Mobile Sync)
-      function setupKwikPassIntegration() {
-        function syncKwikPass() {
-          var sectionEl = document.getElementById('shopify-section-{{ section.id }}');
-          if (!sectionEl) return;
-
-          // 1. Desktop: Deduplicate & ensure fallback anchor is hidden when #kp-login-button-header-logo is present
-          var desktopLinks = sectionEl.querySelectorAll('.header-compact-desktop .customer-links');
-          desktopLinks.forEach(function(container) {
-            var kpButtons = container.querySelectorAll('#kp-login-button-header-logo');
-            if (kpButtons.length > 0) {
-              container.classList.add('has-kp-btn');
-              var fallbackA = container.querySelector('a.header__icon--account');
-              if (fallbackA) fallbackA.style.setProperty('display', 'none', 'important');
-              for (var i = 1; i < kpButtons.length; i++) {
-                kpButtons[i].style.setProperty('display', 'none', 'important');
-              }
-            }
-          });
-
-          // 2. Mobile: Sync KwikPass button and click action to mobile header
-          var desktopKp = sectionEl.querySelector('.header-compact-desktop #kp-login-button-header-logo');
-          var mobileContainer = sectionEl.querySelector('.header-compact-mobile__icons .customer-links');
-          if (desktopKp && mobileContainer) {
-            mobileContainer.classList.add('has-kp-btn');
-            var mobileA = mobileContainer.querySelector('a.header__icon--account');
-            if (mobileA) mobileA.style.setProperty('display', 'none', 'important');
-
-            var mobileBtn = mobileContainer.querySelector('.kp-mobile-login-btn');
-            if (!mobileBtn) {
-              mobileBtn = document.createElement('div');
-              mobileBtn.className = 'kp-mobile-login-btn';
-              mobileBtn.setAttribute('role', 'button');
-              mobileBtn.setAttribute('tabindex', '0');
-              mobileBtn.setAttribute('aria-label', 'Account');
-              mobileBtn.style.cursor = 'pointer';
-              mobileBtn.style.display = 'inline-flex';
-              mobileBtn.style.alignItems = 'center';
-              mobileBtn.style.justifyContent = 'center';
-              mobileBtn.style.lineHeight = '0';
-              mobileBtn.innerHTML = desktopKp.innerHTML;
-
-              mobileBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                desktopKp.click();
-              });
-
-              mobileContainer.appendChild(mobileBtn);
-            } else if (desktopKp.innerHTML.trim() !== '' && mobileBtn.innerHTML !== desktopKp.innerHTML) {
-              mobileBtn.innerHTML = desktopKp.innerHTML;
-            }
-          }
-        }
-
-        syncKwikPass();
-
-        if (window.MutationObserver) {
-          var obs = new MutationObserver(function() {
-            syncKwikPass();
-          });
-          var target = document.getElementById('shopify-section-{{ section.id }}');
-          if (target) {
-            obs.observe(target, { childList: true, subtree: true });
-          }
-        }
-      }
-
-      setupKwikPassIntegration();
     }
 
     if (document.readyState === 'loading') {
