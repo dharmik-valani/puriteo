@@ -306,6 +306,103 @@
             "lookbook_pos_3": "right"
           }
         },
+        "image_DrMKtV": {
+          "type": "image",
+          "settings": {
+            "image_slide": "shopify://shop_images/FINAL.png",
+            "image_slide_mb": "shopify://shop_images/Diwali_Dhamaka_Wellness_Sale.png",
+            "alignment": "left",
+            "enable_custom_position": false,
+            "custom_horizontal": "",
+            "custom_vertical": "",
+            "enable_position_outside_image": false,
+            "text_alignment": "center",
+            "enable_border_line": false,
+            "padding_vertical": 30,
+            "content_width": 475,
+            "enable_content_fullwidth": false,
+            "bg_color_content": "",
+            "border_color_content": "",
+            "profile_name": "",
+            "profile_name_color": "",
+            "profile_name_fs": 20,
+            "profile_name_fs_mb": 20,
+            "profile_name_fw": "normal",
+            "profile_title": "",
+            "profile_title_color": "",
+            "profile_title_fs": 20,
+            "profile_title_fs_mb": 20,
+            "profile_title_fw": "normal",
+            "profile_spacing_bottom": 50,
+            "sub_heading": "",
+            "letter_spacing_sub_title": "",
+            "font_size_sub_heading": 30,
+            "sub_heading_spacing_bottom": 20,
+            "sub_heading_font": "font_2",
+            "font_weight_sub_heading": "400",
+            "border_sub_heading": "none",
+            "sub_title_position": "sub_title_above",
+            "color_sub_heading": "#ffffff",
+            "heading": "",
+            "letter_spacing_heading": "",
+            "enable_border_heading": false,
+            "font_style_heading": "normal",
+            "font_size_heading": 40,
+            "line_height_heading": 40,
+            "heading_spacing_bottom": 8,
+            "color_heading": "#232323",
+            "slide-des": "",
+            "font_size_des": 12,
+            "des_spacing_bottom": 35,
+            "color_des": "#232323",
+            "sub_heading_mb": "",
+            "font_size_sub_heading_mb": 20,
+            "sub_heading_spacing_bottom_mb": 20,
+            "font_weight_sub_heading_mb": "400",
+            "border_sub_heading_mb": "none",
+            "color_sub_heading_mb": "#ffffff",
+            "heading_mb": "",
+            "font_style_heading_mb": "normal",
+            "font_size_heading_mb": 24,
+            "line_height_heading_mb": 24,
+            "heading_spacing_bottom_mb": 8,
+            "color_heading_mb": "#ffffff",
+            "slide-des-mb": "",
+            "font_size_des_mb": 12,
+            "des_spacing_bottom_mb": 35,
+            "color_des_mb": "#ffffff",
+            "enable_icon_button": false,
+            "enable_button_link": false,
+            "enable_underline": true,
+            "font_size_link": 36,
+            "button_slide": "",
+            "link": "shopify://collections/protein-powder",
+            "button_style": "button_1",
+            "button_slide_2": "",
+            "link_2": "shopify://collections/protein-powder",
+            "min_width_banner_button": 270,
+            "color_button": "#ffffff",
+            "border_button": "#232323",
+            "bg_button": "#232323",
+            "bg_button_gradient": "",
+            "color_button_hover": "#ffffff",
+            "border_button_hover": "#232323",
+            "bg_button_hover": "#232323",
+            "bg_button_gradient_hover": "",
+            "lb_product_1": "",
+            "horizontal_pos_1": 0,
+            "vertical_pos_1": 0,
+            "lookbook_pos_1": "right",
+            "lb_product_2": "",
+            "horizontal_pos_2": 0,
+            "vertical_pos_2": 0,
+            "lookbook_pos_2": "right",
+            "lb_product_3": "",
+            "horizontal_pos_3": 0,
+            "vertical_pos_3": 0,
+            "lookbook_pos_3": "right"
+          }
+        },
         "image_jJtrHK": {
           "type": "image",
           "settings": {
@@ -798,6 +895,7 @@
         "image_MUTezC",
         "image_iziRy9",
         "image_GKh9HA",
+        "image_DrMKtV",
         "image_jJtrHK",
         "image_yabbxf",
         "image_PBJAwy",
@@ -1115,7 +1213,13 @@
         "gsc_instagram_feed_instafeed_c3fqiq"
       ],
       "settings": {
-        "include_margins": false
+        "include_margins": false,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_side": 80,
+        "padding_top_mobile": 0,
+        "padding_bottom_mobile": 0,
+        "padding_side_mobile": 15
       }
     },
     "best_sellers_gR9TWm": {
@@ -1466,6 +1570,12 @@
         "pedding-bottom-desk": 0,
         "pedding-bottom-tab": 0,
         "pedding-bottom-mbl": 0,
+        "image_fit": "contain",
+        "banner_max_width": 0,
+        "banner_bg": "#ffffff",
+        "image_height_desktop": 0,
+        "image_height_tablet": 0,
+        "image_height_mobile": 0,
         "as_image": "shopify://shop_images/f1edb138-4025-4753-b5b7-33482e6854b7.png",
         "as_imagemobil": "shopify://shop_images/a0e38e4f-752e-4620-a39c-d4aa60c0226b_1.png"
       }
@@ -1989,7 +2099,13 @@
         ".ins-shoppable-videos .ins-shoppable-video-powered-by-text {display: none;}"
       ],
       "settings": {
-        "include_margins": false
+        "include_margins": false,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_side": 80,
+        "padding_top_mobile": 0,
+        "padding_bottom_mobile": 0,
+        "padding_side_mobile": 15
       }
     },
     "1791977576c32431ff": {
@@ -2006,7 +2122,13 @@
         "gsc_instagram_feed_instafeed_8tkrgw"
       ],
       "settings": {
-        "include_margins": false
+        "include_margins": false,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "padding_side": 80,
+        "padding_top_mobile": 0,
+        "padding_bottom_mobile": 0,
+        "padding_side_mobile": 15
       }
     },
     "testimonial_slider_FNf34T": {
