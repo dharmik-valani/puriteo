@@ -12,6 +12,31 @@
 -%}
 
 <style>
+  {% if section.settings.sticky_header_type != 'none' %}
+    .shopify-section-group-header-group:has(.announcement-bar) {
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 101 !important;
+    }
+    #shopify-section-{{ section.id }} {
+      position: sticky !important;
+      top: var(--announcement-bar-height, 35px) !important;
+      z-index: 100 !important;
+    }
+    body.search-style2-open #shopify-section-{{ section.id }},
+    body.menu_open #shopify-section-{{ section.id }},
+    body.menu-open #shopify-section-{{ section.id }},
+    body:has(.header-compact-drawer.is-open) #shopify-section-{{ section.id }} {
+      z-index: 1000002 !important;
+    }
+  {% endif %}
+
+  {% if section.settings.enable_header_shadow %}
+    #shopify-section-{{ section.id }} .header-compact-wrapper {
+      box-shadow: 0 4px 12px {{ section.settings.header_shadow_color | default: 'rgba(0, 0, 0, 0.08)' }} !important;
+    }
+  {% endif %}
+
   #shopify-section-{{ section.id }} .header-compact-wrapper {
     --hc-bg: {% if section.settings.header_bg_gradient != blank %}{{ section.settings.header_bg_gradient }}{% else %}{{ section.settings.header_bg }}{% endif %};
     --hc-border-bottom-color: {{ section.settings.header_border_bottom | default: 'transparent' }};
@@ -1038,37 +1063,18 @@
 </script>
 
 {% javascript %}
-var sticky = document.getElementsByTagName('sticky-header')[0];
-if (sticky != undefined && sticky != null) {
-  if (!customElements.get('sticky-header')) {
-    class StickyHeader extends HTMLElement {
-      constructor() {
-        super();
-      }
-      connectedCallback() {
-        this.header = document.querySelector('.section-header-navigation');
-        this.headerIsAlwaysSticky = this.getAttribute('data-sticky-type');
-        this.headerBounds = {};
-        this.currentScrollTop = 0;
-        this.preventReveal = false;
-        this.onScrollHandler = this.onScroll.bind(this);
-        window.addEventListener('scroll', this.onScrollHandler, false);
-      }
-      disconnectedCallback() {
-        window.removeEventListener('scroll', this.onScrollHandler);
-      }
-      onScroll() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        if (scrollTop > 100) {
-          this.header.classList.add('scrolled-past-header');
-        } else {
-          this.header.classList.remove('scrolled-past-header');
-        }
-        this.currentScrollTop = scrollTop;
-      }
+if (!customElements.get('sticky-header')) {
+  class StickyHeader extends HTMLElement {
+    connectedCallback() {
+      const update = () => {
+        const bar = document.querySelector('.announcement-bar');
+        if (bar) document.documentElement.style.setProperty('--announcement-bar-height', bar.offsetHeight + 'px');
+      };
+      update();
+      window.addEventListener('resize', update, { passive: true });
     }
-    customElements.define('sticky-header', StickyHeader);
   }
+  customElements.define('sticky-header', StickyHeader);
 }
 {% endjavascript %}
 
@@ -1166,13 +1172,27 @@ if (sticky != undefined && sticky != null) {
     {
       "type": "select",
       "id": "sticky_header_type",
-      "label": "Sticky Header Type",
+      "label": "Sticky Header",
       "default": "on_scroll",
+      "info": "Choose 'Always' or 'On Scroll' to stick the header to the top (like Oziva), or 'None' to keep it static.",
       "options": [
-        { "value": "none", "label": "None" },
-        { "value": "always", "label": "Always" },
-        { "value": "on_scroll", "label": "On Scroll" }
+        { "value": "none", "label": "None (Not sticky)" },
+        { "value": "always", "label": "Always Sticky" },
+        { "value": "on_scroll", "label": "Sticky on Scroll" }
       ]
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_header_shadow",
+      "label": "Enable Header Bottom Shadow",
+      "default": true,
+      "info": "Adds a subtle bottom shadow under the header (like Oziva)."
+    },
+    {
+      "type": "color",
+      "id": "header_shadow_color",
+      "label": "Header Shadow Color",
+      "default": "rgba(0,0,0,0.08)"
     },
     {
       "type": "header",
