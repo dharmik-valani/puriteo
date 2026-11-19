@@ -34,7 +34,8 @@
     #shopify-section-{{ section.id }} #kp-login-button-header-logo svg,
     #shopify-section-{{ section.id }} #svgkp,
     #shopify-section-{{ section.id }} .header__icon--account svg,
-    #shopify-section-{{ section.id }} .customer-links svg {
+    #shopify-section-{{ section.id }} .customer-links svg,
+    #shopify-section-{{ section.id }} .kp-mobile-login-btn svg {
       width: 24px !important;
       height: 24px !important;
       min-width: 24px !important;
@@ -46,11 +47,28 @@
     }
     #shopify-section-{{ section.id }} #kp-login-button-header-logo,
     #shopify-section-{{ section.id }} .customer-links,
-    #shopify-section-{{ section.id }} .customer-links a {
+    #shopify-section-{{ section.id }} .kp-mobile-login-btn {
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
       line-height: 0 !important;
+    }
+    #shopify-section-{{ section.id }} .customer-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 0;
+    }
+    #shopify-section-{{ section.id }} .customer-links:has(#kp-login-button-header-logo) > a,
+    #shopify-section-{{ section.id }} .customer-links:has(#svgkp) > a,
+    #shopify-section-{{ section.id }} .customer-links:has(.kp-mobile-login-btn) > a,
+    #shopify-section-{{ section.id }} .customer-links.has-kp-btn > a,
+    #shopify-section-{{ section.id }} .customer-links #kp-login-button-header-logo ~ a,
+    #shopify-section-{{ section.id }} .customer-links a:has(~ #kp-login-button-header-logo) {
+      display: none !important;
+    }
+    #shopify-section-{{ section.id }} #kp-login-button-header-logo ~ #kp-login-button-header-logo {
+      display: none !important;
     }
   {% endif %}
 
