@@ -27,7 +27,18 @@
     body.menu_open #shopify-section-{{ section.id }},
     body.menu-open #shopify-section-{{ section.id }},
     body:has(.header-compact-drawer.is-open) #shopify-section-{{ section.id }} {
-      z-index: 1000002 !important;
+      z-index: 100000 !important;
+    }
+
+    /* KwikPass GoKwik Account Icon */
+    #shopify-section-{{ section.id }} #kp-login-button-header-logo svg,
+    #shopify-section-{{ section.id }} #svgkp,
+    #shopify-section-{{ section.id }} .header__icon--account svg,
+    #shopify-section-{{ section.id }} .customer-links svg {
+      width: 23px !important;
+      height: 23px !important;
+      min-width: 23px !important;
+      min-height: 23px !important;
     }
   {% endif %}
 
