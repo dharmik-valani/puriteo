@@ -1,0 +1,118 @@
+{% schema %}
+{
+  "name": "Marquee Logos",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo_1",
+      "label": "Client Logo 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_2",
+      "label": "Client Logo 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_3",
+      "label": "Client Logo 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_4",
+      "label": "Client Logo 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_5",
+      "label": "Client Logo 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_6",
+      "label": "Client Logo 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_7",
+      "label": "Client Logo 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_8",
+      "label": "Client Logo 8"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Marquee Logos"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .marquee-horizontal-large {
+    position: relative;
+    display: flex
+;
+    overflow: hidden;
+    width: 100%;
+    height: 150px;
+    justify-content: flex-start;
+    align-items: center;
+    background: #393185;
+    border-bottom: 1px solid white;
+    border-bottom-style: dashed;
+}
+  .track-horizontal {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: absolute;
+    white-space: nowrap;
+    animation: marquee-horizontal 40s linear infinite;
+  }
+  .icon-container-alt {
+    display: flex;
+    width: 170px;
+    height: 100px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid #eaeaea;
+    background-color: #ffffff;
+    margin-right: 30px;
+  }
+  .asicon {
+    width: 60%;
+  }
+  @keyframes marquee-horizontal {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @media screen and (max-width: 767px){
+    .marquee-horizontal-large {
+    height: 105px;
+}
+    .icon-container-alt {
+    width: 130px;
+    height: 75px;
+  }
+  }
+</style>
+
+<div class="marquee-horizontal-large">
+  <div class="track-horizontal">
+    {% for i in (1..2) %}
+      {% for num in (1..8) %}
+        {% assign logo_var = 'logo_' | append: num %}
+        {% if section.settings[logo_var] != blank %}
+          <div class="icon-container-alt">
+            <img src="{{ section.settings[logo_var] | img_url: 'master' }}" alt="Client Logo {{ num }}" class="asicon" />
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>

@@ -1,0 +1,362 @@
+{{ 'halo-product-collapse-tab.css' | asset_url | stylesheet_tag  }}
+{%- liquid
+	assign tab_border_color = section.settings.tab_border_color
+	assign tab_border_color_rgb = section.settings.tab_border_color_rgb
+	if tab_border_color_rgb != blank
+		assign border_color = tab_border_color_rgb
+	else
+		assign border_color = tab_border_color
+	endif
+
+	assign isVerticalSidebar = false
+	if tab_layout == 'vertical_sidebar'
+		assign isVerticalSidebar = 'sidebar'
+	endif
+
+	assign isVerticalSidebarMobile = false
+	if tab_layout_mobile == 'vertical_sidebar'
+		assign isVerticalSidebarMobile = 'sidebar-mobile'
+	endif
+-%}
+<product-tab class="productView-tab layout-{{ tab_layout }} halo-product-tab" data-vertical="{{ isVerticalSidebar }}" data-vertical-mobile="{{ isVerticalSidebarMobile }}">
+	<div class="tabs-contents tabs-contents-{{ tab_layout }} clearfix halo-text-format">
+		{%- for item_block in section.blocks -%}
+			{%- if item_block.disabled -%}{%- continue -%}{%- endif -%}
+			{%- if tab_block != blank and item_block.id != tab_block.id -%}
+				{%- continue -%}
+			{%- endif -%}
+			{%- assign block = item_block -%}        
+			{%- liquid
+				assign title = block.settings.title
+				if title contains 'How to Ues'
+					assign title = title | replace: 'How to Ues', 'How to Use'
+				elsif title contains 'how to ues'
+					assign title = title | replace: 'how to ues', 'How to Use'
+				endif
+				assign has_tab = false
+				assign source = block.settings.product_custom_source
+				assign key = block.settings.product_tab_key_metafield
+
+				if source == 'dynamic'
+                   assign meta_ref = key
+                else
+                	if product.metafields.c_f or product.metafields.custom
+                		if product.metafields.c_f[key] != blank
+                			assign meta_ref = product.metafields.c_f[key]
+                		else
+                			assign meta_ref = product.metafields.custom[key]
+                		endif
+                	endif
+                endif 
+                
+				if block.type == 'image_below_tab' or block.type == 'custom' or block.type == 'description'
+					if block.settings.type == 'metafield'
+						if meta_ref != blank and meta_ref != ''
+			                assign has_tab = true
+			                assign content = meta_ref
+			            else
+			            	assign has_tab = false
+			            endif
+			        else
+			        	assign is_how_to_use = false
+			        	if title contains 'How to' or title contains 'how to' or title contains 'How To' or title contains 'how_to_use' or block.settings.content contains 'how_to_use'
+			        		assign is_how_to_use = true
+			        	endif
+
+			        	assign is_description = false
+			        	if block.type == 'image_below_tab' or block.type == 'description' or title contains 'Description' or title contains 'description'
+			        		assign is_description = true
+			        	endif
+
+			        	if is_how_to_use
+			        		assign htu_val = ''
+			        		if product.metafields.custom.how_to_use != blank
+			        			assign htu_plain = product.metafields.custom.how_to_use.value | default: product.metafields.custom.how_to_use
+			        			assign htu_rich = product.metafields.custom.how_to_use | metafield_tag
+			        			if htu_rich != blank and htu_rich != ''
+			        				assign htu_val = htu_rich
+			        			elsif htu_plain != blank
+			        				assign htu_val = htu_plain | newline_to_br
+			        			endif
+			        		endif
+
+			        		if htu_val == blank and product.metafields.custom.how_to_use_content != blank
+			        			assign htu_rich = product.metafields.custom.how_to_use_content | metafield_tag
+			        			assign htu_plain = product.metafields.custom.how_to_use_content.value | default: product.metafields.custom.how_to_use_content
+			        			if htu_rich != blank and htu_rich != ''
+			        				assign htu_val = htu_rich
+			        			elsif htu_plain != blank
+			        				assign htu_val = htu_plain | newline_to_br
+			        			endif
+			        		endif
+
+			        		if htu_val == blank and product.metafields.custom.how_to_use_text != blank
+			        			assign htu_plain = product.metafields.custom.how_to_use_text.value | default: product.metafields.custom.how_to_use_text
+			        			if htu_plain != blank
+			        				assign htu_val = htu_plain | newline_to_br
+			        			endif
+			        		endif
+
+			        		assign is_static_content = false
+			        		if block.settings.content != blank
+			        			unless block.settings.content contains '{{'
+			        				assign is_static_content = true
+			        			endunless
+			        		endif
+
+			        		if htu_val != blank
+			        			assign content = htu_val
+			        		elsif is_static_content
+			        			assign content = block.settings.content
+			        		else
+			        			assign content = ''
+			        		endif
+
+			        		assign content_clean = content | strip_html | strip
+			        		if content_clean != blank
+			        			assign has_tab = true
+			        		else
+			        			assign has_tab = false
+			        		endif
+			        	elsif is_description
+			        		assign desc_val = ''
+			        		if product.metafields.custom.long_description != blank
+			        			assign desc_rich = product.metafields.custom.long_description | metafield_tag
+			        			assign desc_plain = product.metafields.custom.long_description.value | default: product.metafields.custom.long_description
+			        			if desc_rich != blank and desc_rich != ''
+			        				assign desc_val = desc_rich
+			        			elsif desc_plain != blank
+			        				assign desc_val = desc_plain | newline_to_br
+			        			endif
+			        		endif
+
+			        		assign is_static_content = false
+			        		if block.settings.content != blank
+			        			unless block.settings.content contains '{{'
+			        				assign is_static_content = true
+			        			endunless
+			        		endif
+
+			        		if desc_val != blank
+			        			assign content = desc_val
+			        		elsif is_static_content
+			        			assign content = block.settings.content
+			        		else
+			        			assign content = ''
+			        		endif
+
+			        		assign is_static_kf = false
+			        		if block.settings.key_features_text != blank
+			        			unless block.settings.key_features_text contains '{{'
+			        				assign is_static_kf = true
+			        			endunless
+			        		endif
+
+			        		assign kf_text = ''
+			        		if product.metafields.custom.features_text != blank
+			        			assign kf_rich = product.metafields.custom.features_text | metafield_tag
+			        			assign kf_plain = product.metafields.custom.features_text.value | default: product.metafields.custom.features_text
+			        			if kf_rich != blank and kf_rich != ''
+			        				assign kf_text = kf_rich
+			        			elsif kf_plain != blank
+			        				assign kf_text = kf_plain | newline_to_br
+			        			endif
+			        		elsif is_static_kf
+			        			assign kf_text = block.settings.key_features_text
+			        		endif
+
+			        		assign is_static_hb = false
+			        		if block.settings.health_benefits_text != blank
+			        			unless block.settings.health_benefits_text contains '{{'
+			        				assign is_static_hb = true
+			        			endunless
+			        		endif
+
+			        		assign hb_text = ''
+			        		if product.metafields.custom.benefits_text != blank
+			        			assign hb_rich = product.metafields.custom.benefits_text | metafield_tag
+			        			assign hb_plain = product.metafields.custom.benefits_text.value | default: product.metafields.custom.benefits_text
+			        			if hb_rich != blank and hb_rich != ''
+			        				assign hb_text = hb_rich
+			        			elsif hb_plain != blank
+			        				assign hb_text = hb_plain | newline_to_br
+			        			endif
+			        		elsif is_static_hb
+			        			assign hb_text = block.settings.health_benefits_text
+			        		endif
+
+			        		assign content_clean = content | strip_html | strip
+			        		assign kf_clean = kf_text | strip_html | strip
+			        		assign hb_clean = hb_text | strip_html | strip
+			        		if content_clean != blank or kf_clean != blank or hb_clean != blank
+			        			assign has_tab = true
+			        		else
+			        			assign has_tab = false
+			        		endif
+			        	else
+			        		assign content_clean = block.settings.content | strip_html | strip
+			        		if content_clean != blank
+			        			assign has_tab = true
+			        			assign content = block.settings.content
+			        		else
+			        			assign has_tab = false
+			        		endif
+			        	endif
+			        endif
+				endif
+
+				if block.type == 'image_below_tab' or block.type == 'custom' or block.type == 'description'
+					assign style_mobile = false
+					if block.settings.open_tab_mobile
+						assign style_mobile = 'show-mobile'
+					endif
+					if tab_layout_mobile == 'popup'
+						assign style_mobile = 'popup-mobile'
+					elsif tab_layout_mobile == 'vertical_sidebar'
+						assign style_mobile = 'sidebar-mobile'
+					endif
+				endif
+
+				if tab_block != blank or template.suffix == 'new-product-page'
+					assign is_open_desktop = false
+					if block.settings.open_tab_desktop
+						assign is_open_desktop = true
+					endif
+				else
+					assign is_open_desktop = true
+				endif
+			-%}
+			{%- if has_tab and title != blank -%}
+				<div class="tab-content 1 {% if is_open_desktop %} is-active{% endif %}" id="tab-{{ title | escape | handleize }}">
+					<div class="toggle-title{% if settings.product_page_layout == 'full_width_2' or template.suffix == 'template-full-width-2' %} title-content-full{% endif %}">
+		                <a class="toggleLink {% if is_open_desktop and tab_layout == 'vertical' %}is-open{% endif %}{% if style_mobile %} {{ style_mobile }}{% endif %}" data-collapsible href="#tab-{{ title | escape | handleize }}-mobile">
+		                    <span class="text">
+		                        {{ title | escape }}
+		                    </span>
+		                    {% if icon_style_layout == 'style_1' %}	
+			                    <span class="icon-dropdown">
+			                    	{% if settings.product_page_layout == 'full_width_2' or template.suffix == 'template-full-width-2' %}
+			                    		{% render 'icon-down-2' %}
+			                    	{% else %}
+			                    		{% render 'icon-down' %}
+			                    	{% endif %}
+			                    </span>	
+		                    {% else %}	
+		                    	<span class="icon-plus">&nbsp;</span>
+		                    {% endif %}
+		                </a>
+		            </div>
+		            <div class="toggle-content{% if is_open_desktop %} is-active{% endif %}{% if style_mobile %} {{ style_mobile }}{% endif %}{% if block.settings.enable_btn_show_more %} toggle-content--height{% endif %}" id="tab-{{ title | escape | handleize }}-mobile"{% if block.settings.enable_btn_show_more %} style="--maximum-des-to-show: {{ block.settings.maximum_des_to_show | append: 'px'}}"{% endif %}{% if block.type == 'image_below_tab' or block.type == 'description' %} product-description-tab data-product-description-{{ product.id }}{% endif %}>
+						{%- if tab_layout == 'vertical_sidebar' or style_mobile == 'sidebar-mobile' or style_mobile == 'popup-mobile' -%}
+							<div class="tab-popup-header">
+								<h5>
+									<span class="text">{{ title | escape }}</span>
+								</h5>
+								<a class="pdViewTab-close pdViewTab-close-mobile" role="link" aria-disabled="true">x</a>
+							</div>
+							<div class="tab-popup-content">
+						{%- endif -%}
+						{%- if content != blank -%}
+							<div class="pdp_tab_content_body">{{ content }}</div>
+						{%- endif -%}
+                              
+                              {%- liquid
+                                  assign show_subtabs = false
+                                  if template.suffix == 'new-product-page'
+                                      if is_description and kf_text != blank or hb_text != blank
+                                          assign show_subtabs = true
+                                      endif
+                                  else
+                                      if block.settings.key_features_text != blank or block.settings.health_benefits_text != blank
+                                          assign show_subtabs = true
+                                      endif
+                                  endif
+                              -%}
+                              {%- if show_subtabs -%}
+                                  {%- liquid
+                                      assign render_kf = kf_text | default: block.settings.key_features_text
+                                      assign render_hb = hb_text | default: block.settings.health_benefits_text
+                                  -%}
+                                  <div class="product_tab_main">
+                                      <div class="product_tab_inner">
+                                          <div class="productdetails_title">
+                                              {% if block.settings.key_features_title != blank and render_kf != blank %}
+                                                  <div class="pdp_tab_container_title pdp-card active-card" data-tab="tab_key_features">
+                                                      <div>{{ block.settings.key_features_title }}</div>
+                                                  </div>
+                                              {% endif %}
+                                              {% if block.settings.health_benefits_title != blank and render_hb != blank %}
+                                                  <div class="pdp_tab_container_title pdp-card" data-tab="tab_health_benefits">
+                                                      <div>{{ block.settings.health_benefits_title }}</div>
+                                                  </div>
+                                              {% endif %}
+                                          </div>
+
+                                          <div class="pdp_tab_detils_cover">
+                                              {% if render_kf != blank %}
+                                                  <div class="pdp_tab_detils active_tabify" id="tab_key_features">
+                                                      {{ render_kf }}
+                                                  </div>
+                                              {% endif %}
+                                              {% if render_hb != blank %}
+                                                  <div class="pdp_tab_detils" id="tab_health_benefits">
+                                                      <div>{{ render_hb }}</div>
+                                                  </div>
+                                              {% endif %}
+                                          </div>
+                                      </div>
+                                  </div>
+                              {%- endif -%}
+                              
+							{%- if block.settings.enable_btn_show_more -%}
+								{% assign letter = content | size %}
+								<div class="tab-showMore is-show" data-letter="{{ letter }}" data-des-max="{{ block.settings.maximum_des_to_show }}">
+									<a class="button button--secondary" href="#tab-{{ title | escape | handleize }}-mobile" data-show-more-text="{{ 'products.product.read_more' | t }}" data-show-less-text="{{ 'products.product.read_less' | t }}" data-show-more-toogle> 
+										{{ 'products.product.read_more' | t }}
+									</a>
+								</div>
+							{%- endif -%}
+						{%- if tab_layout == 'vertical_sidebar' or style_mobile == 'sidebar-mobile' or style_mobile == 'popup-mobile' -%}
+							</div>
+						{%- endif -%}
+		            </div>
+					{%- if tab_layout == 'popup' -%}
+						<a class="pdViewTab-close" href="javascript:void(0)">x</a>
+					{%- endif -%}
+				</div>
+			{%- endif -%}
+		{%- endfor -%}
+	</div>
+</product-tab>
+<script src="{{ 'tabs.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'halo-faqs.js' | asset_url }}" defer="defer"></script>
+{% assign description_tab = section.blocks | where: 'type', 'image_below_tab' %}
+{%- if description_tab == blank and tab_layout == 'horizontal' -%}
+<script defer="defer">
+	document.querySelector('.tabs-horizontal .tab:nth-child(1) .tab-title').classList.add('is-open');
+	document.querySelector('.tabs-contents-horizontal .tab-content:nth-child(1)').classList.add('is-active');
+	document.querySelector('.tabs-contents-horizontal .tab-content:nth-child(1) .toggleLink').classList.add('is-open');
+	document.querySelector('.tabs-contents-horizontal .tab-content:nth-child(1) .toggle-content').style.display = 'block';
+</script>
+{%- endif -%}
+{%- if tab_layout_mobile == 'vertical' and tab_layout == 'vertical' -%}
+<script defer="defer">
+	// document.querySelector('.tabs-contents-vertical .tab-content .toggleLink').classList.remove('is-open');
+</script>
+{%- endif -%}
+<script>
+	if(document.querySelectorAll('.productdetails_title').length > 0){
+  var coll_nav = document.querySelectorAll('.productdetails_title .pdp_tab_container_title');
+  var coll_dis =  document.querySelectorAll('.pdp_tab_detils');
+    for(var i=0; i< coll_nav.length; i++){
+        coll_nav[i].addEventListener("click", function () {
+            var get_target = this.getAttribute('data-tab');
+          console.log(get_target);
+          coll_nav.forEach(tab => tab.classList.remove('active-card'));                             
+          coll_dis.forEach(content => content.classList.remove('active_tabify'));
+            this.classList.add('active-card');
+          document.querySelector('#'+ get_target).classList.add('active_tabify');          
+        });
+    }
+}
+</script>

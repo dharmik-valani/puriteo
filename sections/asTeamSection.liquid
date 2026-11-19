@@ -1,0 +1,228 @@
+<style>
+    .experts-section {
+        text-align: center;
+        max-width: 1200px;
+        width: 100%;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .experts-section h2 {
+        font-size: 32px;
+        /* font-weight: bold; */
+        margin-bottom: 10px;
+    }
+
+    .experts-section p {
+        width: 100%;
+        font-size: 20px;
+        color: #666;
+        margin: 10px 0px;
+    }
+
+    .swiper {
+        width: 100%;
+        padding: 20px 0;
+        overflow: hidden;
+    }
+
+    .swiper-wrapper {
+        display: flex;
+    }
+
+    .expert-card {
+        background: linear-gradient(135deg, #fde2e4, #e2eafc);
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        /* max-width: 300px; */
+        /* width: 100%; */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .expert-card img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 10px 0px;
+    }
+
+    .expert-card h3 {
+        width: 100%;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px;
+    }
+
+    .expert-card p {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .swiper-button-prev, .swiper-button-next {
+        display: none; /* Hidden by default */
+    }
+
+    @media (max-width: 768px) {
+        .experts-container {
+            /* flex-direction: column; */
+            align-items: center;
+        }
+    }
+  .experts-container{
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .expert-card{
+    width: 23% !important;
+  }
+  @media screen and (max-width: 768px){
+    .expert-card{
+      width: 48% !important;
+    }
+  }
+  @media screen and (max-width: 500px){
+    .expert-card{
+      width: 100% !important;
+    }
+  }
+</style>
+
+
+
+<div class="experts-section container">
+    <h2>{{ section.settings.teamtitle }}</h2>
+    <p>{{ section.settings.teamdescription }}</p>
+
+    {% if section.settings.enable_slider and section.blocks.size > 4 %}
+    <div class="swiper experts-slider">
+        <div class="swiper-wrapper">
+            {% for block in section.blocks %}
+                <div class="swiper-slide expert-card">
+                    {% if block.settings.expert_image %}
+                        <img src="{{ block.settings.expert_image | image_url }}" alt="{{ block.settings.expert_name }}">
+                    {% endif %}
+                    <h3>{{ block.settings.expert_name }}</h3>
+                    <p>{{ block.settings.expert_description }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- <div class="swiper-pagination"></div> -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+    </div>
+    {% else %}
+    <div class="experts-container">
+        {% for block in section.blocks %}
+            <div class="expert-card">
+                {% if block.settings.expert_image %}
+                    <img src="{{ block.settings.expert_image | image_url }}" alt="{{ block.settings.expert_name }}">
+                {% endif %}
+                <h3>{{ block.settings.expert_name }}</h3>
+                <p>{{ block.settings.expert_description }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let sliderContainer = document.querySelector(".experts-slider");
+        if (sliderContainer) {
+            let slideCount = document.querySelectorAll(".swiper-slide").length;
+            let slidesPerView = window.innerWidth >= 1024 ? 4 : (window.innerWidth >= 768 ? 2 : 1);
+            
+            if (slideCount > slidesPerView) {
+                let swiper = new Swiper(".experts-slider", {
+                    slidesPerView: slidesPerView,
+                    spaceBetween: 20,
+                    loop: true, // Prevents infinite loop that causes blank spaces
+                    watchOverflow: true, // Hides navigation if slides are not enough
+                    navigation: {
+                        nextEl: ".swiper-button-next",
+                        prevEl: ".swiper-button-prev",
+                    },
+                    pagination: {
+                        el: ".swiper-pagination",
+                        clickable: true,
+                    },
+                    breakpoints: {
+                        1024: { slidesPerView: 4 },
+                        768: { slidesPerView: 2 },
+                        480: { slidesPerView: 1 },
+                    },
+                });
+
+                // Show navigation only if necessary
+                if (slideCount > slidesPerView) {
+                    document.querySelector(".swiper-button-prev").style.display = "block";
+                    document.querySelector(".swiper-button-next").style.display = "block";
+                }
+            } else {
+                sliderContainer.style.display = "none"; // Hide slider if not enough slides
+            }
+        }
+    });
+</script>
+
+{% schema %}
+{
+  "name": "Experts Section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "label": "Enable Slider when more than 4 experts",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "teamtitle",
+      "label": "Add Team Title"
+    },
+    {
+      "type": "textarea",
+      "id": "teamdescription",
+      "label": "Add Description"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "expert",
+      "name": "Expert",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "expert_image",
+          "label": "Expert Image"
+        },
+        {
+          "type": "text",
+          "id": "expert_name",
+          "label": "Expert Name",
+          "default": "Rainer Bangera"
+        },
+        {
+          "type": "text",
+          "id": "expert_description",
+          "label": "Expert Description",
+          "default": "Gastroenterologist, Specialist in Internal Medicine, FEBG"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Expert Team Section"
+    }
+  ]
+}
+{% endschema %}

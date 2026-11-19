@@ -1,0 +1,81 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "google-map": {
+      "type": "google-map",
+      "disabled": true,
+      "settings": {
+        "show_custom_map": true,
+        "container": "fullwidth",
+        "block_title": "",
+        "block_text": "",
+        "block_align": "center",
+        "block_max_width": 300,
+        "btn_text": "",
+        "btn_text_color": "",
+        "btn_border_color": "",
+        "btn_bg_color": "",
+        "btn_bg_color_gradient": "",
+        "btn_text_color_hover": "",
+        "btn_border_color_hover": "",
+        "btn_bg_color_hover": "",
+        "btn_bg_color_hover_gradient": "",
+        "btn_max_width": 205,
+        "btn_link": "",
+        "block_content": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3987.3002293533086!2d72.67132618340672!3d23.032638325449522!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e87d7dcdd3811%3A0x9f062233bda55bf8!2sSahjanand%20Business%20Park!5e1!3m2!1sen!2sin!4v1739343184212!5m2!1sen!2sin\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "mg_top_desktop": 0,
+        "mg_top_tablet": 0,
+        "mg_top_mobile": 0,
+        "mg_bottom_desktop": 30,
+        "mg_bottom_tablet": 0,
+        "mg_bottom_mobile": 0
+      }
+    },
+    "main": {
+      "type": "main-contact-us-1",
+      "custom_css": [
+        ".contact-text {font-size: 16px; line-height: var(--line-height);}",
+        ".contact-title {padding-bottom: 20px; font-size: 22px;}",
+        ".contact-form .form-actions .button {border-radius: 10px; width: 200px; font-size: 16px; padding-top: 15px; padding-bottom: 15px;}",
+        ".button.button-1,.button.button--primary {background: #393185; border-color: #393185;}"
+      ],
+      "settings": {
+        "show_breadcrumb": true,
+        "breadcrumb_alignment": "left",
+        "breadcrumb_bg": "",
+        "breadcrumb_gradient": "",
+        "breadcrumb_bg_mb": "#f6f6f6",
+        "breadcrumb_gradient_mb": "",
+        "show_page_title": true,
+        "page_title_alignment": "left",
+        "container": "1170",
+        "mg_top_desktop": 0,
+        "mg_top_tablet": 0,
+        "mg_top_mobile": 0,
+        "mg_bottom_desktop": 0,
+        "mg_bottom_tablet": 0,
+        "mg_bottom_mobile": 0,
+        "contact_form_text": "Bespoke advice from our expert Puriteo team<br>\n<br>\nIf you need advice or information on our products, natural remedies, courses, therapies and stores, or something’s not quite right with our service, our expert team is on hand to help.",
+        "show_contact_info": true,
+        "contact_info_title": "Online order & product inquiries",
+        "contact_info_text": "For updates on your online purchase, delivery information and returns, or something’s not quite right with your order, we’re here to help.",
+        "contact_info_address": "",
+        "contact_info_content_1": "<p style=\"font-size: 20px; line-height: 30px; margin-bottom: 0px;margin-top: 5px;\">\n<span class=\"icon\">\n<svg style=\"position: relative; top: 0px; width: 25px;height: 25px\" viewbox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g><g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g><g id=\"SVGRepo_iconCarrier\"> <path d=\"M15 4V5C15 6.88562 15 7.82843 15.5858 8.41421C16.1716 9 17.1144 9 19 9H20.5M20.5 9L18 7M20.5 9L18 11\" stroke=\"#000000\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path> <path d=\"M15.5562 14.5477L15.1007 15.0272C15.1007 15.0272 14.0181 16.167 11.0631 13.0559C8.10812 9.94484 9.1907 8.80507 9.1907 8.80507L9.47752 8.50311C10.1841 7.75924 10.2507 6.56497 9.63424 5.6931L8.37326 3.90961C7.61028 2.8305 6.13596 2.68795 5.26145 3.60864L3.69185 5.26114C3.25823 5.71766 2.96765 6.30945 3.00289 6.96594C3.09304 8.64546 3.81071 12.259 7.81536 16.4752C12.0621 20.9462 16.0468 21.1239 17.6763 20.9631C18.1917 20.9122 18.6399 20.6343 19.0011 20.254L20.4217 18.7584C21.3806 17.7489 21.1102 16.0182 19.8833 15.312L17.9728 14.2123C17.1672 13.7486 16.1858 13.8848 15.5562 14.5477Z\" fill=\"#000000\"></path> </g></svg>\n</span>\n<span style=\"font-size: 16px; margin-left: 7px\">Call : <a href=\"tel:9909266655\">+91 9909266655</a></span>\n</p>\n<p style=\"font-size: 20px; line-height:30px; margin-top: 0;margin-bottom: 3px;\">\n<span class=\"icon\">\n<svg style=\"width: 20px;height: 20px\" aria-hidden=\"true\" focusable=\"false\" data-prefix=\"fas\" data-icon=\"envelope\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 512 512\" class=\"svg-inline--fa fa-envelope fa-w-16 fa-7x\"><path fill=\"currentColor\" d=\"M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z\" class=\"\"></path></svg></span>\n<span style=\"font-size: 16px; margin-left: 7px\"><a href=\"mailto:puriteohygiene@gmail.com\">Email : \n puriteohygiene@gmail.com</a></span>\n</p><p style=\"font-size: 20px; line-height:30px; margin-top: 0;width:400px;\">\n    <span class=\"icon\">\n        <svg style=\"width: 22px; height: 22px;\" viewbox=\"0 0 384 512\" xmlns=\"http://www.w3.org/2000/svg\">\n            <path fill=\"currentColor\" d=\"M168 0C75.1 0 0 75 0 168c0 87.3 135.1 297.7 158.8 330.5 4.5 6.3 13.9 6.3 18.4 0C216.9 465.7 352 255.3 352 168 352 75 276.9 0 184 0h-16zm8 256a88 88 0 1 1 0-176 88 88 0 0 1 0 176z\"></path>\n        </svg>\n    </span>\n    <span style=\"font-size: 16px; margin-left: 5px\">Address :\nPURITEO HYGIENE PRIVATE LIMITED , Block E, Shed No. 177,Sahjanand Business Park:\nNR. Keshwan Estate, Nikol\nAhmedabad, Gujarat – 382350\nIndia\n</span></p>",
+        "contact_info_content_2": "",
+        "enable_border_top": true
+      }
+    }
+  },
+  "order": [
+    "google-map",
+    "main"
+  ]
+}

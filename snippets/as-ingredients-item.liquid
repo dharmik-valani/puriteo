@@ -1,0 +1,65 @@
+{%- comment -%}
+  Renders one AS Ingredients item.
+  Accepts: block, show_labels, editable (bool), linkable (bool)
+{%- endcomment -%}
+{%- liquid
+  assign label = block.settings.label
+  assign link = block.settings.link
+  assign icon_image = block.settings.icon_image
+  assign icon_svg = block.settings.icon_svg
+  assign image_alt = label
+  if block.settings.image_alt != blank
+    assign image_alt = block.settings.image_alt
+  endif
+  if editable == nil
+    assign editable = true
+  endif
+  if linkable == nil
+    assign linkable = true
+  endif
+-%}
+<li
+  class="as-ingredients__item"
+  {% if editable %}{{ block.shopify_attributes }}{% endif %}
+>
+  {%- if link != blank and linkable -%}
+    <a class="as-ingredients__link" href="{{ link }}">
+  {%- else -%}
+    <div class="as-ingredients__link">
+  {%- endif -%}
+      <span
+        class="as-ingredients__icon"
+        style="{% if block.settings.icon_bg_color != blank and block.settings.icon_bg_color != 'rgba(0,0,0,0)' %}--ai-icon-bg: {{ block.settings.icon_bg_color }};--ai-card-bg: {{ block.settings.icon_bg_color }};{% endif %}"
+      >
+        {%- if icon_image != blank -%}
+          {{
+            icon_image
+            | image_url: width: 320
+            | image_tag:
+              loading: 'lazy',
+              widths: '80, 120, 160, 240, 320',
+              sizes: '(max-width: 749px) 72px, 120px',
+              alt: image_alt
+          }}
+        {%- elsif icon_svg != blank -%}
+          <span class="as-ingredients__icon-html">{{ icon_svg }}</span>
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </span>
+      {%- if show_labels and label != blank -%}
+        <span
+          class="as-ingredients__label"
+          {% if block.settings.label_color != blank and block.settings.label_color != 'rgba(0,0,0,0)' %}
+            style="color: {{ block.settings.label_color }};"
+          {% endif %}
+        >
+          {{ label }}
+        </span>
+      {%- endif -%}
+  {%- if link != blank and linkable -%}
+    </a>
+  {%- else -%}
+    </div>
+  {%- endif -%}
+</li>

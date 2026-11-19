@@ -1,0 +1,486 @@
+{%- liquid
+  assign has_item1 = false
+  assign has_item2 = false
+  assign has_item3 = false
+  assign has_item4 = false
+
+  # Metaobject support
+  assign meta_list = product.metafields.custom.key_ingredients.value
+  if meta_list == blank
+    assign meta_list = product.metafields.custom.key_ingredients
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom.key_ingredient.value
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom.key_ingredient
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom.ingredients.value
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom.ingredients
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom['key-ingredients'].value
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom['key-ingredients']
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom['key_ingredients'].value
+  endif
+
+  if meta_list != blank and meta_list.size > 0
+    for item in meta_list limit: 4
+      assign i_idx = forloop.index
+      assign m_title = item.title.value | default: item.title | default: item.name.value | default: item.name | default: item.label.value | default: item.label | default: item.heading.value | default: item.heading | default: item.ingredient_name.value | default: item.ingredient_name | default: item.display_name.value | default: item.display_name
+      assign m_desc = item.description.value | default: item.description | default: item.desc.value | default: item.desc | default: item.pera.value | default: item.pera | default: item.benefit.value | default: item.benefit | default: item.details.value | default: item.details | default: item.text.value | default: item.text
+      assign m_image = item.image.value | default: item.image | default: item.icon.value | default: item.icon | default: item.img.value | default: item.img | default: item.photo.value | default: item.photo | default: item.ingredient_image.value | default: item.ingredient_image
+
+      if m_image.value != blank
+        assign m_image = m_image.value
+      endif
+
+      if m_title == blank or m_desc == blank or m_image == blank
+        if item.fields != blank
+          for f in item.fields
+            assign f_key = f.key | downcase
+            assign f_val = f.value | default: f
+            if m_image == blank
+              if f.type contains 'file' or f_key contains 'image' or f_key contains 'img' or f_key contains 'icon' or f_key contains 'photo'
+                if f_val != blank
+                  assign m_image = f_val
+                endif
+              endif
+            endif
+            if m_title == blank
+              if f_key contains 'title' or f_key contains 'name' or f_key contains 'label' or f_key contains 'heading'
+                assign m_title = f_val | strip_html | strip
+              endif
+            endif
+            if m_desc == blank
+              if f_key contains 'desc' or f_key contains 'pera' or f_key contains 'benefit' or f_key contains 'detail' or f_key contains 'text'
+                assign m_desc = f_val | strip_html | strip
+              endif
+            endif
+          endfor
+        endif
+      endif
+
+      if m_title == blank and item.system.handle != blank
+        assign m_title = item.system.handle | replace: '-', ' ' | capitalize
+      endif
+
+      if i_idx == 1
+        assign t1 = m_title | strip_html | strip
+        assign p1 = m_desc | strip_html | strip
+        assign img1 = m_image
+        if t1 != blank or p1 != blank or img1 != blank
+          assign has_item1 = true
+        endif
+      elsif i_idx == 2
+        assign t2 = m_title | strip_html | strip
+        assign p2 = m_desc | strip_html | strip
+        assign img2 = m_image
+        if t2 != blank or p2 != blank or img2 != blank
+          assign has_item2 = true
+        endif
+      elsif i_idx == 3
+        assign t3 = m_title | strip_html | strip
+        assign p3 = m_desc | strip_html | strip
+        assign img3 = m_image
+        if t3 != blank or p3 != blank or img3 != blank
+          assign has_item3 = true
+        endif
+      elsif i_idx == 4
+        assign t4 = m_title | strip_html | strip
+        assign p4 = m_desc | strip_html | strip
+        assign img4 = m_image
+        if t4 != blank or p4 != blank or img4 != blank
+          assign has_item4 = true
+        endif
+      endif
+    endfor
+  elsif template.suffix != 'new-product-page'
+    assign t1 = product.metafields.custom.ingredients_title01.value | default: product.metafields.custom.ingredients_title01 | default: section.settings.title_ingredients01 | strip_html | strip
+    assign p1 = product.metafields.custom.ingredients_pera01.value | default: product.metafields.custom.ingredients_pera01 | default: section.settings.pera_ingredients01 | strip_html | strip
+    assign img1 = product.metafields.custom.ingredients_img_01.value | default: product.metafields.custom.ingredients_img_01 | default: section.settings.image_ingredients01
+
+    if img1 != blank or t1 != blank or p1 != blank
+      assign has_item1 = true
+    endif
+
+    assign t2 = product.metafields.custom.ingredients_title02.value | default: product.metafields.custom.ingredients_title02 | default: section.settings.title_ingredients02 | strip_html | strip
+    assign p2 = product.metafields.custom.ingredients_pera02.value | default: product.metafields.custom.ingredients_pera02 | default: section.settings.pera_ingredients02 | strip_html | strip
+    assign img2 = product.metafields.custom.ingredients_img_02.value | default: product.metafields.custom.ingredients_img_02 | default: section.settings.image_ingredients02
+
+    if img2 != blank or t2 != blank or p2 != blank
+      assign has_item2 = true
+    endif
+
+    assign t3 = product.metafields.custom.ingredients_title03.value | default: product.metafields.custom.ingredients_title03 | default: section.settings.title_ingredients03 | strip_html | strip
+    assign p3 = product.metafields.custom.ingredients_pera03.value | default: product.metafields.custom.ingredients_pera03 | default: section.settings.pera_ingredients03 | strip_html | strip
+    assign img3 = product.metafields.custom.ingredients_img_03.value | default: product.metafields.custom.ingredients_img_03 | default: section.settings.image_ingredients03
+
+    if img3 != blank or t3 != blank or p3 != blank
+      assign has_item3 = true
+    endif
+
+    assign t4 = product.metafields.custom.ingredients_title04.value | default: product.metafields.custom.ingredients_title04 | default: section.settings.title_ingredients04 | strip_html | strip
+    assign p4 = product.metafields.custom.ingredients_pera04.value | default: product.metafields.custom.ingredients_pera04 | default: section.settings.pera_ingredients04 | strip_html | strip
+    assign img4 = product.metafields.custom.ingredients_img_04.value | default: product.metafields.custom.ingredients_img_04 | default: section.settings.image_ingredients04
+
+    if img4 != blank or t4 != blank or p4 != blank
+      assign has_item4 = true
+    endif
+  else
+    assign t1 = section.settings.title_ingredients01 | strip_html | strip
+    assign p1 = section.settings.pera_ingredients01 | strip_html | strip
+    assign img1 = section.settings.image_ingredients01
+    if img1 != blank or t1 != blank or p1 != blank
+      assign has_item1 = true
+    endif
+
+    assign t2 = section.settings.title_ingredients02 | strip_html | strip
+    assign p2 = section.settings.pera_ingredients02 | strip_html | strip
+    assign img2 = section.settings.image_ingredients02
+    if img2 != blank or t2 != blank or p2 != blank
+      assign has_item2 = true
+    endif
+
+    assign t3 = section.settings.title_ingredients03 | strip_html | strip
+    assign p3 = section.settings.pera_ingredients03 | strip_html | strip
+    assign img3 = section.settings.image_ingredients03
+    if img3 != blank or t3 != blank or p3 != blank
+      assign has_item3 = true
+    endif
+
+    assign t4 = section.settings.title_ingredients04 | strip_html | strip
+    assign p4 = section.settings.pera_ingredients04 | strip_html | strip
+    assign img4 = section.settings.image_ingredients04
+    if img4 != blank or t4 != blank or p4 != blank
+      assign has_item4 = true
+    endif
+  endif
+
+  assign has_ingredients = false
+  if has_item1 or has_item2 or has_item3 or has_item4
+    assign has_ingredients = true
+  endif
+-%}
+
+<style>
+    .asheading {
+        margin-bottom: 25px;
+    }
+    .asheading h3{
+      font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    line-height: 1.2;
+    margin-top: 0px;
+    text-align: center;
+    color: #1b3a6e;
+    }
+
+    .mb-5 {
+        margin-bottom: 15px;
+    }
+
+    .asbg_color {
+        background-color: #efefef;
+        text-align: center;
+        padding: 30px 40px;
+        position: relative;
+    }
+    
+    .img_ingrd img {
+        width: 200px;
+        position: absolute;
+        top: -20%;
+        left: -35px;
+    }
+    
+    .mt-5 {
+        margin-top: 70px;
+    }
+
+    .astitel_indg {
+        font-size: 22px;
+        font-weight: 600;
+        line-height: 1.2;
+        margin-top: 10px;
+        color: #1b3a6e;
+    }
+
+    .as_pera {
+        color: #333333;
+    }
+
+    @media screen and (max-width: 767px) {
+      .asbg_color {
+          background-color: #efefef;
+          text-align: center;
+          padding: 20px 15px;
+          position: relative;
+      }
+      .asmoli_mt{
+        margin-top: 30px !important;
+      }
+      .img_ingrd img {
+        width: 135px;
+        position: absolute;
+        top: -10%;
+        left: -15px;
+    }
+      .astitel_indg {
+    font-size: 20px !important;
+    margin-bottom: 10px;
+}
+      .as_pera{
+            font-size: 14px !important;
+
+      }
+        .mb-768 {
+            margin-bottom: 25px !important;
+        }
+
+        .mb-5 {
+            margin-bottom: 0px;
+        }
+
+        .col-6 {
+            width: 100%;
+        }
+      .asheading h3 {
+        font-size: 19px;
+      
+     }
+      .benefits-list li:not(:last-child)::after {
+        content: "";
+        width: 1px;
+        height: 100px;
+    }
+      .benefits-list li {
+    font-size: 17px;
+}
+    #shopify-section-template--24289984512319__asingredients_meta_BDpdCN .as-image-banner {
+    padding-top: 18px !important;
+    padding-bottom: 35px;
+}
+    }
+</style>
+
+{%- if template.suffix == 'new-product-page' -%}
+  {%- if has_ingredients -%}
+    <section class="as-image-banner">
+        <div class="container-1170">
+            <div>
+                <div class="asheading">
+                    <h3>Built on a solid foundation with natural <br> ingredients working in synergy</h3>
+                </div>
+                
+                {% if has_item1 or has_item2 %}
+                <div class="row mt-5">
+                    {% if has_item1 %}
+                    <div class="asbg_color col-6 mb-5">
+                        {% if t1 != blank %}
+                          <h4 class="astitel_indg">{{ t1 }}</h4>
+                        {% endif %}
+                        {% if p1 != blank %}
+                          <p class="as_pera">{{ p1 }}</p>
+                        {% endif %}
+                        {% if img1 != blank %}
+                        <div class="img_ingrd">
+                            <img src="{{ img1 | image_url: width: 360 }}" alt="{{ t1 | escape }}">
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if has_item2 %}
+                    <div class="asbg_color col-6 mb-5">
+                        {% if t2 != blank %}
+                          <h4 class="astitel_indg">{{ t2 }}</h4>
+                        {% endif %}
+                        {% if p2 != blank %}
+                          <p class="as_pera">{{ p2 }}</p>
+                        {% endif %}
+                        {% if img2 != blank %}
+                        <div class="img_ingrd">
+                            <img src="{{ img2 | image_url: width: 360 }}" alt="{{ t2 | escape }}">
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% if has_item3 or has_item4 %}
+                <div class="row mt-5 asmoli_mt">
+                    {% if has_item3 %}
+                    <div class="asbg_color col-6 mb-5">
+                        {% if t3 != blank %}
+                          <h4 class="astitel_indg">{{ t3 }}</h4>
+                        {% endif %}
+                        {% if p3 != blank %}
+                          <p class="as_pera">{{ p3 }}</p>
+                        {% endif %}
+                        {% if img3 != blank %}
+                        <div class="img_ingrd">
+                            <img src="{{ img3 | image_url: width: 360 }}" alt="{{ t3 | escape }}">
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if has_item4 %}
+                    <div class="asbg_color col-6 mb-5">
+                        {% if t4 != blank %}
+                          <h4 class="astitel_indg">{{ t4 }}</h4>
+                        {% endif %}
+                        {% if p4 != blank %}
+                          <p class="as_pera">{{ p4 }}</p>
+                        {% endif %}
+                        {% if img4 != blank %}
+                        <div class="img_ingrd">
+                            <img src="{{ img4 | image_url: width: 360 }}" alt="{{ t4 | escape }}">
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+  {%- else -%}
+    <style>
+        #shopify-section-{{ section.id }} {
+            display: none !important;
+        }
+    </style>
+  {%- endif -%}
+{%- else -%}
+    <section class="as-image-banner">
+        <div class="container-1170">
+            <div>
+                <div class="asheading">
+                    <h3>Built on a solid foundation with natural <br> ingredients working in synergy</h3>
+                </div>
+                
+                <div class="row mt-5">
+                    <div class="asbg_color col-6 mb-5">
+                        <h4 class="astitel_indg">{{ section.settings.title_ingredients01 }}</h4>
+                        <p class="as_pera">{{ section.settings.pera_ingredients01 }}</p>
+                        <div class="img_ingrd">
+                            <img src="{{ section.settings.image_ingredients01 | img_url: 'master' }}" alt="">
+                        </div>
+                    </div>
+
+                    <div class="asbg_color col-6 mb-5">
+                        <h4 class="astitel_indg">{{ section.settings.title_ingredients02 }}</h4>
+                        <p class="as_pera">{{ section.settings.pera_ingredients02 }}</p>
+                        <div class="img_ingrd">
+                            <img src="{{ section.settings.image_ingredients02 | img_url: 'master' }}" alt="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-5 asmoli_mt">
+                    <div class="asbg_color col-6 mb-5">
+                        <h4 class="astitel_indg">{{ section.settings.title_ingredients03 }}</h4>
+                        <p class="as_pera">{{ section.settings.pera_ingredients03 }}</p>
+                        <div class="img_ingrd">
+                            <img src="{{ section.settings.image_ingredients03 | img_url: 'master' }}" alt="">
+                        </div>
+                    </div>
+
+                    <div class="asbg_color col-6 mb-5">
+                        <h4 class="astitel_indg">{{ section.settings.title_ingredients04 }}</h4>
+                        <p class="as_pera">{{ section.settings.pera_ingredients04 }}</p>
+                        <div class="img_ingrd">
+                            <img src="{{ section.settings.image_ingredients04 | img_url: 'master' }}" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{%- endif -%}
+
+{% schema %}
+{
+    "name": "asingredients_meta",
+    "tag": "section",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "image_ingredients01",
+            "label": "Image 1"
+        },
+        {
+            "type": "text",
+            "id": "title_ingredients01",
+            "label": "Title 1"
+        },
+        {
+            "type": "text",
+            "id": "pera_ingredients01",
+            "label": "Description 1"
+        },
+        {
+            "type": "image_picker",
+            "id": "image_ingredients02",
+            "label": "Image 2"
+        },
+        {
+            "type": "text",
+            "id": "title_ingredients02",
+            "label": "Title 2"
+        },
+        {
+            "type": "text",
+            "id": "pera_ingredients02",
+            "label": "Description 2"
+        },
+        {
+            "type": "image_picker",
+            "id": "image_ingredients03",
+            "label": "Image 3"
+        },
+        {
+            "type": "text",
+            "id": "title_ingredients03",
+            "label": "Title 3"
+        },
+        {
+            "type": "text",
+            "id": "pera_ingredients03",
+            "label": "Description 3"
+        },
+        {
+            "type": "image_picker",
+            "id": "image_ingredients04",
+            "label": "Image 4"
+        },
+        {
+            "type": "text",
+            "id": "title_ingredients04",
+            "label": "Title 4"
+        },
+        {
+            "type": "text",
+            "id": "pera_ingredients04",
+            "label": "Description 4"
+        }
+    ],
+    "presets": [
+        {
+            "name": "asingredients_meta",
+            "settings": {}
+        }
+    ]
+}
+{% endschema %}

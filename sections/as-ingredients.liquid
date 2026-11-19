@@ -1,0 +1,1081 @@
+<link rel="stylesheet" href="{{ 'section-as-ingredients.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'section-as-ingredients.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- liquid
+  assign heading = section.settings.heading
+  assign subheading = section.settings.subheading
+  assign mobile_layout = section.settings.mobile_layout
+  assign item_style = section.settings.item_style
+  assign show_labels = section.settings.show_labels
+  assign show_decorations = section.settings.show_decorations
+  assign enable_auto_scroll = section.settings.enable_auto_scroll
+
+  assign container_class = 'container'
+  if section.settings.container == 'fullwidth'
+    assign container_class = 'container-full'
+  elsif section.settings.container == '1170'
+    assign container_class = 'container-1170'
+  elsif section.settings.container == '1770'
+    assign container_class = 'container-1770'
+  endif
+
+  assign card_shadow = 'none'
+  if section.settings.card_shadow == 'soft'
+    assign card_shadow = '0 4px 16px rgba(27, 58, 110, 0.08)'
+  elsif section.settings.card_shadow == 'medium'
+    assign card_shadow = '0 8px 24px rgba(27, 58, 110, 0.12)'
+  endif
+
+  # Map speed 1–10 → duration 50s–5s (higher = faster)
+  assign auto_scroll_speed = section.settings.auto_scroll_speed | default: 5
+  assign marquee_speed_offset = auto_scroll_speed | times: 5
+  assign marquee_duration = 55 | minus: marquee_speed_offset
+  assign icon_image_scale = section.settings.icon_image_scale | default: 100
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} .as-ingredients {
+    --ai-heading-color: {{ section.settings.heading_color }};
+    --ai-subheading-color: {{ section.settings.subheading_color }};
+    --ai-label-color: {{ section.settings.label_color }};
+    --ai-icon-bg: {{ section.settings.icon_bg_color }};
+    --ai-card-bg: {{ section.settings.card_bg_color }};
+    --ai-card-radius: {{ section.settings.card_radius }}px;
+    --ai-card-padding-y: {{ section.settings.card_padding_y }}px;
+    --ai-card-padding-x: {{ section.settings.card_padding_x }}px;
+    --ai-card-border: {{ section.settings.card_border_color }};
+    --ai-card-border-width: {{ section.settings.card_border_width }}px;
+    --ai-card-shadow: {{ card_shadow }};
+    --ai-card-width: {{ section.settings.card_width | default: 170 }}px;
+    --ai-card-width-mobile: {{ section.settings.card_width_mobile | default: 130 }}px;
+    --ai-card-min-height: {{ section.settings.card_min_height | default: 100 }}px;
+    --ai-card-height-mobile: {{ section.settings.card_height_mobile | default: 75 }}px;
+    --ai-logo-scale: {{ section.settings.logo_scale | default: 60 }}%;
+    --ai-logo-max-height: {{ section.settings.logo_max_height }}px;
+    --ai-logo-max-height-mobile: {{ section.settings.logo_max_height_mobile }}px;
+    --ai-heading-size: {{ section.settings.heading_font_size }}px;
+    --ai-heading-size-mobile: {{ section.settings.heading_font_size_mobile }}px;
+    --ai-heading-weight: {{ section.settings.heading_font_weight }};
+    --ai-subheading-size: {{ section.settings.subheading_font_size }}px;
+    --ai-subheading-size-mobile: {{ section.settings.subheading_font_size_mobile }}px;
+    --ai-subheading-weight: {{ section.settings.subheading_font_weight }};
+    --ai-label-size: {{ section.settings.label_font_size }}px;
+    --ai-label-size-mobile: {{ section.settings.label_font_size_mobile }}px;
+    --ai-label-weight: {{ section.settings.label_font_weight }};
+    --ai-icon-size: {{ section.settings.icon_size }}px;
+    --ai-icon-size-mobile: {{ section.settings.icon_size_mobile }}px;
+    --ai-icon-image-scale: {{ icon_image_scale }}%;
+    --ai-icon-image-scale-n: {{ icon_image_scale }};
+    /* Keep icons fully visible inside the circle (no crop) */
+    --ai-icon-image-overscan: 1;
+    --ai-item-gap: {{ section.settings.item_gap }}px;
+    --ai-item-gap-mobile: {{ section.settings.item_gap_mobile }}px;
+    --ai-header-mb: {{ section.settings.header_margin_bottom }}px;
+    --ai-header-mb-mobile: {{ section.settings.header_margin_bottom_mobile }}px;
+    --ai-header-max-width: {{ section.settings.header_max_width }}px;
+    --ai-text-align: {{ section.settings.text_alignment }};
+    --ai-columns-desktop: {{ section.settings.columns_desktop }};
+    --ai-columns-tablet: {{ section.settings.columns_tablet }};
+    --ai-columns-mobile: {{ section.settings.columns_mobile }};
+    --ai-scroll-item-width: {{ section.settings.scroll_item_width }}px;
+    --ai-marquee-duration: {{ marquee_duration }}s;
+    --ai-decor-width: {{ section.settings.decoration_width }}px;
+    --ai-decor-width-mobile: {{ section.settings.decoration_width_mobile }}px;
+    --ai-decor-offset-y: {{ section.settings.decoration_offset_y }}px;
+    --ai-decor-offset-x: {{ section.settings.decoration_offset_x }}px;
+    background: {% if section.settings.background_gradient != blank %}{{ section.settings.background_gradient }}{% else %}{{ section.settings.background_color }}{% endif %};
+    padding-top: {{ section.settings.padding_top_mobile }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+  }
+
+  /* Icon circle — section-scoped so Theme Editor settings always win */
+  #shopify-section-{{ section.id }} .as-ingredients--icon_circle .as-ingredients__icon {
+    width: var(--ai-icon-size);
+    height: var(--ai-icon-size);
+    max-width: 100%;
+    background: var(--ai-icon-bg);
+    box-sizing: border-box;
+    padding: 8%;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .as-ingredients--icon_circle .as-ingredients__icon img,
+  #shopify-section-{{ section.id }} .as-ingredients--icon_circle .as-ingredients__icon svg:not(.placeholder-svg),
+  #shopify-section-{{ section.id }} .as-ingredients--icon_circle .as-ingredients__icon-html {
+    width: calc(var(--ai-icon-image-scale-n) * var(--ai-icon-image-overscan, 1) * 1%);
+    height: calc(var(--ai-icon-image-scale-n) * var(--ai-icon-image-overscan, 1) * 1%);
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  #shopify-section-{{ section.id }} .as-ingredients__item,
+  #shopify-section-{{ section.id }} .as-ingredients__label {
+    text-align: center;
+  }
+
+  /* Logo card — same size as Marquee Logos (170×100 desktop, icon 60%) */
+  #shopify-section-{{ section.id }} .as-ingredients--logo_card .as-ingredients__icon {
+    width: var(--ai-card-width);
+    height: var(--ai-card-min-height);
+    min-width: var(--ai-card-width);
+    min-height: var(--ai-card-min-height);
+    padding: var(--ai-card-padding-y) var(--ai-card-padding-x);
+    border-radius: var(--ai-card-radius);
+    background: var(--ai-card-bg);
+    border: var(--ai-card-border-width) solid var(--ai-card-border);
+    box-shadow: var(--ai-card-shadow);
+  }
+
+  #shopify-section-{{ section.id }} .as-ingredients--logo_card .as-ingredients__icon img,
+  #shopify-section-{{ section.id }} .as-ingredients--logo_card .as-ingredients__icon svg,
+  #shopify-section-{{ section.id }} .as-ingredients--logo_card .as-ingredients__icon .placeholder-svg {
+    width: var(--ai-logo-scale);
+    max-width: var(--ai-logo-scale);
+    height: auto;
+    max-height: 85%;
+  }
+
+  #shopify-section-{{ section.id }} .as-ingredients--logo_card .as-ingredients__icon-html,
+  #shopify-section-{{ section.id }} .as-ingredients--logo_card .as-ingredients__icon-html svg {
+    width: var(--ai-logo-scale);
+    max-width: var(--ai-logo-scale);
+    height: auto;
+    max-height: 85%;
+  }
+
+  #shopify-section-{{ section.id }} .as-ingredients--logo_card .as-ingredients__grid--marquee .as-ingredients__item,
+  #shopify-section-{{ section.id }} .as-ingredients--logo_card .as-ingredients__grid--scroll .as-ingredients__item {
+    flex: 0 0 var(--ai-card-width);
+    width: var(--ai-card-width);
+  }
+
+  @media screen and (max-width: 767px) {
+    #shopify-section-{{ section.id }} .as-ingredients--logo_card {
+      --ai-card-width: var(--ai-card-width-mobile);
+      --ai-card-min-height: var(--ai-card-height-mobile);
+    }
+  }
+
+  #shopify-section-{{ section.id }} .as-ingredients__marquee-track {
+    animation-duration: var(--ai-marquee-duration);
+  }
+
+  #shopify-section-{{ section.id }} .as-ingredients .{{ container_class }} {
+    padding-left: {{ section.settings.container_padding_left_mobile }}px !important;
+    padding-right: {{ section.settings.container_padding_right_mobile }}px !important;
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .as-ingredients .{{ container_class }} {
+      padding-left: {{ section.settings.container_padding_left }}px !important;
+      padding-right: {{ section.settings.container_padding_right }}px !important;
+    }
+
+    #shopify-section-{{ section.id }} .as-ingredients {
+      padding-top: {{ section.settings.padding_top_tablet }}px;
+      padding-bottom: {{ section.settings.padding_bottom_tablet }}px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    #shopify-section-{{ section.id }} .as-ingredients {
+      padding-top: {{ section.settings.padding_top_desktop }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+    }
+  }
+
+  /* Mobile / tablet — same specificity as desktop vars above */
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .as-ingredients {
+      --ai-item-gap: {{ section.settings.item_gap_mobile }}px;
+      --ai-header-mb: {{ section.settings.header_margin_bottom_mobile }}px;
+      --ai-logo-max-height: {{ section.settings.logo_max_height_mobile }}px;
+      --ai-decor-width: {{ section.settings.decoration_width_mobile }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .as-ingredients {
+      --ai-heading-size: {{ section.settings.heading_font_size_mobile }}px;
+      --ai-subheading-size: {{ section.settings.subheading_font_size_mobile }}px;
+      --ai-label-size: {{ section.settings.label_font_size_mobile }}px;
+      --ai-icon-size: {{ section.settings.icon_size_mobile }}px;
+    }
+
+    #shopify-section-{{ section.id }} .as-ingredients__header,
+    #shopify-section-{{ section.id }} .as-ingredients__item,
+    #shopify-section-{{ section.id }} .as-ingredients__label {
+      text-align: center;
+    }
+
+    #shopify-section-{{ section.id }} .as-ingredients__link {
+      align-items: center;
+      text-align: center;
+    }
+  }
+{% endstyle %}
+
+<div
+  class="as-ingredients as-ingredients--{{ item_style }} section-block-{{ section.id }}{% if settings.banner_animation == 'effect_fade_up' %} scroll-trigger animate--slide-in{% endif %}"
+  id="as-ingredients-{{ section.id }}"
+>
+  {%- if show_decorations -%}
+    {%- if section.settings.decoration_left != blank -%}
+      <div class="as-ingredients__decor as-ingredients__decor--left" aria-hidden="true">
+        {{
+          section.settings.decoration_left
+          | image_url: width: 400
+          | image_tag:
+            loading: 'lazy',
+            widths: '120, 200, 300, 400',
+            sizes: '(max-width: 749px) 80px, 160px',
+            alt: ''
+        }}
+      </div>
+    {%- endif -%}
+    {%- if section.settings.decoration_right != blank -%}
+      <div class="as-ingredients__decor as-ingredients__decor--right" aria-hidden="true">
+        {{
+          section.settings.decoration_right
+          | image_url: width: 400
+          | image_tag:
+            loading: 'lazy',
+            widths: '120, 200, 300, 400',
+            sizes: '(max-width: 749px) 80px, 160px',
+            alt: ''
+        }}
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+
+  <div class="{{ container_class }}">
+    <div class="as-ingredients__inner">
+      {%- if heading != blank or subheading != blank -%}
+        <div class="as-ingredients__header">
+          {%- if heading != blank -%}
+            <h2 class="as-ingredients__heading">{{ heading }}</h2>
+          {%- endif -%}
+          {%- if subheading != blank -%}
+            <p class="as-ingredients__subheading">{{ subheading }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        {%- if enable_auto_scroll -%}
+          <div class="as-ingredients__marquee" aria-label="{{ heading | default: 'Badges' | escape }}">
+            <div class="as-ingredients__marquee-track">
+              {%- for marquee_pass in (1..2) -%}
+                <ul
+                  class="as-ingredients__grid as-ingredients__grid--marquee"
+                  role="list"
+                  {% if marquee_pass == 2 %}aria-hidden="true"{% endif %}
+                >
+                  {%- for block in section.blocks -%}
+                    {%- liquid
+                      if marquee_pass == 1
+                        assign item_editable = true
+                        assign item_linkable = true
+                      else
+                        assign item_editable = false
+                        assign item_linkable = false
+                      endif
+                    -%}
+                    {% render 'as-ingredients-item',
+                      block: block,
+                      show_labels: show_labels,
+                      editable: item_editable,
+                      linkable: item_linkable
+                    %}
+                  {%- endfor -%}
+                </ul>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- else -%}
+          <ul
+            class="as-ingredients__grid{% if mobile_layout == 'scroll' %} as-ingredients__grid--scroll{% endif %}"
+            role="list"
+          >
+            {%- for block in section.blocks -%}
+              {% render 'as-ingredients-item',
+                block: block,
+                show_labels: show_labels,
+                editable: true,
+                linkable: true
+              %}
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "AS Pure Ingredients",
+  "tag": "section",
+  "class": "section-as-ingredients",
+  "max_blocks": 16,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "item_style",
+      "label": "Item style",
+      "default": "icon_circle",
+      "options": [
+        { "value": "icon_circle", "label": "Icon circle (ingredients)" },
+        { "value": "logo_card", "label": "Logo card (certifications)" }
+      ],
+      "info": "Use Icon circle for ingredient badges, or Logo card for certification logos."
+    },
+    {
+      "type": "select",
+      "id": "container",
+      "label": "Container",
+      "default": "container",
+      "options": [
+        { "value": "container", "label": "Default" },
+        { "value": "1170", "label": "1170px" },
+        { "value": "1770", "label": "1770px" },
+        { "value": "fullwidth", "label": "Full width" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_left",
+      "label": "Left padding (desktop)",
+      "default": "50",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "15", "label": "15px" },
+        { "value": "20", "label": "20px" },
+        { "value": "30", "label": "30px" },
+        { "value": "40", "label": "40px" },
+        { "value": "50", "label": "50px" },
+        { "value": "60", "label": "60px" },
+        { "value": "80", "label": "80px" },
+        { "value": "100", "label": "100px" },
+        { "value": "120", "label": "120px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_right",
+      "label": "Right padding (desktop)",
+      "default": "50",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "15", "label": "15px" },
+        { "value": "20", "label": "20px" },
+        { "value": "30", "label": "30px" },
+        { "value": "40", "label": "40px" },
+        { "value": "50", "label": "50px" },
+        { "value": "60", "label": "60px" },
+        { "value": "80", "label": "80px" },
+        { "value": "100", "label": "100px" },
+        { "value": "120", "label": "120px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_left_mobile",
+      "label": "Left padding (mobile)",
+      "default": "15",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "10", "label": "10px" },
+        { "value": "15", "label": "15px" },
+        { "value": "20", "label": "20px" },
+        { "value": "24", "label": "24px" },
+        { "value": "30", "label": "30px" },
+        { "value": "40", "label": "40px" },
+        { "value": "50", "label": "50px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_right_mobile",
+      "label": "Right padding (mobile)",
+      "default": "15",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "10", "label": "10px" },
+        { "value": "15", "label": "15px" },
+        { "value": "20", "label": "20px" },
+        { "value": "24", "label": "24px" },
+        { "value": "30", "label": "30px" },
+        { "value": "40", "label": "40px" },
+        { "value": "50", "label": "50px" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 4,
+      "max": 10,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Columns on tablet",
+      "min": 3,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columns on mobile (grid)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "default": "grid",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "scroll", "label": "Horizontal scroll" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "scroll_item_width",
+      "label": "Mobile scroll item width",
+      "min": 72,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "default": 96,
+      "info": "Used when mobile layout is Horizontal scroll"
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "label": "Item gap (desktop)",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "item_gap_mobile",
+      "label": "Item gap (mobile)",
+      "min": 8,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_auto_scroll",
+      "label": "Enable continuous auto scroll",
+      "default": false,
+      "info": "Scrolls items continuously from right to left on desktop and mobile. When off, the layout stays static (or manually scrollable on mobile)."
+    },
+    {
+      "type": "range",
+      "id": "auto_scroll_speed",
+      "label": "Auto scroll speed",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 5,
+      "info": "Higher is faster. Only applies when continuous auto scroll is enabled."
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Pure Ingredients. Real Benefits."
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Thoughtful formulas for a healthier you."
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "header_max_width",
+      "label": "Header max width",
+      "min": 400,
+      "max": 1000,
+      "step": 20,
+      "unit": "px",
+      "default": 720
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#5A7AAD"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size (desktop)",
+      "min": 18,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Heading font size (mobile)",
+      "min": 16,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "heading_font_weight",
+      "label": "Heading font weight",
+      "default": "700",
+      "options": [
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Subheading font size (desktop)",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size_mobile",
+      "label": "Subheading font size (mobile)",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "subheading_font_weight",
+      "label": "Subheading font weight",
+      "default": "400",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "header_margin_bottom",
+      "label": "Header bottom spacing (desktop)",
+      "min": 12,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "header_margin_bottom_mobile",
+      "label": "Header bottom spacing (mobile)",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Icon circle style"
+    },
+    {
+      "type": "paragraph",
+      "content": "Applies when Item style is Icon circle. Logo card settings below are ignored in this mode."
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon circle size (desktop)",
+      "min": 40,
+      "max": 140,
+      "step": 2,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "icon_size_mobile",
+      "label": "Icon circle size (mobile)",
+      "min": 36,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "icon_image_scale",
+      "label": "Icon graphic size inside circle",
+      "min": 40,
+      "max": 100,
+      "step": 2,
+      "unit": "%",
+      "default": 100,
+      "info": "Size of the image/SVG relative to the circle. Use 100% to fill the circle with no gap."
+    },
+    {
+      "type": "color",
+      "id": "icon_bg_color",
+      "label": "Icon circle background",
+      "default": "#E8F0FB"
+    },
+    {
+      "type": "header",
+      "content": "Logo card style"
+    },
+    {
+      "type": "paragraph",
+      "content": "Applies when Item style is Logo card. Switch Item style to Logo card to see these settings in the preview."
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8,
+      "info": "Marquee Logos uses 8px."
+    },
+    {
+      "type": "range",
+      "id": "card_width",
+      "label": "Card width (desktop)",
+      "min": 80,
+      "max": 220,
+      "step": 2,
+      "unit": "px",
+      "default": 170,
+      "info": "Marquee Logos uses 170px."
+    },
+    {
+      "type": "range",
+      "id": "card_width_mobile",
+      "label": "Card width (mobile)",
+      "min": 60,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "default": 130,
+      "info": "Marquee Logos uses 130px."
+    },
+    {
+      "type": "range",
+      "id": "card_min_height",
+      "label": "Card height (desktop)",
+      "min": 48,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "default": 100,
+      "info": "Marquee Logos uses 100px."
+    },
+    {
+      "type": "range",
+      "id": "card_height_mobile",
+      "label": "Card height (mobile)",
+      "min": 40,
+      "max": 120,
+      "step": 1,
+      "unit": "px",
+      "default": 75,
+      "info": "Marquee Logos uses 75px."
+    },
+    {
+      "type": "range",
+      "id": "card_padding_y",
+      "label": "Card padding (vertical)",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "info": "Marquee Logos uses 0px."
+    },
+    {
+      "type": "range",
+      "id": "card_padding_x",
+      "label": "Card padding (horizontal)",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "info": "Marquee Logos uses 0px."
+    },
+    {
+      "type": "range",
+      "id": "logo_scale",
+      "label": "Logo size inside card",
+      "min": 40,
+      "max": 90,
+      "step": 2,
+      "unit": "%",
+      "default": 60,
+      "info": "Marquee Logos uses 60%."
+    },
+    {
+      "type": "range",
+      "id": "logo_max_height",
+      "label": "Logo max height (desktop)",
+      "min": 20,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "logo_max_height_mobile",
+      "label": "Logo max height (mobile)",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "#eaeaea"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Card border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "select",
+      "id": "card_shadow",
+      "label": "Card shadow",
+      "default": "none",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "soft", "label": "Soft" },
+        { "value": "medium", "label": "Medium" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Labels"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_labels",
+      "label": "Show labels under images",
+      "default": true,
+      "info": "Turn off for certification logos that don’t need text."
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "range",
+      "id": "label_font_size",
+      "label": "Label font size (desktop)",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "label_font_size_mobile",
+      "label": "Label font size (mobile)",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "label_font_weight",
+      "label": "Label font weight",
+      "default": "500",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Decorative corners"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_decorations",
+      "label": "Show corner decorations",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "decoration_left",
+      "label": "Left decoration image"
+    },
+    {
+      "type": "image_picker",
+      "id": "decoration_right",
+      "label": "Right decoration image"
+    },
+    {
+      "type": "range",
+      "id": "decoration_width",
+      "label": "Decoration width (desktop)",
+      "min": 60,
+      "max": 220,
+      "step": 4,
+      "unit": "px",
+      "default": 140
+    },
+    {
+      "type": "range",
+      "id": "decoration_width_mobile",
+      "label": "Decoration width (mobile)",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "decoration_offset_y",
+      "label": "Decoration vertical offset",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "decoration_offset_x",
+      "label": "Decoration horizontal offset",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Colors & spacing"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#F7FAFD"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Top padding (desktop)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Bottom padding (desktop)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_top_tablet",
+      "label": "Top padding (tablet)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_tablet",
+      "label": "Bottom padding (tablet)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top padding (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom padding (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ingredient_item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Image / logo"
+        },
+        {
+          "type": "html",
+          "id": "icon_svg",
+          "label": "SVG (optional)",
+          "info": "Used when no image is set. Paste SVG code."
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "100% Vegetarian"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Image alt text",
+          "info": "Defaults to the label if empty."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        },
+        {
+          "type": "color",
+          "id": "icon_bg_color",
+          "label": "Icon / card background override",
+          "info": "Leave empty to use the section default"
+        },
+        {
+          "type": "color",
+          "id": "label_color",
+          "label": "Label color override"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AS Pure Ingredients",
+      "blocks": [
+        { "type": "ingredient_item", "settings": { "label": "100% Vegetarian" } },
+        { "type": "ingredient_item", "settings": { "label": "Vegan" } },
+        { "type": "ingredient_item", "settings": { "label": "Gluten Free" } },
+        { "type": "ingredient_item", "settings": { "label": "Sugar Free" } },
+        { "type": "ingredient_item", "settings": { "label": "No Artificial Colours" } },
+        { "type": "ingredient_item", "settings": { "label": "Non-GMO" } },
+        { "type": "ingredient_item", "settings": { "label": "Cruelty Free" } },
+        { "type": "ingredient_item", "settings": { "label": "USA Made Safe Certified" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

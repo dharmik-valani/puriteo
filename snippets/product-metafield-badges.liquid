@@ -1,0 +1,313 @@
+{%- comment -%}
+  Renders product badges from metaobject definition referenced in product metafield.
+  Usage:
+    {% render 'product-metafield-badges', product: product, alignment: title_alignment, alignment_mb: title_alignment_mb, position: 'above', block: block %}
+{%- endcomment -%}
+
+{%- liquid
+  assign raw_badges = product.metafields.custom.badges.value | default: product.metafields.custom.badges
+  if raw_badges == blank
+    assign raw_badges = product.metafields.custom.product_badges.value | default: product.metafields.custom.product_badges
+  endif
+  if raw_badges == blank
+    assign raw_badges = product.metafields.custom.badge.value | default: product.metafields.custom.badge
+  endif
+  if raw_badges == blank
+    assign raw_badges = product.metafields.custom.product_badge.value | default: product.metafields.custom.product_badge
+  endif
+
+  assign position_class = 'product-metafield-badges--above'
+  if position == 'below'
+    assign position_class = 'product-metafield-badges--below'
+  endif
+
+  assign align = alignment | default: block.settings.badges_alignment | default: 'left'
+  assign align_mb = alignment_mb | default: block.settings.badges_alignment_mb | default: align
+
+  assign align_style = 'flex-start'
+  if align == 'center'
+    assign align_style = 'center'
+  elsif align == 'right'
+    assign align_style = 'flex-end'
+  endif
+
+  assign align_style_mb = 'flex-start'
+  if align_mb == 'center'
+    assign align_style_mb = 'center'
+  elsif align_mb == 'right'
+    assign align_style_mb = 'flex-end'
+  endif
+
+  assign font_size = block.settings.badges_fontsize | default: 11
+  assign font_size_mb = block.settings.badges_fontsize_mb | default: 10
+  assign font_weight = font_weight | default: block.settings.badges_fontweight | default: '700'
+  assign font_weight_mb = font_weight_mb | default: block.settings.badges_fontweight_mb | default: font_weight
+  assign padding_y = block.settings.badges_padding_y | default: 4
+  assign padding_x = block.settings.badges_padding_x | default: 10
+  assign radius = block.settings.badges_radius | default: 4
+  assign gap = block.settings.badges_gap | default: 8
+  assign spacing_top = block.settings.badges_margin_top | default: 0
+  assign spacing_top_mb = block.settings.badges_margin_top_mb | default: 16
+  assign spacing_below = block.settings.badges_margin_bottom | default: 10
+  assign spacing_below_mb = block.settings.badges_margin_bottom_mb | default: 8
+
+  comment
+    Check if raw_badges is a single metaobject vs an iterable list
+  endcomment
+  assign is_single_object = false
+  if raw_badges != blank
+    if raw_badges.badge_text != blank or raw_badges.text != blank or raw_badges.style != blank or raw_badges.style_filled_or_outline != blank or raw_badges.background_color != blank or raw_badges.background_colour != blank or raw_badges.text_colour != blank or raw_badges.text_color != blank or raw_badges.border_color != blank
+      assign is_single_object = true
+    endif
+  endif
+-%}
+
+{%- if raw_badges != blank -%}
+  <div
+    class="product-metafield-badges {{ position_class }} {{ class }}"
+    style="
+      --badges-justify: {{ align_style }};
+      --badges-justify-mb: {{ align_style_mb }};
+      --badge-font-size: {{ font_size }}px;
+      --badge-font-size-mb: {{ font_size_mb }}px;
+      --badge-font-weight: {{ font_weight }};
+      --badge-font-weight-mb: {{ font_weight_mb }};
+      --badge-padding-y: {{ padding_y }}px;
+      --badge-padding-x: {{ padding_x }}px;
+      --badge-radius: {{ radius }}px;
+      --badge-gap: {{ gap }}px;
+      --badge-spacing-top: {{ spacing_top }}px;
+      --badge-spacing-top-mb: {{ spacing_top_mb }}px;
+      --badge-spacing-below: {{ spacing_below }}px;
+      --badge-spacing-below-mb: {{ spacing_below_mb }}px;
+    "
+  >
+    {%- if is_single_object -%}
+      {%- liquid
+        assign b_text = raw_badges.badge_text.value | default: raw_badges.badge_text
+        if b_text == blank
+          assign b_text = raw_badges.text.value | default: raw_badges.text
+        endif
+        if b_text == blank
+          assign b_text = raw_badges.label.value | default: raw_badges.label
+        endif
+        if b_text == blank
+          assign b_text = raw_badges.title.value | default: raw_badges.title
+        endif
+        if b_text == blank
+          assign b_text = raw_badges.name.value | default: raw_badges.name
+        endif
+
+        assign b_style = raw_badges.style.value | default: raw_badges.style
+        if b_style == blank
+          assign b_style = raw_badges.style_filled_or_outline.value | default: raw_badges.style_filled_or_outline
+        endif
+        if b_style == blank
+          assign b_style = raw_badges.badge_style.value | default: raw_badges.badge_style
+        endif
+        assign b_style_str = b_style | downcase | strip
+
+        assign is_outline = false
+        if b_style_str contains 'outline' or b_style_str contains 'second'
+          assign is_outline = true
+        endif
+
+        assign b_bg = raw_badges.background_color.value | default: raw_badges.background_color
+        if b_bg == blank
+          assign b_bg = raw_badges.background_colour.value | default: raw_badges.background_colour
+        endif
+        if b_bg == blank
+          assign b_bg = raw_badges.bg_color.value | default: raw_badges.bg_color
+        endif
+        assign b_bg_str = b_bg | append: '' | strip
+
+        assign b_color = raw_badges.text_colour.value | default: raw_badges.text_colour
+        if b_color == blank
+          assign b_color = raw_badges.text_color.value | default: raw_badges.text_color
+        endif
+        if b_color == blank
+          assign b_color = raw_badges.color.value | default: raw_badges.color
+        endif
+        assign b_color_str = b_color | append: '' | strip
+
+        assign b_border = raw_badges.border_color.value | default: raw_badges.border_color
+        if b_border == blank
+          assign b_border = raw_badges.border_colour.value | default: raw_badges.border_colour
+        endif
+        assign b_border_str = b_border | append: '' | strip
+
+        assign b_font_weight = raw_badges.font_weight.value | default: raw_badges.font_weight
+        if b_font_weight == blank
+          assign b_font_weight = raw_badges.fontweight.value | default: raw_badges.fontweight
+        endif
+
+        if is_outline
+          assign badge_color = b_color_str | default: '#f84248'
+          assign badge_bg = b_bg_str | default: '#ffeff0'
+          assign badge_border = b_border_str | default: badge_color
+        else
+          assign badge_color = b_color_str | default: '#ffffff'
+          assign badge_bg = b_bg_str | default: '#3c3486'
+          assign badge_border = b_border_str | default: 'transparent'
+        endif
+      -%}
+      {%- if b_text != blank -%}
+        <span
+          class="product-metafield-badges__item{% if is_outline %} product-metafield-badges__item--outline{% else %} product-metafield-badges__item--filled{% endif %}"
+          style="--badge-bg: {{ badge_bg }}; --badge-color: {{ badge_color }}; --badge-border: {{ badge_border }};{% if b_font_weight != blank %} --badge-item-font-weight: {{ b_font_weight }};{% endif %}"
+        >
+          {{- b_text | escape -}}
+        </span>
+      {%- endif -%}
+    {%- else -%}
+      {%- for item in raw_badges -%}
+        {%- liquid
+          assign b_text = item.badge_text.value | default: item.badge_text
+          if b_text == blank
+            assign b_text = item.text.value | default: item.text
+          endif
+          if b_text == blank
+            assign b_text = item.label.value | default: item.label
+          endif
+          if b_text == blank
+            assign b_text = item.title.value | default: item.title
+          endif
+          if b_text == blank
+            assign b_text = item.name.value | default: item.name
+          endif
+          if b_text == blank and item != blank
+            assign item_str = item | append: ''
+            unless item_str contains 'Drop'
+              assign b_text = item_str | strip
+            endunless
+          endif
+
+          assign b_style = item.style.value | default: item.style
+          if b_style == blank
+            assign b_style = item.style_filled_or_outline.value | default: item.style_filled_or_outline
+          endif
+          if b_style == blank
+            assign b_style = item.badge_style.value | default: item.badge_style
+          endif
+          assign b_style_str = b_style | downcase | strip
+
+          assign is_outline = false
+          if b_style_str contains 'outline' or b_style_str contains 'second'
+            assign is_outline = true
+          endif
+
+          assign b_bg = item.background_color.value | default: item.background_color
+          if b_bg == blank
+            assign b_bg = item.background_colour.value | default: item.background_colour
+          endif
+          if b_bg == blank
+            assign b_bg = item.bg_color.value | default: item.bg_color
+          endif
+          assign b_bg_str = b_bg | append: '' | strip
+
+          assign b_color = item.text_colour.value | default: item.text_colour
+          if b_color == blank
+            assign b_color = item.text_color.value | default: item.text_color
+          endif
+          if b_color == blank
+            assign b_color = item.color.value | default: item.color
+          endif
+          assign b_color_str = b_color | append: '' | strip
+
+          assign b_border = item.border_color.value | default: item.border_color
+          if b_border == blank
+            assign b_border = item.border_colour.value | default: item.border_colour
+          endif
+          assign b_border_str = b_border | append: '' | strip
+
+          assign b_font_weight = item.font_weight.value | default: item.font_weight
+          if b_font_weight == blank
+            assign b_font_weight = item.fontweight.value | default: item.fontweight
+          endif
+
+          if is_outline
+            assign badge_color = b_color_str | default: '#f84248'
+            assign badge_bg = b_bg_str | default: '#ffeff0'
+            assign badge_border = b_border_str | default: badge_color
+          else
+            assign badge_color = b_color_str | default: '#ffffff'
+            assign badge_bg = b_bg_str | default: '#3c3486'
+            assign badge_border = b_border_str | default: 'transparent'
+          endif
+        -%}
+        {%- if b_text != blank -%}
+          <span
+            class="product-metafield-badges__item{% if is_outline %} product-metafield-badges__item--outline{% else %} product-metafield-badges__item--filled{% endif %}"
+            style="--badge-bg: {{ badge_bg }}; --badge-color: {{ badge_color }}; --badge-border: {{ badge_border }};{% if b_font_weight != blank %} --badge-item-font-weight: {{ b_font_weight }};{% endif %}"
+          >
+            {{- b_text | escape -}}
+          </span>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+
+  {%- unless product_metafield_badges_css_rendered -%}
+    {%- assign product_metafield_badges_css_rendered = true -%}
+    <style>
+      .product-metafield-badges {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--badge-gap, 8px);
+        justify-content: var(--badges-justify, flex-start);
+        width: 100%;
+        line-height: 1;
+      }
+      .product-metafield-badges--above {
+        margin-top: var(--badge-spacing-top, 0px);
+        margin-bottom: var(--badge-spacing-below, 10px);
+      }
+      .product-metafield-badges--below {
+        margin-top: var(--badge-spacing-below, 10px);
+        margin-bottom: 0;
+      }
+      .product-metafield-badges__item {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--badge-padding-y, 4px) var(--badge-padding-x, 10px);
+        font-size: var(--badge-font-size, 11px);
+        font-weight: var(--badge-item-font-weight, var(--badge-font-weight, 700));
+        line-height: 1.2;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        border-radius: var(--badge-radius, 4px);
+        background-color: var(--badge-bg, #3c3486);
+        color: var(--badge-color, #ffffff);
+        border: 1px solid var(--badge-border, transparent);
+        box-sizing: border-box;
+        white-space: nowrap;
+      }
+      .product-metafield-badges__item--outline {
+        border-width: 1px;
+        border-style: solid;
+      }
+      @media (max-width: 767px) {
+        .product-metafield-badges {
+          gap: calc(var(--badge-gap, 8px) * 0.75);
+          justify-content: var(--badges-justify-mb, var(--badges-justify, flex-start));
+        }
+        .product-metafield-badges--above {
+          margin-top: var(--badge-spacing-top-mb, 16px);
+          margin-bottom: var(--badge-spacing-below-mb, 8px);
+        }
+        .product-metafield-badges--below {
+          margin-top: var(--badge-spacing-below-mb, 8px);
+          margin-bottom: 0;
+        }
+        .product-metafield-badges__item {
+          padding: calc(var(--badge-padding-y, 4px) * 0.75) calc(var(--badge-padding-x, 10px) * 0.8);
+          font-size: var(--badge-font-size-mb, 10px);
+          font-weight: var(--badge-item-font-weight, var(--badge-font-weight-mb, var(--badge-font-weight, 700)));
+          letter-spacing: 0.03em;
+        }
+      }
+    </style>
+  {%- endunless -%}
+{%- endif -%}

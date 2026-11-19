@@ -1,0 +1,120 @@
+<!-- custom-video-section.liquid -->
+
+<section id="custom-video-section" class="asvideo-section">
+  <div class="asvideo-container">
+    {% if section.settings.video_url != blank %}
+      <!-- Image Placeholder -->
+      <div class="video-overlay" id="videoOverlay">
+        <img src="{{ section.settings.image_url | img_url: 'master'  }}" alt="Video Thumbnail" class="video-thumbnail">
+        <button class="play-icon" id="playButton">
+            <svg fill="#000000" height="500px" width="500px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="XMLID_455_"> <path id="XMLID_458_" d="M315,0H15C6.716,0,0,6.716,0,15v300c0,8.284,6.716,15,15,15h300c8.284,0,15-6.716,15-15V15 C330,6.716,323.284,0,315,0z M300,300H30V30h270V300z"></path> <path id="XMLID_461_" d="M113.729,245.62c2.266,1.256,4.77,1.88,7.271,1.88c2.763,0,5.523-0.763,7.95-2.28l108-67.499 c4.386-2.741,7.05-7.548,7.05-12.72c0-5.172-2.664-9.979-7.05-12.72l-108-67.501c-4.623-2.891-10.453-3.043-15.222-0.4 C108.959,87.024,106,92.047,106,97.5v135C106,237.953,108.959,242.976,113.729,245.62z"></path> </g> </g></svg>
+        </button>
+      </div>
+      <!-- Video -->
+      <video 
+        id="videoElement"
+        src="{{ section.settings.video_url }}" 
+        muted 
+        class="fullscreen-video"
+      ></video>
+    {% else %}
+      <p>Please add a video URL from the section settings.</p>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .asvideo-section {
+    margin: 0;
+    padding: 0;
+  }
+  .asvideo-container {
+    position: relative;
+    width: 100vw;
+    height: 60vh;
+    overflow: hidden;
+    margin: 50px 0px;
+}
+  .video-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    border: none;
+    height: 90px;
+    width: 90px;
+    font-size: 2rem;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 2;
+  }
+  .play-icon svg{
+    height: 50px;
+    width: 50px;
+  } 
+  .fullscreen-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none; /* Hide video by default */
+  }
+  .video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const playButton = document.getElementById("playButton");
+    const videoOverlay = document.getElementById("videoOverlay");
+    const videoElement = document.getElementById("videoElement");
+
+    playButton.addEventListener("click", () => {
+      videoOverlay.style.display = "none"; // Hide overlay
+      videoElement.style.display = "block"; // Show video
+      videoElement.play(); // Play video
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Fullscreen Video Section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Video URL",
+      "default": "https://www.example.com/video.mp4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_url",
+      "label": "Placeholder Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fullscreen Video Section",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

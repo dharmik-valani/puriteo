@@ -1,0 +1,99 @@
+<style>
+    .asSvgSection{
+    background: #eff1fe;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-inline: 20px;
+}
+.svgWithText{
+    width: 100%;
+    display: flex;
+}
+.asTitleSvgs{
+    text-overflow: ellipsis;
+}
+.asTitleSvgs{
+    display: flex;
+    justify-content: space-between;
+}
+.asTitleSvgs{
+    font-size: 13px;
+    text-align: center;
+    justify-content: center;
+}
+p.asTitleSvgs {
+    font-size: 16px;
+    text-align: center;
+    justify-content: center;
+    font-weight: 600;
+    width: 60%;
+    margin: 6px 0px 5px 5px;
+}
+.img_size {
+    width: 32px !important;
+    height: 41px;
+}
+@media screen and (max-width: 1340px) {
+    .img_size{
+    width: 45px !important;
+}
+}
+@media screen and (max-width: 767px) {
+        .asSvgSection{
+            padding-inline: 5px;
+            gap: 15px;
+        }
+        .svgWithText{
+            width: 25%;
+        }
+        .img_size{
+            width: 35px !important;
+        }
+        p.asTitleSvgs{
+            font-size: 10px !important;
+        }
+}
+</style>
+<div class="asSvgSection">
+    <div class="svgWithText">
+    <div class="asTitleSvgs">
+        <img src="{{ block.settings.svgIconOne | img_url: width: '' }}" class="img_size" alt="">
+    </div>
+    <p class="asTitleSvgs">{{ block.settings.asTxtOne }}</p>
+    </div>
+    <div class="svgWithText">
+    <div class="asTitleSvgs">
+        <img src="{{ block.settings.svgIconTwo | img_url: width: '' }}" class="img_size" alt="">
+    </div>
+    <p class="asTitleSvgs">{{ block.settings.asTxtTwo }}</p>
+    </div>
+    <div class="svgWithText">
+    <div class="asTitleSvgs">
+        <img src="{{ block.settings.svgIconThree | img_url: width: '' }}" class="img_size" alt="">
+    </div>
+    <p class="asTitleSvgs">{{ block.settings.asTxtThree }}</p>
+    </div>
+    </div>
+    <div class="asSvgSection">
+    <div class="svgWithText">
+    <div class="asTitleSvgs">
+        <img src="{{ block.settings.svgIconFour | img_url: width: '' }}" class="img_size" alt="">
+    </div>
+    <p class="asTitleSvgs">{{ block.settings.asTxtFour }}</p>
+    </div>
+    <div class="svgWithText">
+    <div class="asTitleSvgs">
+        <img src="{{ block.settings.svgIconFive | img_url: width: '' }}" class="img_size" alt="">
+    </div>
+    <p class="asTitleSvgs">{{ block.settings.asTxtFive }}</p>
+    </div>
+    <div class="svgWithText">
+    <div class="asTitleSvgs">
+        <img src="{{ block.settings.svgIconsix | img_url: width: '' }}" class="img_size" alt="">
+    </div>
+    <p class="asTitleSvgs">{{ block.settings.asTxtsix }}</p>
+    </div>
+    </div>

@@ -1,0 +1,333 @@
+{%- liquid
+  if template.suffix == 'new-product-page'
+    assign banner_img = product.metafields.custom.benefits_banner
+    if banner_img == blank
+      assign banner_img = section.settings['asbenefit-img']
+    endif
+
+    assign b_title = product.metafields.custom.title | strip_html | strip
+    if b_title == blank and product.metafields.custom.benefits_banner != blank
+      assign b_title = section.settings.title | strip_html | strip
+    endif
+
+    assign b_pera = product.metafields.custom.pera | strip_html | strip
+    if b_pera == blank and product.metafields.custom.benefits_banner != blank
+      assign b_pera = section.settings.pera | strip_html | strip
+    endif
+
+    assign valid_benefits_count = 0
+    for i in (1..7)
+      assign b_key = 'benefits0' | append: i
+      assign b_val = product.metafields.custom[b_key] | strip_html | strip
+      if b_val != blank
+        assign valid_benefits_count = valid_benefits_count | plus: 1
+      endif
+    endfor
+
+    if valid_benefits_count == 0
+      for block in section.blocks
+        assign b_item = block.settings.benefit | strip_html | strip
+        if b_item != blank and b_item != ''
+          assign valid_benefits_count = valid_benefits_count | plus: 1
+        endif
+      endfor
+    endif
+
+    assign has_benefits_section = false
+    if banner_img != blank and banner_img != ''
+      assign has_benefits_section = true
+    elsif b_title != blank or b_pera != blank
+      assign has_benefits_section = true
+    elsif valid_benefits_count > 0
+      assign has_benefits_section = true
+    endif
+  else
+    assign banner_img = section.settings['asbenefit-img']
+    if banner_img == blank
+      assign banner_img = product.metafields.custom.benefits_banner
+    endif
+
+    assign b_title = section.settings.title | default: product.metafields.custom.title | strip_html | strip
+    assign b_pera = section.settings.pera | default: product.metafields.custom.pera | strip_html | strip
+
+    assign valid_benefits_count = 0
+    for block in section.blocks
+      assign b_item = block.settings.benefit | strip_html | strip
+      if b_item != blank
+        assign valid_benefits_count = valid_benefits_count | plus: 1
+      endif
+    endfor
+
+    assign has_benefits_section = false
+    if banner_img != blank and banner_img != ''
+      assign has_benefits_section = true
+    elsif b_title != blank or b_pera != blank
+      assign has_benefits_section = true
+    elsif valid_benefits_count > 0
+      assign has_benefits_section = true
+    endif
+  endif
+-%}
+
+<style>
+    .row {
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+    }
+    .col-6{
+        width: calc(50% - 15px);
+    }
+    .benefits-section {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
+
+.benefits-section strong {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+  font-size: 25px;
+  color: #1b3a6e;
+}
+
+.benefits-list {
+  list-style: none;
+  padding-left: 00px;
+  position: relative;
+}
+
+.benefits-list li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  line-height: 2.5;
+  color: #333333;
+}
+
+.benefits-list li::before {
+  content: "•";
+  color: #1b3a6e;
+  font-size: 35px;
+  position: absolute;
+  left: 0;
+  top: -18px;
+}
+
+.benefits-list li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+    top: 7px;
+    width: 1px;
+    height: 100px;
+  background: #e6ebf2;
+}
+  .text-style::first-letter {
+    text-transform: uppercase; /* Pela letter ne capital ma kare */
+}
+.as_benefit_title h2{
+    font-size: 28px;
+    font-weight: 600;
+    color: #1b3a6e;
+    font-family: 'Poppins';
+    line-height: 1.2;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+.as_benefit_title p{
+    font-size: 18px;
+    line-height: 1.2;
+    margin-top: 0px;
+    font-family: 'Poppins';
+    color: #000000;
+    font-weight: 400;
+
+}
+.asbaneift_img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+@media screen and (max-width: 767px){
+    .col-6{
+        width: calc(100% - 15px);
+    }
+    .as_benefit_title h2{
+    font-size: 20px;
+    font-weight: 600;
+    color: #1b3a6e;
+    font-family: 'Poppins';
+    line-height: 1.2;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+.as_benefit_title p{
+    font-size: 15px;
+    line-height: 1.2;
+    margin-top: 0px;
+    font-family: 'Poppins';
+    color: #000000;
+    font-weight: 400;
+
+}
+  .benefits-list li {
+        font-size: 15px !important;
+    }
+  .benefits-list li::before {
+    top: -25px;
+}
+      .benefits-list li:not(:last-child)::after {
+        content: "";
+        width: 1px;
+        height: 75px !important;
+    }
+    .benefits-section strong {
+      font-weight: bold;
+      display: block;
+      margin-bottom: -5px;
+      font-size: 20px;
+  }
+  .as-image-banner {
+    padding-top: 35px;
+    padding-bottom: 0px;
+  }
+}
+
+.aspading {
+  padding-left: 80px !important;
+  padding-right: 80px !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 767px) {
+  .aspading {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+}
+</style>
+{%- if template.suffix == 'new-product-page' -%}
+  {%- if has_benefits_section -%}
+    <section class="as-image-banner">
+       <div class="container-1170 aspading">
+            <div class="row">
+                {% if banner_img != blank and banner_img != '' %}
+                <div class="col-6">
+                    <img class="asbaneift_img" src="{{ banner_img | img_url: 'master' }}" alt="asbenefits-img">
+                </div>
+                {% endif %}
+                <div class="col-6{% unless banner_img != blank and banner_img != '' %} col-12{% endunless %}">
+                    <div class="as_benefit_title">
+                        {% if b_title != blank %}
+                            <h2>{{ section.settings.title | default: product.metafields.custom.title }}</h2>
+                        {% endif %}
+                        {% if b_pera != blank %}
+                            <p>{{ section.settings.pera | default: product.metafields.custom.pera }}</p>
+                        {% endif %}
+                    </div>
+                    {% if valid_benefits_count > 0 %}
+                    <div>
+                        <div class="benefits-section">
+                            <strong>{{ section.settings['benefit-title'] | default: 'Benefits:' }}</strong>
+                            <ul class="benefits-list">
+                                {%- for block in section.blocks -%}
+                                  {%- assign b_item = block.settings.benefit | strip_html | strip -%}
+                                  {%- if b_item != blank -%}
+                                    <li class="text-style" {{ block.shopify_attributes }}>{{ block.settings.benefit }}</li>
+                                  {%- endif -%}
+                                {%- endfor -%}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+       </div>
+    </section>
+  {%- else -%}
+    <style>
+      #shopify-section-{{ section.id }} {
+        display: none !important;
+      }
+    </style>
+  {%- endif -%}
+{%- else -%}
+    <section class="as-image-banner">
+       <div class="container-1170 aspading">
+            <div class="row">
+                <div class="col-6">
+                    <img class="asbaneift_img" src="{{ section.settings['asbenefit-img'] | default: product.metafields.custom.benefits_banner | img_url: 'master' }}" alt="asbenefits-img">
+                </div>
+                <div class="col-6">
+                    <div class="as_benefit_title">
+                        <h2>{{ section.settings.title | default: product.metafields.custom.title }}</h2>
+                        <p>{{ section.settings.pera | default: product.metafields.custom.pera }}</p>
+                    </div>
+                    <div>
+                        <div class="benefits-section">
+                            <strong>{{ section.settings['benefit-title'] }}</strong>
+                            <ul class="benefits-list">
+                                {% for block in section.blocks %}
+                                    <li class="text-style" {{ block.shopify_attributes }}>{{ block.settings.benefit }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       </div>
+    </section>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "benefits_meta",
+    "tag": "section",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "asbenefit-img",
+        "label": "Image"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "text",
+        "id": "pera",
+        "label": "Pera"
+      },
+      {
+        "type": "text",
+        "id": "benefit-title",
+        "label": "Benefit Title"
+      }
+
+    ],
+    "blocks": [
+        {
+            "type": "aspoint",
+            "name": "aspoint",
+              "settings": [
+                {
+                    "type": "text",
+                    "id": "benefit",
+                    "label": "Benefit"
+                }
+            ]
+        }
+    ],
+    "presets": [
+      {
+        "name": "benefits_meta",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

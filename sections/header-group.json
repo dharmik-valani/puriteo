@@ -1,0 +1,752 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header Group",
+  "sections": {
+    "announcement_bar_JwVhCd": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement_8XrQNj": {
+          "type": "announcement",
+          "settings": {
+            "text": "Get 5% OFF on orders above ₹500",
+            "btn_color": "#f84248",
+            "btn_border_color": "#ffffff",
+            "btn_bg_color": "#ffffff",
+            "btn_bg_color_gradient": ""
+          }
+        },
+        "announcement_Vr4Uww": {
+          "type": "announcement",
+          "settings": {
+            "text": "Get 10% OFF on orders above ₹1,000",
+            "btn_color": "#f84248",
+            "btn_border_color": "#ffffff",
+            "btn_bg_color": "#ffffff",
+            "btn_bg_color_gradient": ""
+          }
+        },
+        "announcement_Eyc3bJ": {
+          "type": "announcement",
+          "settings": {
+            "text": "Get 15% OFF + Free Gift on orders above ₹2,000",
+            "btn_color": "#f84248",
+            "btn_border_color": "#ffffff",
+            "btn_bg_color": "#ffffff",
+            "btn_bg_color_gradient": ""
+          }
+        },
+        "announcement_m8DLVp": {
+          "type": "announcement",
+          "settings": {
+            "text": "Extra 10% OFF on prepaid orders",
+            "btn_color": "#f84248",
+            "btn_border_color": "#ffffff",
+            "btn_bg_color": "#ffffff",
+            "btn_bg_color_gradient": ""
+          }
+        }
+      },
+      "block_order": [
+        "announcement_8XrQNj",
+        "announcement_Vr4Uww",
+        "announcement_Eyc3bJ",
+        "announcement_m8DLVp"
+      ],
+      "custom_css": [
+        "@media screen and (max-width: 767px) {.announcement-bar__message .message, .announcement-bar__message p {padding: 5px 5px !important; font-size: 10px !important; font-weight: 400 !important; }}"
+      ],
+      "settings": {
+        "enable_announcement": true,
+        "layout": "slider",
+        "enable_close": false,
+        "color_text": "#ffffff",
+        "bg_color_text": "#3c3486",
+        "bg_color_text_gradient": "",
+        "font_size_text": 16,
+        "font_style_text": "normal",
+        "font_weight_text": "400",
+        "arrow_active": false,
+        "content_max_width": 40,
+        "padding_top": 5,
+        "padding_bottom": 5
+      }
+    },
+    "header_navigation_compact": {
+      "type": "header-navigation-compact",
+      "settings": {
+        "container": "1470",
+        "padding_full_width": 30,
+        "header_height_desktop": 78,
+        "header_height_mobile": 64,
+        "container_padding_left": 80,
+        "container_padding_left_mobile": 16,
+        "padding_top": 0,
+        "padding_top_mobile": 0,
+        "sticky_header_type": "on_scroll",
+        "header_bg": "#ffffff",
+        "header_bg_gradient": "",
+        "header_border_bottom": "rgba(0,0,0,0)",
+        "header_border_bottom_width": 0,
+        "logo": "shopify://shop_images/Puriteo_logo_1_a4ff030d-429a-4ad8-adcc-d4632c0331cd.png",
+        "logo_width": 115,
+        "logo_width_mobile": 85,
+        "logo_text": "Puriteo",
+        "logo_font_size": 24,
+        "logo_font_weight": "800",
+        "logo_color": "#000000",
+        "menu": "header-manu",
+        "menu_font_size": 15,
+        "menu_font_weight": "500",
+        "menu_text_transform": "none",
+        "menu_item_gap": 24,
+        "menu_color": "#000000",
+        "menu_hover_color": "#1b3a6e",
+        "menu_active_indicator_color": "#1b3a6e",
+        "search_style": "style_2",
+        "show_search": true,
+        "search_placeholder_desktop": "Search",
+        "search_placeholder_mobile": "Search products",
+        "search_width_desktop": 260,
+        "search_height_desktop": 40,
+        "search_height_mobile": 44,
+        "search_bg_color": "#ffffff",
+        "search_text_color": "#000000",
+        "search_placeholder_color": "#6b84ad",
+        "search_border_color": "#e8e2d8",
+        "search_border_radius": 50,
+        "search_icon_color": "#000000",
+        "style2_modal_max_width": 780,
+        "style2_modal_radius": 18,
+        "style2_modal_bg": "#ffffff",
+        "style2_modal_padding": 28,
+        "style2_input_border_color": "#1b3a6e",
+        "style2_input_radius": 10,
+        "style2_input_height": 50,
+        "style2_show_tags": true,
+        "style2_tags_heading": "",
+        "style2_tags_list": "",
+        "style2_show_bestsellers": true,
+        "style2_bestsellers_heading": "",
+        "style2_bestseller_collection": "",
+        "style2_bestseller_limit": 3,
+        "icons_size": 22,
+        "icons_size_mobile": 22,
+        "icons_spacing": 16,
+        "icons_spacing_mobile": 12,
+        "icons_color": "#000000",
+        "icons_hover_color": "#1b3a6e",
+        "show_track_order": true,
+        "track_order_link": "https://app.ehandler.in/track-awb",
+        "track_order_color": "#000000",
+        "show_customer": true,
+        "customer_color": "#000000",
+        "show_wishlist": true,
+        "show_wishlist_number": true,
+        "wishlist_color": "#000000",
+        "wishlist_bg_item": "#bf8c44",
+        "wishlist_color_item": "#ffffff",
+        "show_cart": true,
+        "cart_color": "#000000",
+        "cart_bg_item": "#bf8c44",
+        "cart_color_item": "#ffffff",
+        "concern_card_cta": "Shop range →",
+        "show_quiz_link": false,
+        "quiz_text": "Not sure what you need? Take the 60-second wellness quiz →",
+        "quiz_url": "",
+        "quiz_text_size": 13,
+        "quiz_text_color": "#000000",
+        "dropdown_max_width": 1320,
+        "dropdown_pad_lr": 30,
+        "dropdown_pad_tb": 28,
+        "dropdown_pad_lr_mobile": 16,
+        "dropdown_top_offset": 0,
+        "dropdown_bg": "#ffffff",
+        "dropdown_border_color": "#ffffff",
+        "dropdown_shadow_color": "#0000001f",
+        "concern_grid_columns": 4,
+        "concern_grid_columns_mobile": 2,
+        "concern_grid_gap": 14,
+        "concern_grid_gap_mobile": 10,
+        "concern_card_min_height": 62,
+        "concern_card_pad": 12,
+        "concern_card_pad_mobile": 10,
+        "concern_card_radius": 12,
+        "concern_card_border_width": 0,
+        "concern_card_border_color": "rgba(0,0,0,0)",
+        "concern_card_bg": "#f7f9fc",
+        "concern_card_bg_hover": "#eee7db",
+        "concern_card_bg_mobile": "#f7f9fc",
+        "concern_title_size": 15,
+        "concern_title_weight": "600",
+        "concern_title_color": "#000000",
+        "concern_subtext_size": 12,
+        "concern_subtext_color": "#1b3a6e",
+        "concern_badge_size": 42,
+        "concern_badge_size_mobile": 36,
+        "concern_badge_radius": 10,
+        "concern_icon_size": 32,
+        "concern_icon_size_mobile": 18,
+        "concern_badge_bg": "#1b3a6e",
+        "concern_badge_icon_color": "#ffffff",
+        "show_promo_card": true,
+        "promo_card_width": 330,
+        "promo_card_padding": 28,
+        "promo_card_radius": 16,
+        "promo_bg_color": "#1b3a6e",
+        "promo_badge": "MOST LOVED",
+        "promo_badge_size": 11,
+        "promo_badge_color": "#c59a52",
+        "promo_title": "Build your wellness box",
+        "promo_title_size": 26,
+        "promo_title_color": "#ffffff",
+        "promo_desc": "Pick any 4 for ₹999. Mix tablets, capsules and effervescents.",
+        "promo_desc_size": 13,
+        "promo_desc_color": "#a8bad8",
+        "promo_btn_text": "Build my box →",
+        "promo_btn_url": "/apps/box-builder/build-your-box",
+        "promo_btn_bg": "#ffffff",
+        "promo_btn_hover_bg": "#f7f9fc",
+        "promo_btn_color": "#1b3a6e",
+        "promo_btn_radius": 50,
+        "promo_btn_pad_tb": 10,
+        "promo_btn_pad_lr": 24,
+        "drawer_bg_color": "#ffffff",
+        "drawer_link_color": "#1b3a6e",
+        "drawer_link_size": 15,
+        "drawer_link_weight": "500",
+        "drawer_heading_color": "#1b3a6e",
+        "drawer_heading_size": 15,
+        "drawer_heading_weight": "400",
+        "drawer_card_title_size": 11,
+        "drawer_card_title_color": "#1b3a6e",
+        "drawer_border_color": "#1b3a6e",
+        "show_chat_support": false,
+        "chat_text_pre": "Need help choosing?",
+        "chat_text_highlight": "Chat with an expert",
+        "chat_url": "",
+        "chat_bg_color": "#1b3a6e",
+        "chat_highlight_color": "#d4a359"
+      }
+    },
+    "header_navigation_hamburger_TkMayy": {
+      "type": "header-navigation-hamburger",
+      "blocks": {
+        "logo_dRMggw": {
+          "type": "logo",
+          "settings": {
+            "logo_position": "always",
+            "logo": "shopify://shop_images/Puriteo_logo_1_a4ff030d-429a-4ad8-adcc-d4632c0331cd.png",
+            "logo_transparent": "shopify://shop_images/Puriteo_logo_1_a4ff030d-429a-4ad8-adcc-d4632c0331cd.png",
+            "logo_width": 120,
+            "logo_width_fixed": 100,
+            "logo_text": "",
+            "logo_font_size": 20,
+            "logo_font_weight": "900",
+            "logo_text_transform": "uppercase",
+            "logo_color": "#000000"
+          }
+        },
+        "main_menu_drL8wA": {
+          "type": "main_menu",
+          "settings": {
+            "menu": "header-manu",
+            "menu_top_spacing": 20,
+            "menu_bottom_spacing": 20,
+            "grid_gap_menu_item": 15,
+            "alignment": "center",
+            "bg_mega_menu": "#ffffff",
+            "bg_mega_menu_gradient": "",
+            "lv_1_color": "#000000",
+            "lv_1_color_hover": "#000000",
+            "lv_2_color": "#232323",
+            "lv_2_color_hover": "#232323",
+            "lv_3_color": "#3c3c3c",
+            "lv_3_color_hover": "#3c3c3c",
+            "sale_item_1": "",
+            "sale_item_2": "",
+            "sale_item_3": "",
+            "sale_item_color": "#d12442",
+            "label_position": "main_menu",
+            "show_label_blink": false,
+            "new_label_1": "",
+            "new_label_2": "",
+            "new_label_3": "",
+            "new_label_color": "#ffffff",
+            "new_label_bg": "#bae4ed",
+            "new_label_bg_gradient": "",
+            "sale_label_1": "",
+            "sale_label_2": "",
+            "sale_label_3": "",
+            "sale_label_color": "#ffffff",
+            "sale_label_bg": "#d12442",
+            "sale_label_bg_gradient": "",
+            "hot_label_1": "",
+            "hot_label_2": "",
+            "hot_label_3": "",
+            "hot_label_color": "#ffffff",
+            "hot_label_bg": "#fff993",
+            "hot_label_bg_gradient": ""
+          }
+        },
+        "header_icons_Chf8ag": {
+          "type": "header_icons",
+          "settings": {
+            "icons_width": 22,
+            "icons_bold": "regular",
+            "icons_layout": "icon",
+            "show_search": true,
+            "search_icon": "1",
+            "search_dropdown": "default",
+            "show_customer": true,
+            "customer_icon": "2",
+            "text_font_size": 13,
+            "show_wishlist": true,
+            "show_wishlist_number": true,
+            "wishlist_icon": "1",
+            "show_cart": true,
+            "cart_icon": "6",
+            "show_language_currency": true,
+            "lang_cur_icon": "1",
+            "show_search_sticky": true,
+            "show_customer_sticky": true,
+            "show_wishlist_sticky": true,
+            "show_cart_sticky": true,
+            "show_language_currency_sticky": true,
+            "header_icons_color": "#000000",
+            "header_icons_color_hover": "#000000",
+            "cart_count_bubble_color": "#323232",
+            "cart_count_bubble_bg": "#ffe5e8",
+            "cart_count_bubble_bg_gradient": "",
+            "wishlist_color_item": "#ffffff",
+            "wishlist_bg_item": "#232323"
+          }
+        },
+        "megamenu_style_1_k9biRk": {
+          "type": "megamenu_style_1",
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1200,
+            "item": "Shop",
+            "column": 3,
+            "show_banner_1": true,
+            "banner_1": "shopify://shop_images/00_26a0e255-fe38-4ed2-b0ac-d76e92a99e0b.png",
+            "banner_url_1": "",
+            "show_product": false,
+            "product_title": "Featured Products",
+            "product_collection": ""
+          }
+        },
+        "megamenu_style_2_ezGLfF": {
+          "type": "megamenu_style_2",
+          "disabled": true,
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1200,
+            "item": "Shop",
+            "column": 4,
+            "show_banner_1": true,
+            "banner_1": "shopify://shop_images/01_84121235-8e24-4c41-bacb-2bf1b11859f2.png",
+            "banner_url_1": "",
+            "show_banner_2": true,
+            "banner_2": "shopify://shop_images/07_33d39170-a81f-441f-bdf6-b0169b276e1d.png",
+            "banner_url_2": "",
+            "show_banner_3": false,
+            "banner_url_3": ""
+          }
+        },
+        "megamenu_style_3_4jxHgx": {
+          "type": "megamenu_style_3",
+          "disabled": true,
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1200,
+            "mega_tyle": "style1",
+            "item": "Shop",
+            "column": 4,
+            "show_banner_1": true,
+            "banner_1": "shopify://shop_images/07_3bb2ca35-fc4d-45c7-b586-e042544a25c7.png",
+            "banner_url_1": "",
+            "show_banner_2": true,
+            "banner_2": "shopify://shop_images/04_e526c001-f63a-4565-95f8-d0bc7de1f2b8.png",
+            "banner_url_2": "",
+            "show_banner_3": false,
+            "banner_url_3": "",
+            "show_banner_4": false,
+            "banner_url_4": "",
+            "show_banner_5": false,
+            "banner_url_5": ""
+          }
+        },
+        "megamenu_style_4_Tz7fpz": {
+          "type": "megamenu_style_4",
+          "disabled": true,
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1200,
+            "item": "Shop",
+            "column": 4,
+            "menu_text_left": "",
+            "menu_text_left_sale": "",
+            "show_banner_1": true,
+            "banner_1": "shopify://shop_images/GUT_CARE_copy.png",
+            "banner_url_1": "",
+            "show_banner_2": true,
+            "banner_2": "shopify://shop_images/BANNER_2_copy_7c69d5e0-cc46-4848-9d2d-5ed834e82c0e.png",
+            "banner_url_2": "",
+            "show_az_brand": false,
+            "az_brand_title": "All Brands A-Z",
+            "az_brand_link_text": "See All Brands",
+            "az_brand_url": "",
+            "bg_mega_menu_bottom": "#f8f8f8",
+            "az_brand_link_text_color": "#000000"
+          }
+        },
+        "megamenu_style_5_hXx4ej": {
+          "type": "megamenu_style_5",
+          "disabled": true,
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1200,
+            "mega_tyle": "style1",
+            "item": "Shop",
+            "column": 3,
+            "menu_text_left": "",
+            "menu_text_left_sale": "",
+            "show_banner_1": false,
+            "banner_url_1": "",
+            "product_limit": 4,
+            "show_product": false,
+            "product_title": "Featured Products",
+            "product_collection": "",
+            "bg_mega_menu_bottom": "#f8f8f8"
+          }
+        }
+      },
+      "block_order": [
+        "logo_dRMggw",
+        "main_menu_drL8wA",
+        "header_icons_Chf8ag",
+        "megamenu_style_1_k9biRk",
+        "megamenu_style_2_ezGLfF",
+        "megamenu_style_3_4jxHgx",
+        "megamenu_style_4_Tz7fpz",
+        "megamenu_style_5_hXx4ej"
+      ],
+      "disabled": true,
+      "custom_css": [
+        ".header-logo {padding: 10px 0px;}",
+        ".header-nav-hamburger .header-icons {gap: 18px;}",
+        ".site-nav-title {font-size: 18px;}",
+        ".header-nav-hamburger:not(.header-hamburger--transparent),.scrolled-past-header .header-hamburger--transparent {background: #f9f9f9;}",
+        ".header-navigation .header__icon--cart:hover .cart-count-bubble .text {color: #ffffff;}",
+        ".site-nav {position: unset !important; width: 50% !important;}",
+        ".wishlist-count-bubble {background-color: #3c3486;}",
+        ".menu-lv-1__action .text {font-weight: 400; font-size: 16px !important;}"
+      ],
+      "settings": {
+        "container": "1470",
+        "padding_full_width": 0,
+        "header_layout_style": "style_1",
+        "header_navigation_bg": "#ffffff",
+        "header_navigation_bg_gradient": "",
+        "sticky_header_type": "on_scroll",
+        "sticky_header_width": "default",
+        "enable_transparent": false,
+        "transparent_color": "#ffffff",
+        "transparent_color_hover": "#ffffff",
+        "border_color": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "header-mobile": {
+      "type": "header-mobile",
+      "blocks": {
+        "menu_9b4ACD": {
+          "type": "menu",
+          "settings": {
+            "color": "#232323",
+            "menu_tab_bg": "#000000"
+          }
+        },
+        "search_nxkzX7": {
+          "type": "search",
+          "settings": {
+            "color": "#232323"
+          }
+        },
+        "logo_yjHyYD": {
+          "type": "logo",
+          "settings": {
+            "logo_mobile": "shopify://shop_images/Puriteo_logo_1.png",
+            "logo_transparent": "shopify://shop_images/Puriteo_logo_1.png",
+            "logo_width_mobile": 80,
+            "logo_text": "",
+            "logo_font_size": 20,
+            "logo_font_weight": "900",
+            "logo_text_transform": "uppercase",
+            "logo_color": "#232323"
+          }
+        },
+        "customer_iK3PVW": {
+          "type": "customer",
+          "disabled": true,
+          "settings": {
+            "icon": "1",
+            "color": "#232323"
+          }
+        },
+        "cart_mY67hD": {
+          "type": "cart",
+          "settings": {
+            "icon": "3",
+            "color": "#232323",
+            "color_bubble": "#ffffff",
+            "bg_bubble": "#3c3486"
+          }
+        }
+      },
+      "block_order": [
+        "menu_9b4ACD",
+        "search_nxkzX7",
+        "logo_yjHyYD",
+        "customer_iK3PVW",
+        "cart_mY67hD"
+      ],
+      "disabled": true,
+      "custom_css": [
+        ".header-mobile--wrapper {padding: 10px 0px;}",
+        "@media screen and (max-width: 767px) {.header-mobile__item {min-width: 35px; } .mobileMenu-toggle {width: 20px; height: 20px; } .header-mobile__item:first-child {justify-content: center; }}"
+      ],
+      "settings": {
+        "background": "#ffffff",
+        "gradient": "",
+        "sticky_header_type": "on_scroll",
+        "enable_transparent": false,
+        "transparent_color": "#ffffff",
+        "transparent_border_color": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "header_basic_eXKhje": {
+      "type": "header-basic",
+      "blocks": {
+        "logo_EQqrLq": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/Puriteo_logo_1_a4ff030d-429a-4ad8-adcc-d4632c0331cd.png",
+            "logo_width": 120,
+            "logo_text": "",
+            "logo_font_size": 30,
+            "logo_font_weight": "900",
+            "logo_text_transform": "uppercase",
+            "logo_color": "#232323"
+          }
+        },
+        "function_group_EpDrfT": {
+          "type": "function_group",
+          "settings": {
+            "show_search": true,
+            "show_search_left_to_right": false,
+            "search_placeholder": "Search for products, concerns or ingredients...",
+            "search_color": "#8a9bb5",
+            "bg_search_color": "#ffffff",
+            "search_border_color": "#c5d4e8",
+            "search_icon_color": "#3c3487",
+            "search_button_bg": "#3c3487",
+            "show_customer": true,
+            "customer_color": "#232323",
+            "show_wishlist": true,
+            "wishlist_color": "#232323",
+            "show_wishlist_number": true,
+            "wishlist_color_item": "#ffffff",
+            "wishlist_bg_item": "#3c3486",
+            "show_cart": true,
+            "cart_color": "#232323",
+            "cart_color_item": "#ffffff",
+            "cart_bg_item": "#3c3486",
+            "show_track_order": true,
+            "track_order_link": "",
+            "track_order_color": "#232323"
+          }
+        }
+      },
+      "block_order": [
+        "logo_EQqrLq",
+        "function_group_EpDrfT"
+      ],
+      "disabled": true,
+      "settings": {
+        "container": "1470",
+        "padding_full_width": 0,
+        "container_padding_left": "80",
+        "container_padding_right": "80",
+        "container_padding_left_mobile": "15",
+        "container_padding_right_mobile": "15",
+        "background": "#ffffff",
+        "gradient": "",
+        "enable_transparent": false,
+        "padding_top": 10,
+        "padding_bottom": 10
+      }
+    },
+    "header_navigation_plain_8ry4gb": {
+      "type": "header-navigation-plain",
+      "blocks": {
+        "logo_WWgLtx": {
+          "type": "logo",
+          "disabled": true,
+          "settings": {
+            "logo_position": "sticky_menu",
+            "logo_width": 90,
+            "logo_width_fixed": 55,
+            "logo_text": "",
+            "logo_font_size": 20,
+            "logo_font_weight": "900",
+            "logo_text_transform": "uppercase",
+            "logo_color": "#ffffff"
+          }
+        },
+        "main_menu_reBTaF": {
+          "type": "main_menu",
+          "settings": {
+            "menu": "header-manu",
+            "menu_top_spacing": 11,
+            "menu_bottom_spacing": 12,
+            "grid_gap_menu_item": 20,
+            "alignment": "center",
+            "bg_mega_menu": "#ffffff",
+            "bg_mega_menu_gradient": "",
+            "lv_1_color": "#ffffff",
+            "lv_1_color_hover": "#ffffff",
+            "lv_2_color": "#232323",
+            "lv_2_color_hover": "#232323",
+            "lv_3_color": "#3c3c3c",
+            "lv_3_color_hover": "#3c3c3c",
+            "sale_item_1": "",
+            "sale_item_2": "",
+            "sale_item_3": "",
+            "sale_item_color": "#d12442",
+            "label_position": "main_menu",
+            "show_label_blink": false,
+            "new_label_1": "",
+            "new_label_2": "",
+            "new_label_3": "",
+            "new_label_color": "#ffffff",
+            "new_label_bg": "#bae4ed",
+            "new_label_bg_gradient": "",
+            "sale_label_1": "",
+            "sale_label_2": "",
+            "sale_label_3": "",
+            "sale_label_color": "#ffffff",
+            "sale_label_bg": "#d12442",
+            "sale_label_bg_gradient": "",
+            "hot_label_1": "",
+            "hot_label_2": "",
+            "hot_label_3": "",
+            "hot_label_color": "#ffffff",
+            "hot_label_bg": "#fff993",
+            "hot_label_bg_gradient": ""
+          }
+        },
+        "header_icons_LMnfjp": {
+          "type": "header_icons",
+          "disabled": true,
+          "settings": {
+            "show_language_currency": false,
+            "show_search": false,
+            "show_customer": false,
+            "show_wishlist": false,
+            "show_wishlist_number": false,
+            "show_cart": false,
+            "text_font_size": 14,
+            "show_language_currency_sticky": false,
+            "show_search_sticky": true,
+            "show_customer_sticky": false,
+            "show_wishlist_sticky": false,
+            "show_cart_sticky": true,
+            "cart_icon": "1",
+            "header_icons_color": "#ffffff",
+            "header_icons_color_hover": "#ffffff",
+            "header_icons_border_color": "rgba(0,0,0,0)",
+            "header_icons_border_sticky_color": "#232323",
+            "cart_count_bubble_color": "#323232",
+            "cart_count_bubble_bg": "#ffe5e8",
+            "cart_count_bubble_bg_gradient": "",
+            "wishlist_color_item": "#ffffff",
+            "wishlist_bg_item": "#232323"
+          }
+        },
+        "megamenu_style_1_kgHwMU": {
+          "type": "megamenu_style_1",
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1200,
+            "item": "Hair and Skin",
+            "column": 2,
+            "show_banner_1": false,
+            "banner_1": "shopify://shop_images/00_26a0e255-fe38-4ed2-b0ac-d76e92a99e0b.png",
+            "banner_url_1": "",
+            "show_product": false,
+            "product_title": "Featured Products",
+            "product_collection": ""
+          }
+        },
+        "megamenu_style_1_9qpbz3": {
+          "type": "megamenu_style_1",
+          "disabled": true,
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1440,
+            "item": "Wellness",
+            "column": 5,
+            "show_banner_1": true,
+            "banner_1": "shopify://shop_images/00_26a0e255-fe38-4ed2-b0ac-d76e92a99e0b.png",
+            "banner_url_1": "",
+            "show_product": false,
+            "product_title": "Featured Products",
+            "product_collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "logo_WWgLtx",
+        "main_menu_reBTaF",
+        "header_icons_LMnfjp",
+        "megamenu_style_1_kgHwMU",
+        "megamenu_style_1_9qpbz3"
+      ],
+      "disabled": true,
+      "settings": {
+        "container": "1470",
+        "padding_full_width": 0,
+        "header_navigation_bg": "#3c3486",
+        "header_navigation_bg_gradient": "",
+        "sticky_header_type": "on_scroll",
+        "sticky_header_width": "full",
+        "enable_transparent": false,
+        "transparent_color": "#ffffff",
+        "transparent_color_hover": "#ffffff",
+        "border_color": "rgba(0,0,0,0)"
+      }
+    }
+  },
+  "order": [
+    "announcement_bar_JwVhCd",
+    "header_navigation_compact",
+    "header_navigation_hamburger_TkMayy",
+    "header-mobile",
+    "header_basic_eXKhje",
+    "header_navigation_plain_8ry4gb"
+  ]
+}

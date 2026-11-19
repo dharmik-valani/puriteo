@@ -1,0 +1,1362 @@
+{%- liquid
+  assign heading = section.settings.heading | default: 'Key Ingredients'
+  assign heading_align = section.settings.heading_alignment | default: 'left'
+  assign desktop_layout = section.settings.desktop_layout | default: 'grid'
+  assign mobile_layout = section.settings.mobile_layout | default: 'carousel'
+  assign mobile_columns = section.settings.mobile_columns | default: '2'
+
+  assign container_class = 'container'
+  if section.settings.container == 'fullwidth'
+    assign container_class = 'container-full'
+  elsif section.settings.container == '1170'
+    assign container_class = 'container-1170'
+  elsif section.settings.container == '1770'
+    assign container_class = 'container-1770'
+  endif
+
+  # 1. Strictly check Key Ingredients Metaobject list only (custom.key_ingredients)
+  assign meta_list = product.metafields.custom.key_ingredients.value
+  if meta_list == blank
+    assign meta_list = product.metafields.custom.key_ingredients
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom['key-ingredients'].value
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom['key-ingredients']
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom['key_ingredients'].value
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom.key_ingredient.value
+  endif
+  if meta_list == blank
+    assign meta_list = product.metafields.custom.key_ingredient
+  endif
+
+  # Determine if meta_list is a single metaobject vs a list/array
+  assign is_single_metaobject = false
+  if meta_list != blank
+    if meta_list.system != blank and meta_list.first == blank
+      assign is_single_metaobject = true
+    endif
+  endif
+
+  # 2. Count items strictly from valid key ingredients
+  assign item_count = 0
+
+  if is_single_metaobject
+    assign s_title = meta_list.title.value | default: meta_list.title | default: meta_list.name.value | default: meta_list.name | default: meta_list.ingredient_name.value | default: meta_list.ingredient_name | default: meta_list.heading.value | default: meta_list.heading
+    if s_title != blank
+      assign item_count = 1
+    endif
+  elsif meta_list != blank and meta_list.size > 0
+    for itm in meta_list
+      assign itm_title = itm.title.value | default: itm.title | default: itm.name.value | default: itm.name | default: itm.ingredient_name.value | default: itm.ingredient_name | default: itm.heading.value | default: itm.heading
+      if itm_title != blank
+        assign item_count = item_count | plus: 1
+      endif
+    endfor
+  elsif template.suffix != 'new-product-page'
+    # Fallback to numbered product metafields or blocks ONLY on non-new-product-page templates
+    for i in (1..8)
+      if i < 10
+        assign num_str = '0' | append: i
+      else
+        assign num_str = i
+      endif
+
+      assign t_key = 'ingredients_title' | append: num_str
+      assign p_key = 'ingredients_pera' | append: num_str
+      assign img_key1 = 'ingredients_img_' | append: num_str
+      assign img_key2 = 'ingredients_img' | append: num_str
+
+      assign t_val = product.metafields.custom[t_key].value | default: product.metafields.custom[t_key] | strip_html | strip
+      assign p_val = product.metafields.custom[p_key].value | default: product.metafields.custom[p_key] | strip_html | strip
+      assign img_val = product.metafields.custom[img_key1].value | default: product.metafields.custom[img_key1]
+      if img_val == blank
+        assign img_val = product.metafields.custom[img_key2].value | default: product.metafields.custom[img_key2]
+      endif
+
+      if t_val != blank or p_val != blank or img_val != blank
+        assign item_count = item_count | plus: 1
+      endif
+    endfor
+
+    if item_count == 0 and section.blocks.size > 0
+      assign item_count = section.blocks.size
+    endif
+  endif
+-%}
+
+{%- if item_count > 0 -%}
+  <section
+    class="as-key-ingredients section-block-{{ section.id }}"
+    id="as-key-ingredients-{{ section.id }}"
+    data-items-count="{{ item_count }}"
+  >
+    <div class="{{ container_class }}">
+      {%- if heading != blank -%}
+        <div class="as-key-ingredients__header as-key-ingredients__header--{{ heading_align }}">
+          <h2 class="as-key-ingredients__heading">{{ heading }}</h2>
+        </div>
+      {%- endif -%}
+
+      <div class="as-key-ingredients__slider-wrap">
+        {%- if desktop_layout == 'carousel' and section.settings.show_desktop_arrows -%}
+          <button
+            type="button"
+            class="as-key-ingredients__arrow as-key-ingredients__arrow--prev"
+            aria-label="Previous ingredients"
+            data-as-ki-prev
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+        {%- endif -%}
+
+        <div
+          class="as-key-ingredients__grid as-key-ingredients__grid--desktop-{{ desktop_layout }} as-key-ingredients__grid--items-{{ item_count }} as-key-ingredients__grid--mobile-{{ mobile_layout }}"
+          style="--grid-items-count: {{ item_count }};"
+          data-as-ki-grid
+        >
+        {%- if is_single_metaobject -%}
+          {%- liquid
+            assign item = meta_list
+            assign item_title = item.title.value | default: item.title | default: item.name.value | default: item.name | default: item.label.value | default: item.label | default: item.heading.value | default: item.heading | default: item.ingredient_name.value | default: item.ingredient_name | default: item.ingredient_title.value | default: item.ingredient_title | default: item.display_name.value | default: item.display_name
+
+            assign item_desc = item.description.value | default: item.description | default: item.desc.value | default: item.desc | default: item.pera.value | default: item.pera | default: item.paragraph.value | default: item.paragraph | default: item.benefit.value | default: item.benefit | default: item.benefits.value | default: item.benefits | default: item.ingredient_description.value | default: item.ingredient_description | default: item.details.value | default: item.details | default: item.detail.value | default: item.detail | default: item.summary.value | default: item.summary | default: item.text.value | default: item.text | default: item.info.value | default: item.info | default: item.content.value | default: item.content
+
+            assign item_img = item.image.value | default: item.image | default: item.icon.value | default: item.icon | default: item.img.value | default: item.img | default: item.photo.value | default: item.photo | default: item.picture.value | default: item.picture | default: item.ingredient_image.value | default: item.ingredient_image | default: item.ingredient_img.value | default: item.ingredient_img | default: item.file.value | default: item.file
+
+            if item_img.value != blank
+              assign item_img = item_img.value
+            endif
+
+            if item_title == blank or item_desc == blank or item_img == blank
+              if item.fields != blank
+                for f in item.fields
+                  assign f_key = f.key | downcase
+                  assign f_val = f.value | default: f
+
+                  if item_img == blank
+                    if f.type contains 'file' or f_key contains 'image' or f_key contains 'img' or f_key contains 'icon' or f_key contains 'photo' or f_key contains 'pic'
+                      if f_val != blank
+                        assign item_img = f_val
+                      endif
+                    endif
+                  endif
+
+                  if item_title == blank
+                    if f_key contains 'title' or f_key contains 'name' or f_key contains 'label' or f_key contains 'heading'
+                      assign val = f_val | strip_html | strip
+                      if val != blank
+                        assign item_title = val
+                      endif
+                    endif
+                  endif
+
+                  if item_desc == blank
+                    if f_key contains 'desc' or f_key contains 'pera' or f_key contains 'benefit' or f_key contains 'detail' or f_key contains 'text' or f_key contains 'summary' or f_key contains 'info' or f_key contains 'content'
+                      assign val = f_val | strip_html | strip
+                      if val != blank
+                        assign item_desc = val
+                      endif
+                    endif
+                  endif
+                endfor
+              endif
+            endif
+
+            if item_title == blank and item.system.handle != blank
+              assign item_title = item.system.handle | replace: '-', ' ' | capitalize
+            endif
+
+            assign item_title = item_title | strip_html | strip
+            assign item_desc = item_desc | strip_html | strip
+
+            assign item_img_src = ''
+            if item_img != blank
+              if item_img.src != blank
+                assign item_img_src = item_img | image_url: width: 360
+              else
+                assign item_img_str = item_img | append: ''
+                if item_img_str contains 'http://' or item_img_str contains 'https://' or item_img_str contains '//'
+                  assign item_img_src = item_img_str
+                else
+                  assign item_img_src = item_img | image_url: width: 360
+                endif
+              endif
+            endif
+          -%}
+          {%- if item_title != blank or item_desc != blank or item_img_src != blank -%}
+            <div class="as-key-ingredients__card">
+              {%- if item_img_src != blank -%}
+                <div class="as-key-ingredients__img-wrap">
+                  <img
+                    src="{{ item_img_src }}"
+                    alt="{{ item_title | default: 'Key Ingredient' | escape }}"
+                    loading="lazy"
+                    width="160"
+                    height="160"
+                  >
+                </div>
+              {%- endif -%}
+              {%- if item_title != blank -%}
+                <h3 class="as-key-ingredients__title">{{ item_title }}</h3>
+              {%- endif -%}
+              {%- if item_desc != blank -%}
+                <p class="as-key-ingredients__desc">{{ item_desc }}</p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- elsif meta_list != blank and meta_list.size > 0 -%}
+          {%- for item in meta_list -%}
+            {%- liquid
+              assign item_title = item.title.value | default: item.title | default: item.name.value | default: item.name | default: item.label.value | default: item.label | default: item.heading.value | default: item.heading | default: item.ingredient_name.value | default: item.ingredient_name | default: item.ingredient_title.value | default: item.ingredient_title | default: item.display_name.value | default: item.display_name
+
+              assign item_desc = item.description.value | default: item.description | default: item.desc.value | default: item.desc | default: item.pera.value | default: item.pera | default: item.paragraph.value | default: item.paragraph | default: item.benefit.value | default: item.benefit | default: item.benefits.value | default: item.benefits | default: item.ingredient_description.value | default: item.ingredient_description | default: item.details.value | default: item.details | default: item.detail.value | default: item.detail | default: item.summary.value | default: item.summary | default: item.text.value | default: item.text | default: item.info.value | default: item.info | default: item.content.value | default: item.content
+
+              assign item_img = item.image.value | default: item.image | default: item.icon.value | default: item.icon | default: item.img.value | default: item.img | default: item.photo.value | default: item.photo | default: item.picture.value | default: item.picture | default: item.ingredient_image.value | default: item.ingredient_image | default: item.ingredient_img.value | default: item.ingredient_img | default: item.file.value | default: item.file
+
+              if item_img.value != blank
+                assign item_img = item_img.value
+              endif
+
+              if item_title == blank or item_desc == blank or item_img == blank
+                if item.fields != blank
+                  for f in item.fields
+                    assign f_key = f.key | downcase
+                    assign f_val = f.value | default: f
+
+                    if item_img == blank
+                      if f.type contains 'file' or f_key contains 'image' or f_key contains 'img' or f_key contains 'icon' or f_key contains 'photo' or f_key contains 'pic'
+                        if f_val != blank
+                          assign item_img = f_val
+                        endif
+                      endif
+                    endif
+
+                    if item_title == blank
+                      if f_key contains 'title' or f_key contains 'name' or f_key contains 'label' or f_key contains 'heading'
+                        assign val = f_val | strip_html | strip
+                        if val != blank
+                          assign item_title = val
+                        endif
+                      endif
+                    endif
+
+                    if item_desc == blank
+                      if f_key contains 'desc' or f_key contains 'pera' or f_key contains 'benefit' or f_key contains 'detail' or f_key contains 'text' or f_key contains 'summary' or f_key contains 'info' or f_key contains 'content'
+                        assign val = f_val | strip_html | strip
+                        if val != blank
+                          assign item_desc = val
+                        endif
+                      endif
+                    endif
+                  endfor
+                endif
+              endif
+
+              if item_title == blank and item.system.handle != blank
+                assign item_title = item.system.handle | replace: '-', ' ' | capitalize
+              endif
+
+              assign item_title = item_title | strip_html | strip
+              assign item_desc = item_desc | strip_html | strip
+
+              assign item_img_src = ''
+              if item_img != blank
+                if item_img.src != blank
+                  assign item_img_src = item_img | image_url: width: 360
+                else
+                  assign item_img_str = item_img | append: ''
+                  if item_img_str contains 'http://' or item_img_str contains 'https://' or item_img_str contains '//'
+                    assign item_img_src = item_img_str
+                  else
+                    assign item_img_src = item_img | image_url: width: 360
+                  endif
+                endif
+              endif
+            -%}
+            {%- if item_title != blank or item_desc != blank or item_img_src != blank -%}
+              <div class="as-key-ingredients__card">
+                {%- if item_img_src != blank -%}
+                  <div class="as-key-ingredients__img-wrap">
+                    <img
+                      src="{{ item_img_src }}"
+                      alt="{{ item_title | default: 'Key Ingredient' | escape }}"
+                      loading="lazy"
+                      width="160"
+                      height="160"
+                    >
+                  </div>
+                {%- endif -%}
+                {%- if item_title != blank -%}
+                  <h3 class="as-key-ingredients__title">{{ item_title }}</h3>
+                {%- endif -%}
+                {%- if item_desc != blank -%}
+                  <p class="as-key-ingredients__desc">{{ item_desc }}</p>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- elsif item_count > 0 -%}
+          {%- for i in (1..8) -%}
+            {%- liquid
+              if i < 10
+                assign num_str = '0' | append: i
+              else
+                assign num_str = i
+              endif
+
+              assign t_key = 'ingredients_title' | append: num_str
+              assign p_key = 'ingredients_pera' | append: num_str
+              assign img_key1 = 'ingredients_img_' | append: num_str
+              assign img_key2 = 'ingredients_img' | append: num_str
+
+              assign item_title = product.metafields.custom[t_key].value | default: product.metafields.custom[t_key] | strip_html | strip
+              assign item_desc = product.metafields.custom[p_key].value | default: product.metafields.custom[p_key] | strip_html | strip
+              assign item_img = product.metafields.custom[img_key1].value | default: product.metafields.custom[img_key1]
+              if item_img == blank
+                assign item_img = product.metafields.custom[img_key2].value | default: product.metafields.custom[img_key2]
+              endif
+
+              if item_img.value != blank
+                assign item_img = item_img.value
+              endif
+
+              assign item_img_src = ''
+              if item_img != blank
+                if item_img.src != blank
+                  assign item_img_src = item_img | image_url: width: 360
+                else
+                  assign item_img_str = item_img | append: ''
+                  if item_img_str contains 'http://' or item_img_str contains 'https://' or item_img_str contains '//'
+                    assign item_img_src = item_img_str
+                  else
+                    assign item_img_src = item_img | image_url: width: 360
+                  endif
+                endif
+              endif
+            -%}
+
+            {%- if item_title != blank or item_desc != blank or item_img_src != blank -%}
+              <div class="as-key-ingredients__card">
+                {%- if item_img_src != blank -%}
+                  <div class="as-key-ingredients__img-wrap">
+                    <img
+                      src="{{ item_img_src }}"
+                      alt="{{ item_title | default: 'Key Ingredient' | escape }}"
+                      loading="lazy"
+                      width="160"
+                      height="160"
+                    >
+                  </div>
+                {%- endif -%}
+                {%- if item_title != blank -%}
+                  <h3 class="as-key-ingredients__title">{{ item_title }}</h3>
+                {%- endif -%}
+                {%- if item_desc != blank -%}
+                  <p class="as-key-ingredients__desc">{{ item_desc }}</p>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- if section.blocks.size > 0 -%}
+            {%- for block in section.blocks -%}
+              {%- liquid
+                assign b_title = block.settings.title | strip_html | strip
+                assign b_desc = block.settings.description | strip_html | strip
+                assign b_img = block.settings.image
+              -%}
+              {%- if b_title != blank or b_desc != blank or b_img != blank -%}
+                <div class="as-key-ingredients__card" {{ block.shopify_attributes }}>
+                  {%- if b_img != blank -%}
+                    <div class="as-key-ingredients__img-wrap">
+                      <img
+                        src="{{ b_img | image_url: width: 360 }}"
+                        alt="{{ b_title | default: 'Key Ingredient' | escape }}"
+                        loading="lazy"
+                        width="160"
+                        height="160"
+                      >
+                    </div>
+                  {%- endif -%}
+                  {%- if b_title != blank -%}
+                    <h3 class="as-key-ingredients__title">{{ b_title }}</h3>
+                  {%- endif -%}
+                  {%- if b_desc != blank -%}
+                    <p class="as-key-ingredients__desc">{{ b_desc }}</p>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+
+      {%- if desktop_layout == 'carousel' and section.settings.show_desktop_arrows -%}
+        <button
+          type="button"
+          class="as-key-ingredients__arrow as-key-ingredients__arrow--next"
+          aria-label="Next ingredients"
+          data-as-ki-next
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      {%- endif -%}
+    </div>
+
+    {%- if mobile_layout == 'carousel' and section.settings.show_mobile_dots -%}
+      <div class="as-key-ingredients__dots-wrap as-key-ingredients__dots-wrap--mobile" aria-hidden="true">
+        {%- for i in (1..item_count) -%}
+          <span class="as-key-ingredients__dot{% if forloop.first %} active{% endif %}"></span>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if desktop_layout == 'carousel' and section.settings.show_desktop_dots -%}
+      <div class="as-key-ingredients__dots-wrap as-key-ingredients__dots-wrap--desktop" aria-hidden="true">
+        {%- for i in (1..item_count) -%}
+          <span class="as-key-ingredients__dot{% if forloop.first %} active{% endif %}" data-dot-index="{{ forloop.index0 }}"></span>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+  <style>
+    #as-key-ingredients-{{ section.id }} {
+      background-color: {{ section.settings.bg_color | default: 'transparent' }};
+      padding-top: {{ section.settings.padding_top_desktop | default: 45 }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop | default: 45 }}px;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      margin: 0;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    #as-key-ingredients-{{ section.id }} .container,
+    #as-key-ingredients-{{ section.id }} .container-1170,
+    #as-key-ingredients-{{ section.id }} .container-1770,
+    #as-key-ingredients-{{ section.id }} .container-full {
+      padding-left: {{ section.settings.padding_side_desktop | default: 80 }}px !important;
+      padding-right: {{ section.settings.padding_side_desktop | default: 80 }}px !important;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    {% if section.settings.container == '1170' %}
+      #as-key-ingredients-{{ section.id }} .container-1170 {
+        max-width: 1200px;
+      }
+    {% elsif section.settings.container == '1770' %}
+      #as-key-ingredients-{{ section.id }} .container-1770 {
+        max-width: 1800px;
+      }
+    {% elsif section.settings.container == 'fullwidth' %}
+      #as-key-ingredients-{{ section.id }} .container-full {
+        max-width: 100%;
+      }
+    {% else %}
+      #as-key-ingredients-{{ section.id }} .container {
+        max-width: 100%;
+      }
+    {% endif %}
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__header {
+      margin-bottom: {{ section.settings.heading_mb | default: 35 }}px;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__header--left {
+      text-align: left;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__header--center {
+      text-align: center;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__heading {
+      font-size: {{ section.settings.heading_size | default: 28 }}px;
+      font-weight: 700;
+      line-height: 1.25;
+      color: {{ section.settings.heading_color | default: '#2b1408' }};
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__slider-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__arrow {
+      position: absolute;
+      top: 40%;
+      transform: translateY(-50%);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: {{ section.settings.title_color | default: '#0d1b3e' }};
+      cursor: pointer;
+      z-index: 5;
+      transition: all 0.2s ease;
+      user-select: none;
+      padding: 0;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__arrow:hover {
+      background: {{ section.settings.title_color | default: '#0d1b3e' }};
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__arrow:disabled,
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__arrow.is-disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__arrow--prev {
+      left: -22px;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__arrow--next {
+      right: -22px;
+    }
+
+    /* Desktop View (min-width: 821px) */
+    @media (min-width: 821px) {
+      /* Base Desktop Grid */
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* Desktop Grid Layout */
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-grid {
+        display: grid;
+        gap: {{ section.settings.grid_gap_desktop | default: 28 }}px;
+        align-items: start;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-grid.as-key-ingredients__grid--items-1 {
+        grid-template-columns: minmax(200px, 340px);
+        justify-content: center;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-grid.as-key-ingredients__grid--items-2 {
+        grid-template-columns: repeat(2, minmax(200px, 340px));
+        justify-content: center;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-grid.as-key-ingredients__grid--items-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-grid.as-key-ingredients__grid--items-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-grid.as-key-ingredients__grid--items-5,
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-grid.as-key-ingredients__grid--items-6,
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-grid.as-key-ingredients__grid--items-7,
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-grid.as-key-ingredients__grid--items-8 {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+
+      /* Desktop Carousel Layout */
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-carousel {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        gap: {{ section.settings.grid_gap_desktop | default: 28 }}px;
+        padding-top: 4px;
+        padding-bottom: 8px;
+        scrollbar-width: none;
+        justify-content: flex-start;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-carousel::-webkit-scrollbar {
+        display: none;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--desktop-carousel .as-key-ingredients__card {
+        flex: 0 0 {{ section.settings.desktop_card_width | default: 260 }}px !important;
+        max-width: {{ section.settings.desktop_card_width | default: 260 }}px !important;
+        width: {{ section.settings.desktop_card_width | default: 260 }}px !important;
+        scroll-snap-align: start;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__dots-wrap--mobile {
+        display: none !important;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__dots-wrap--desktop {
+        display: flex !important;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 24px;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__dots-wrap--desktop .as-key-ingredients__dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: background-color 0.25s ease, width 0.25s ease;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__dots-wrap--desktop .as-key-ingredients__dot.active {
+        width: 24px;
+        border-radius: 4px;
+        background-color: {{ section.settings.title_color | default: '#0d1b3e' }};
+      }
+    }
+
+    /* Card & Image Centering */
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__card {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      text-align: {{ section.settings.card_alignment | default: 'center' }} !important;
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100% !important;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__img-wrap {
+      width: 100% !important;
+      height: {{ section.settings.image_height_desktop | default: 120 }}px;
+      display: flex !important;
+      align-items: flex-end !important;
+      justify-content: center !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      margin-top: 0 !important;
+      margin-bottom: 8px !important;
+      text-align: center !important;
+      position: relative !important;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__img-wrap img {
+      max-width: 100% !important;
+      max-height: 100% !important;
+      width: auto !important;
+      height: auto !important;
+      object-fit: {{ section.settings.image_fit | default: 'contain' }} !important;
+      object-position: bottom center !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      display: block !important;
+      {% if section.settings.enable_image_hover %}
+        transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      {% endif %}
+    }
+
+    {% if section.settings.enable_image_hover %}
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__card:hover .as-key-ingredients__img-wrap img {
+        transform: scale(1.08);
+      }
+    {% endif %}
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__title {
+      font-size: {{ section.settings.title_size | default: 17 }}px;
+      font-weight: {{ section.settings.title_font_weight | default: '700' }};
+      color: {{ section.settings.title_color | default: '#0d1b3e' }};
+      margin: 0 auto 6px auto;
+      line-height: 1.25;
+      width: 100%;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__desc {
+      font-size: {{ section.settings.desc_size | default: 14 }}px;
+      line-height: 1.45;
+      color: {{ section.settings.desc_color | default: '#4a5b78' }};
+      margin: 0 auto;
+      max-width: {{ section.settings.desc_max_width | default: 240 }}px;
+      width: 100%;
+    }
+
+    #as-key-ingredients-{{ section.id }} .as-key-ingredients__dots-wrap {
+      display: none;
+    }
+
+    /* Tablet & Mobile Breakpoints */
+    @media (max-width: 820px) {
+      #as-key-ingredients-{{ section.id }} {
+        padding-top: {{ section.settings.padding_top_mobile | default: 30 }}px;
+        padding-bottom: {{ section.settings.padding_bottom_mobile | default: 30 }}px;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      #as-key-ingredients-{{ section.id }} .container,
+      #as-key-ingredients-{{ section.id }} .container-1170,
+      #as-key-ingredients-{{ section.id }} .container-1770,
+      #as-key-ingredients-{{ section.id }} .container-full {
+        padding-left: {{ section.settings.padding_side_mobile | default: 15 }}px !important;
+        padding-right: {{ section.settings.padding_side_mobile | default: 15 }}px !important;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__heading {
+        font-size: {{ section.settings.heading_size_mobile | default: 22 }}px;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__header {
+        margin-bottom: 20px;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__card {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: 100% !important;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__img-wrap {
+        width: 100% !important;
+        height: {{ section.settings.image_height_mobile | default: 75 }}px !important;
+        display: flex !important;
+        align-items: flex-end !important;
+        justify-content: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-top: 0 !important;
+        margin-bottom: 6px !important;
+        text-align: center !important;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__img-wrap img {
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        object-position: bottom center !important;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__title {
+        font-size: {{ section.settings.title_size_mobile | default: 14 }}px;
+        margin-bottom: 4px;
+        text-align: center !important;
+        width: 100% !important;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__desc {
+        font-size: {{ section.settings.desc_size_mobile | default: 12 }}px;
+        line-height: 1.35;
+        text-align: center !important;
+        width: 100% !important;
+      }
+
+      /* Mobile Mode: Carousel / Swipe Slider */
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--mobile-carousel {
+        display: flex !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: {{ section.settings.grid_gap_mobile | default: 16 }}px;
+        padding-top: 6px;
+        padding-bottom: 12px;
+        scrollbar-width: none;
+        justify-content: flex-start;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--mobile-carousel::-webkit-scrollbar {
+        display: none;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--mobile-carousel .as-key-ingredients__card {
+        flex: 0 0 {{ section.settings.mobile_card_width | default: 200 }}px;
+        max-width: {{ section.settings.mobile_card_width | default: 200 }}px;
+        scroll-snap-align: center;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        align-items: center !important;
+        text-align: center !important;
+      }
+
+      /* Mobile Mode: Grid */
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__grid--mobile-grid {
+        display: grid !important;
+        grid-template-columns: repeat({{ mobile_columns }}, 1fr) !important;
+        gap: {{ section.settings.grid_gap_mobile | default: 16 }}px;
+        width: 100%;
+        justify-items: center !important;
+        align-items: start !important;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__dots-wrap {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.2);
+        transition: background-color 0.2s ease, width 0.2s ease;
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__dot.active {
+        width: 16px;
+        border-radius: 4px;
+        background-color: {{ section.settings.title_color | default: '#0d1b3e' }};
+      }
+
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__arrow,
+      #as-key-ingredients-{{ section.id }} .as-key-ingredients__dots-wrap--desktop {
+        display: none !important;
+      }
+    }
+  </style>
+
+  <script>
+    (function() {
+      var section = document.getElementById('as-key-ingredients-{{ section.id }}');
+      if (!section) return;
+
+      var grid = section.querySelector('[data-as-ki-grid]');
+      if (!grid) return;
+
+      var prevBtn = section.querySelector('[data-as-ki-prev]');
+      var nextBtn = section.querySelector('[data-as-ki-next]');
+      var desktopDots = section.querySelectorAll('.as-key-ingredients__dots-wrap--desktop .as-key-ingredients__dot');
+      var mobileDots = section.querySelectorAll('.as-key-ingredients__dots-wrap--mobile .as-key-ingredients__dot');
+
+      function getStep() {
+        var card = grid.querySelector('.as-key-ingredients__card');
+        var gap = 24;
+        if (window.innerWidth <= 820) {
+          gap = {{ section.settings.grid_gap_mobile | default: 16 }};
+        } else {
+          gap = {{ section.settings.grid_gap_desktop | default: 28 }};
+        }
+        return card ? (card.offsetWidth + gap) : 280;
+      }
+
+      function updateArrows() {
+        if (!prevBtn && !nextBtn) return;
+        var maxScroll = grid.scrollWidth - grid.clientWidth;
+        if (maxScroll <= 4) {
+          if (prevBtn) prevBtn.disabled = true;
+          if (nextBtn) nextBtn.disabled = true;
+          return;
+        }
+        if (prevBtn) {
+          prevBtn.disabled = grid.scrollLeft <= 4;
+        }
+        if (nextBtn) {
+          nextBtn.disabled = grid.scrollLeft >= maxScroll - 4;
+        }
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+          grid.scrollBy({ left: -getStep(), behavior: 'smooth' });
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+          grid.scrollBy({ left: getStep(), behavior: 'smooth' });
+        });
+      }
+
+      if (desktopDots.length > 0) {
+        desktopDots.forEach(function(dot, idx) {
+          dot.addEventListener('click', function() {
+            grid.scrollTo({ left: idx * getStep(), behavior: 'smooth' });
+          });
+        });
+      }
+
+      grid.addEventListener('scroll', function() {
+        updateArrows();
+        var step = getStep();
+        if (step <= 0) return;
+        var activeIndex = Math.round(grid.scrollLeft / step);
+
+        if (desktopDots.length > 0) {
+          desktopDots.forEach(function(dot, idx) {
+            if (idx === activeIndex) {
+              dot.classList.add('active');
+            } else {
+              dot.classList.remove('active');
+            }
+          });
+        }
+
+        if (mobileDots.length > 0) {
+          mobileDots.forEach(function(dot, idx) {
+            if (idx === activeIndex) {
+              dot.classList.add('active');
+            } else {
+              dot.classList.remove('active');
+            }
+          });
+        }
+      }, { passive: true });
+
+      window.addEventListener('resize', updateArrows);
+      setTimeout(updateArrows, 150);
+    })();
+  </script>
+{%- else -%}
+  <style>
+    #shopify-section-{{ section.id }} {
+      display: none !important;
+    }
+  </style>
+  <script>
+    (function() {
+      var s = document.getElementById('shopify-section-{{ section.id }}');
+      if (s) s.style.display = 'none';
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Key Ingredients",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Key Ingredients"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading font size (Desktop)",
+      "min": 18,
+      "max": 42,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading font size (Mobile)",
+      "min": 16,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "heading_mb",
+      "label": "Heading bottom spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 35
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#2b1408"
+    },
+    {
+      "type": "header",
+      "content": "Desktop Display Mode"
+    },
+    {
+      "type": "select",
+      "id": "desktop_layout",
+      "label": "Desktop Layout Style",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Carousel / Slider" }
+      ],
+      "default": "grid",
+      "info": "Choose 'Grid' for multi-column layout or 'Carousel' for horizontal slider."
+    },
+    {
+      "type": "range",
+      "id": "desktop_card_width",
+      "label": "Card width in Carousel mode (Desktop)",
+      "min": 180,
+      "max": 380,
+      "step": 10,
+      "unit": "px",
+      "default": 260,
+      "info": "Controls card width when in Carousel mode on desktop."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_desktop_arrows",
+      "label": "Show navigation arrows on desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_desktop_dots",
+      "label": "Show indicator dots on desktop",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Mobile Display Mode"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile Layout Style",
+      "options": [
+        { "value": "carousel", "label": "Carousel / Swipe Slider" },
+        { "value": "grid", "label": "Grid" }
+      ],
+      "default": "carousel",
+      "info": "Choose 'Carousel' for a swipeable horizontal card slider or 'Grid' for multi-column rows."
+    },
+    {
+      "type": "select",
+      "id": "mobile_columns",
+      "label": "Mobile Grid Columns (if Grid selected)",
+      "options": [
+        { "value": "1", "label": "1 Column" },
+        { "value": "2", "label": "2 Columns" },
+        { "value": "3", "label": "3 Columns" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_width",
+      "label": "Card width in Carousel mode",
+      "min": 140,
+      "max": 280,
+      "step": 10,
+      "unit": "px",
+      "default": 200,
+      "info": "Controls card width when swiping horizontally on mobile."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mobile_dots",
+      "label": "Show swipe indicator dots on mobile",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_mobile",
+      "label": "Card gap (Mobile)",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Image Sizing & Centering"
+    },
+    {
+      "type": "range",
+      "id": "image_height_desktop",
+      "label": "Image height (Desktop)",
+      "min": 80,
+      "max": 240,
+      "step": 5,
+      "unit": "px",
+      "default": 150
+    },
+    {
+      "type": "range",
+      "id": "image_height_mobile",
+      "label": "Image height (Mobile)",
+      "min": 60,
+      "max": 180,
+      "step": 5,
+      "unit": "px",
+      "default": 110
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        { "value": "contain", "label": "Contain (Scale proportionally without crop)" },
+        { "value": "cover", "label": "Cover (Fill entire image box)" }
+      ],
+      "default": "contain"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_image_hover",
+      "label": "Enable image hover zoom effect",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Card & Text Layout"
+    },
+    {
+      "type": "select",
+      "id": "card_alignment",
+      "label": "Card text alignment",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "left", "label": "Left" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "card_max_width",
+      "label": "Card max width (Desktop)",
+      "min": 180,
+      "max": 360,
+      "step": 10,
+      "unit": "px",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_desktop",
+      "label": "Card gap (Desktop)",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title font size (Desktop)",
+      "min": 13,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Title font size (Mobile)",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "title_font_weight",
+      "label": "Title font weight",
+      "options": [
+        { "value": "600", "label": "Semi-Bold (600)" },
+        { "value": "700", "label": "Bold (700)" },
+        { "value": "800", "label": "Extra-Bold (800)" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Ingredient title color",
+      "default": "#0d1b3e"
+    },
+    {
+      "type": "range",
+      "id": "desc_size",
+      "label": "Description font size (Desktop)",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "desc_size_mobile",
+      "label": "Description font size (Mobile)",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "desc_max_width",
+      "label": "Description max width",
+      "min": 160,
+      "max": 320,
+      "step": 10,
+      "unit": "px",
+      "default": 240
+    },
+    {
+      "type": "color",
+      "id": "desc_color",
+      "label": "Ingredient description color",
+      "default": "#4a5b78"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "container",
+      "label": "Container",
+      "default": "container",
+      "options": [
+        { "value": "container", "label": "Default (Page width)" },
+        { "value": "1170", "label": "1170px" },
+        { "value": "1770", "label": "1770px" },
+        { "value": "fullwidth", "label": "Full width" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Top padding (Desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Bottom padding (Desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "padding_side_desktop",
+      "label": "Left & Right padding (Desktop)",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 80,
+      "info": "Applied equally to both left and right sides."
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top padding (Mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom padding (Mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_side_mobile",
+      "label": "Left & Right padding (Mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 15,
+      "info": "Applied equally to both left and right sides."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ingredient",
+      "name": "Ingredient item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Ingredient Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Key Ingredients",
+      "blocks": []
+    }
+  ]
+}
+{% endschema %}

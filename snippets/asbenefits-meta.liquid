@@ -1,0 +1,265 @@
+{%- comment -%}
+  Renders the benefits_meta section content.
+  Accepts:
+  - section: {Object} The section object containing settings and blocks.
+  - product: {Object} The product object (defaults to global product).
+{%- endcomment -%}
+
+{%- liquid
+  assign current_product = product | default: product
+  assign banner_img = current_product.metafields.custom.benefits_banner.value | default: current_product.metafields.custom.benefits_banner
+  if banner_img == blank
+    assign banner_img = section.settings['asbenefit-img']
+  endif
+
+  assign b_title = current_product.metafields.custom.title.value | default: current_product.metafields.custom.title | strip_html | strip
+  if b_title == blank and banner_img != blank
+    assign b_title = section.settings.title | strip_html | strip
+  endif
+  if b_title == blank
+    assign b_title = section.settings.title | strip_html | strip
+  endif
+
+  assign b_pera = current_product.metafields.custom.pera.value | default: current_product.metafields.custom.pera | strip_html | strip
+  if b_pera == blank and banner_img != blank
+    assign b_pera = section.settings.pera | strip_html | strip
+  endif
+  if b_pera == blank
+    assign b_pera = section.settings.pera | strip_html | strip
+  endif
+
+  assign benefit_title_text = section.settings['benefit-title'] | default: 'Benefits:'
+
+  assign valid_benefits_count = 0
+  for i in (1..7)
+    assign b_key = 'benefits0' | append: i
+    assign b_val = current_product.metafields.custom[b_key].value | default: current_product.metafields.custom[b_key]
+    if b_val == blank
+      assign b_key_alt = 'benefits' | append: i
+      assign b_val = current_product.metafields.custom[b_key_alt].value | default: current_product.metafields.custom[b_key_alt]
+    endif
+    assign b_clean = b_val | strip_html | strip
+    if b_clean != blank
+      assign valid_benefits_count = valid_benefits_count | plus: 1
+    endif
+  endfor
+
+  if valid_benefits_count == 0 and section.blocks.size > 0
+    for block in section.blocks
+      assign b_item = block.settings.benefit | strip_html | strip
+      if b_item != blank and b_item != ''
+        assign valid_benefits_count = valid_benefits_count | plus: 1
+      endif
+    endfor
+  endif
+
+  assign has_benefits_section = false
+  if banner_img != blank and banner_img != ''
+    assign has_benefits_section = true
+  elsif valid_benefits_count > 0
+    assign has_benefits_section = true
+  endif
+
+  # Fallback settings for padding and styling
+  assign pt_desk = section.settings.benefits_padding_top | default: section.settings.padding_top | default: 35
+  assign pb_desk = section.settings.benefits_padding_bottom | default: section.settings.padding_bottom | default: 35
+  assign pt_mbl = section.settings.benefits_padding_top_mobile | default: section.settings.padding_top_mobile | default: 35
+  assign pb_mbl = section.settings.benefits_padding_bottom_mobile | default: section.settings.padding_bottom_mobile | default: 20
+
+  assign bg_color = section.settings.benefits_bg_color | default: 'transparent'
+  assign title_color = section.settings.benefits_title_color | default: '#1b3a6e'
+  assign pera_color = section.settings.benefits_text_color | default: '#000000'
+  assign heading_color = section.settings.benefits_heading_color | default: '#1b3a6e'
+  assign bullet_color = section.settings.benefits_bullet_color | default: '#1b3a6e'
+  assign list_color = section.settings.benefits_list_color | default: '#333333'
+  assign img_radius = section.settings.benefits_image_radius | default: 10
+-%}
+
+{%- if has_benefits_section -%}
+  <style>
+    #shopify-section-{{ section.id }} .as-image-banner {
+      padding-top: {{ pt_desk }}px;
+      padding-bottom: {{ pb_desk }}px;
+      background: {{ bg_color }};
+    }
+    #shopify-section-{{ section.id }} .as-image-banner .row {
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    #shopify-section-{{ section.id }} .as-image-banner .col-6 {
+      width: calc(50% - 15px);
+    }
+    #shopify-section-{{ section.id }} .as-image-banner .col-12 {
+      width: 100%;
+    }
+    #shopify-section-{{ section.id }} .benefits-section {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+    }
+    #shopify-section-{{ section.id }} .benefits-section strong {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+      font-size: 25px;
+      color: {{ heading_color }};
+    }
+    #shopify-section-{{ section.id }} .benefits-list {
+      list-style: none;
+      padding-left: 0;
+      position: relative;
+      margin: 0;
+    }
+    #shopify-section-{{ section.id }} .benefits-list li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 10px;
+      font-size: 20px;
+      line-height: 2.5;
+      color: {{ list_color }};
+    }
+    #shopify-section-{{ section.id }} .benefits-list li::before {
+      content: "•";
+      color: {{ bullet_color }};
+      font-size: 35px;
+      position: absolute;
+      left: 0;
+      top: -18px;
+    }
+    #shopify-section-{{ section.id }} .benefits-list li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 7px;
+      width: 1px;
+      height: 100px;
+      background: #e6ebf2;
+    }
+    #shopify-section-{{ section.id }} .text-style::first-letter {
+      text-transform: uppercase;
+    }
+    #shopify-section-{{ section.id }} .as_benefit_title h2 {
+      font-size: 28px;
+      font-weight: 600;
+      color: {{ title_color }};
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.2;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    #shopify-section-{{ section.id }} .as_benefit_title p {
+      font-size: 18px;
+      line-height: 1.2;
+      margin-top: 0;
+      font-family: 'Poppins', sans-serif;
+      color: {{ pera_color }};
+      font-weight: 400;
+    }
+    #shopify-section-{{ section.id }} .asbaneift_img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      border-radius: {{ img_radius }}px !important;
+    }
+    #shopify-section-{{ section.id }} .aspading {
+      padding-left: 80px !important;
+      padding-right: 80px !important;
+      max-width: 100% !important;
+      box-sizing: border-box;
+    }
+    @media screen and (max-width: 767px) {
+      #shopify-section-{{ section.id }} .as-image-banner {
+        padding-top: {{ pt_mbl }}px;
+        padding-bottom: {{ pb_mbl }}px;
+      }
+      #shopify-section-{{ section.id }} .as-image-banner .col-6 {
+        width: 100%;
+      }
+      #shopify-section-{{ section.id }} .as_benefit_title h2 {
+        font-size: 20px;
+      }
+      #shopify-section-{{ section.id }} .as_benefit_title p {
+        font-size: 15px;
+      }
+      #shopify-section-{{ section.id }} .benefits-list li {
+        font-size: 15px !important;
+      }
+      #shopify-section-{{ section.id }} .benefits-list li::before {
+        top: -25px;
+      }
+      #shopify-section-{{ section.id }} .benefits-list li:not(:last-child)::after {
+        content: "";
+        width: 1px;
+        height: 75px !important;
+      }
+      #shopify-section-{{ section.id }} .benefits-section strong {
+        margin-bottom: -5px;
+        font-size: 20px;
+      }
+      #shopify-section-{{ section.id }} .aspading {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+      }
+    }
+  </style>
+
+  <section class="as-image-banner">
+    <div class="container-1170 aspading">
+      <div class="row">
+        {%- if banner_img != blank and banner_img != '' -%}
+          <div class="col-6">
+            <img class="asbaneift_img" src="{{ banner_img | img_url: 'master' }}" alt="{{ b_title | default: current_product.title | escape }}" loading="lazy">
+          </div>
+        {%- endif -%}
+        <div class="col-6{% unless banner_img != blank and banner_img != '' %} col-12{% endunless %}">
+          <div class="as_benefit_title">
+            {%- if b_title != blank -%}
+              <h2>{{ section.settings.title | default: current_product.metafields.custom.title.value | default: current_product.metafields.custom.title | default: b_title }}</h2>
+            {%- endif -%}
+            {%- if b_pera != blank -%}
+              <p>{{ section.settings.pera | default: current_product.metafields.custom.pera.value | default: current_product.metafields.custom.pera | default: b_pera }}</p>
+            {%- endif -%}
+          </div>
+          {%- if valid_benefits_count > 0 -%}
+            <div>
+              <div class="benefits-section">
+                <strong>{{ benefit_title_text }}</strong>
+                <ul class="benefits-list">
+                  {%- assign rendered_benefit_count = 0 -%}
+                  {%- for i in (1..7) -%}
+                    {%- assign b_key = 'benefits0' | append: i -%}
+                    {%- assign b_val = current_product.metafields.custom[b_key].value | default: current_product.metafields.custom[b_key] -%}
+                    {%- if b_val == blank -%}
+                      {%- assign b_key_alt = 'benefits' | append: i -%}
+                      {%- assign b_val = current_product.metafields.custom[b_key_alt].value | default: current_product.metafields.custom[b_key_alt] -%}
+                    {%- endif -%}
+                    {%- assign b_check = b_val | strip_html | strip -%}
+                    {%- if b_check != blank -%}
+                      {%- assign rendered_benefit_count = rendered_benefit_count | plus: 1 -%}
+                      <li class="text-style">{{ b_val }}</li>
+                    {%- endif -%}
+                  {%- endfor -%}
+                  {%- if rendered_benefit_count == 0 and section.blocks.size > 0 -%}
+                    {%- for block in section.blocks -%}
+                      {%- assign b_item = block.settings.benefit | strip_html | strip -%}
+                      {%- if b_item != blank -%}
+                        <li class="text-style" {{ block.shopify_attributes }}>{{ block.settings.benefit }}</li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                </ul>
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </section>
+{%- else -%}
+  <style>
+    #shopify-section-{{ section.id }} {
+      display: none !important;
+    }
+  </style>
+{%- endif -%}

@@ -1,0 +1,170 @@
+{%- liquid
+  assign b_t1 = product.metafields.custom.benefit_text1 | strip_html | strip
+  assign b_t2 = product.metafields.custom.benefit_text2 | strip_html | strip
+  assign b_t3 = product.metafields.custom.benefit_text3 | strip_html | strip
+  assign b_t4 = product.metafields.custom.benefit_text4 | strip_html | strip
+  assign b_t5 = product.metafields.custom.benefit_text5 | strip_html | strip
+
+  assign has_b1 = false
+  if product.metafields.custom.benefit_icon1 != blank or b_t1 != blank
+    assign has_b1 = true
+  endif
+
+  assign has_b2 = false
+  if product.metafields.custom.benefit_icon2 != blank or b_t2 != blank
+    assign has_b2 = true
+  endif
+
+  assign has_b3 = false
+  if product.metafields.custom.benefit_icon3 != blank or b_t3 != blank
+    assign has_b3 = true
+  endif
+
+  assign has_b4 = false
+  if product.metafields.custom.benefit_icon4 != blank or b_t4 != blank
+    assign has_b4 = true
+  endif
+
+  assign has_b5 = false
+  if product.metafields.custom.benefit_icon5 != blank or b_t5 != blank
+    assign has_b5 = true
+  endif
+-%}
+
+{%- if template.suffix == 'new-product-page' -%}
+  {%- if has_b1 or has_b2 or has_b3 or has_b4 or has_b5 -%}
+    <div class="prd_benefits_main">
+      {% if has_b1 %}
+        <div class="prd_benefit_inner">
+          {% if product.metafields.custom.benefit_icon1 != blank %}
+            <div class="benefit_img">
+              <img src="{{ product.metafields.custom.benefit_icon1 | img_url: 'original' }}" alt="{{ block.settings.astxtone | default: b_t1 | escape }}">
+            </div>
+          {% endif %}
+          {% if b_t1 != blank %}
+            <div class="benefit_text">
+              {{ product.metafields.custom.benefit_text1 }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+      
+      {% if has_b2 %}
+        <div class="prd_benefit_inner">
+          {% if product.metafields.custom.benefit_icon2 != blank %}
+            <div class="benefit_img">
+              <img src="{{ product.metafields.custom.benefit_icon2 | img_url: 'original' }}" alt="{{ block.settings.astxttwo | default: b_t2 | escape }}">
+            </div>
+          {% endif %}
+          {% if b_t2 != blank %}
+            <div class="benefit_text">
+              {{ product.metafields.custom.benefit_text2 }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+      
+      {% if has_b3 %}
+        <div class="prd_benefit_inner">
+          {% if product.metafields.custom.benefit_icon3 != blank %}
+            <div class="benefit_img">
+              <img src="{{ product.metafields.custom.benefit_icon3 | img_url: 'original' }}" alt="{{ block.settings.astxtthree | default: b_t3 | escape }}">
+            </div>
+          {% endif %}
+          {% if b_t3 != blank %}
+            <div class="benefit_text">
+              {{ product.metafields.custom.benefit_text3 }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+      
+      {% if has_b4 %}
+        <div class="prd_benefit_inner">
+          {% if product.metafields.custom.benefit_icon4 != blank %}
+            <div class="benefit_img">
+              <img src="{{ product.metafields.custom.benefit_icon4 | img_url: 'original' }}" alt="{{ block.settings.astxtfour | default: b_t4 | escape }}">
+            </div>
+          {% endif %}
+          {% if b_t4 != blank %}
+            <div class="benefit_text">
+              {{ product.metafields.custom.benefit_text4 }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+      
+      {% if has_b5 %}
+        <div class="prd_benefit_inner">
+          {% if product.metafields.custom.benefit_icon5 != blank %}
+            <div class="benefit_img">
+              <img src="{{ product.metafields.custom.benefit_icon5 | img_url: 'original' }}" alt="{{ block.settings.astxtfive | default: b_t5 | escape }}">
+            </div>
+          {% endif %}
+          {% if b_t5 != blank %}
+            <div class="benefit_text">
+              {{ product.metafields.custom.benefit_text5 }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  {%- endif -%}
+{%- else -%}
+  <div class="prd_benefits_main">
+    {% if product.metafields.custom.benefit_icon1 != blank %}
+      <div class="prd_benefit_inner">
+        <div class="benefit_img">
+          <img src="{{ product.metafields.custom.benefit_icon1 | img_url: 'original' }}" alt="{{ block.settings.astxtone }}">
+        </div>
+        <div class="benefit_text">
+          {{ product.metafields.custom.benefit_text1 }}
+        </div>
+      </div>
+    {% endif %}
+    
+    {% if product.metafields.custom.benefit_icon2 != blank %}
+      <div class="prd_benefit_inner">
+        <div class="benefit_img">
+          <img src="{{ product.metafields.custom.benefit_icon2 | img_url: 'original' }}" alt="{{ block.settings.astxttwo }}">
+        </div>
+        <div class="benefit_text">
+          {{ product.metafields.custom.benefit_text2 }}
+        </div>
+      </div>
+    {% endif %}
+    
+    {% if product.metafields.custom.benefit_icon3 != blank %}
+      <div class="prd_benefit_inner">
+        <div class="benefit_img">
+          <img src="{{ product.metafields.custom.benefit_icon3 | img_url: 'original' }}" alt="{{ block.settings.astxtthree }}">
+        </div>
+        <div class="benefit_text">
+          {{ product.metafields.custom.benefit_text3 }}
+        </div>
+      </div>
+    {% endif %}
+    
+    {% if product.metafields.custom.benefit_icon4 != blank %}
+      <div class="prd_benefit_inner">
+        <div class="benefit_img">
+          <img src="{{ product.metafields.custom.benefit_icon4 | img_url: 'original' }}" alt="{{ block.settings.astxtfour }}">
+        </div>
+        <div class="benefit_text">
+          {{ product.metafields.custom.benefit_text4 }}
+        </div>
+      </div>
+    {% endif %}
+    
+    {% if product.metafields.custom.benefit_icon5 != blank %}
+      <div class="prd_benefit_inner">
+        <div class="benefit_img">
+          <img src="{{ product.metafields.custom.benefit_icon5 | img_url: 'original' }}" alt="{{ block.settings.astxtfive }}">
+        </div>
+        <div class="benefit_text">
+          {{ product.metafields.custom.benefit_text5 }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{%- endif -%}

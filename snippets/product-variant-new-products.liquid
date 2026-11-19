@@ -1,0 +1,506 @@
+{%- liquid
+  assign picker_type = block.settings.picker_type
+  assign enable_border_top = block.settings.enable_border_top
+  assign enable_border_bottom = block.settings.enable_border_bottom
+  assign color_border = block.settings.color_border
+-%}
+<div
+  class="productView-options npp-variant-options{% if enable_border_top %} has-border-top{% endif %}{% if enable_border_bottom %} has-border-bottom{% endif %}"
+  style="--color-border: {{ color_border }}"
+  data-lang="{{ request.locale.iso_code | downcase }}"
+  data-default-lang="{{ localization.country.iso_code | downcase }}"
+>
+  {%- if variantCount > 0 and product.has_only_default_variant != true -%}
+    <div class="productView-variants halo-productOptions" id="product-option-{{ product.id }}" data-type="{{ picker_type }}">
+      {%- if picker_type == 'button' -%}
+        <variant-radios
+          class="no-js-hidden product-option has-default"
+          data-product="{{ product.id }}"
+          data-section="{{ section.id }}"
+          data-url="{{ product.url }}"
+        >
+          {%- for option in product.options_with_values -%}
+            {%- liquid
+              assign option_name = option.name | downcase
+              assign option_index = forloop.index0
+              assign is_pack_option = false
+              if option_name contains 'pack' or option_name contains 'size' or option_name contains 'weight' or option_name contains 'month' or option_name contains 'duration' or option_name contains 'quantity' or option_name contains 'count' or option_name contains 'bottle' or option_name contains 'strip' or option_name contains 'box' or option_name contains 'tub'
+                assign is_pack_option = true
+              endif
+              assign enable_pack_cards = true
+              assign pack_layout = block.settings.pack_layout | default: 'carousel'
+              assign pack_arrow_pos = block.settings.pack_arrow_position | default: 'both'
+              assign show_header_arrows = block.settings.show_pack_header_arrows
+              if show_header_arrows == nil
+                if pack_arrow_pos == 'header' or pack_arrow_pos == 'both'
+                  assign show_header_arrows = true
+                else
+                  assign show_header_arrows = false
+                endif
+              endif
+
+              assign show_carousel_arrows = block.settings.show_pack_carousel_arrows
+              if show_carousel_arrows == nil
+                if pack_arrow_pos == 'sides' or pack_arrow_pos == 'both'
+                  assign show_carousel_arrows = true
+                else
+                  assign show_carousel_arrows = false
+                endif
+              endif
+            -%}
+            <fieldset
+              class="js product-form__input npp-variant-input{% if is_pack_option and enable_pack_cards %}{% if pack_layout == 'carousel' %} npp-variant-input--pack-cards npp-variant-input--pack-carousel{% else %} npp-variant-input--pack-cards{% endif %}{% elsif is_pack_option %} npp-variant-input--pack{% else %} npp-variant-input--flavor{% endif %} clearfix"
+              data-product-attribute="set-rectangle"
+              data-option-index="{{ forloop.index0 }}"
+            >
+              {%- if is_pack_option and enable_pack_cards and pack_layout == 'carousel' -%}
+                <div class="npp-pack-header">
+                  <legend class="form__label">
+                    {{ option.name | append: ':' }}
+                    <span data-header-option>{{ option.selected_value }}</span>
+                  </legend>
+                  {%- if show_header_arrows -%}
+                    <div class="npp-pack-header-arrows" aria-label="Pack navigation">
+                      <button
+                        type="button"
+                        class="npp-pack-header-arrow npp-pack-header-arrow--prev"
+                        aria-label="Previous pack"
+                        data-pack-arrow-prev
+                        disabled
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                      </button>
+                      <button
+                        type="button"
+                        class="npp-pack-header-arrow npp-pack-header-arrow--next"
+                        aria-label="Next pack"
+                        data-pack-arrow-next
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                      </button>
+                    </div>
+                  {%- endif -%}
+                </div>
+              {%- else -%}
+                <legend class="form__label">
+                  {{ option.name | append: ':' }}
+                  <span data-header-option>{{ option.selected_value }}</span>
+                </legend>
+              {%- endif -%}
+
+              {%- if is_pack_option and enable_pack_cards and pack_layout == 'carousel' -%}
+                <div class="npp-pack-carousel-wrap" data-pack-carousel-wrap>
+                  {%- if show_carousel_arrows -%}
+                    <button
+                      type="button"
+                      class="npp-pack-side-arrow npp-pack-side-arrow--prev"
+                      aria-label="Previous pack"
+                      data-pack-arrow-prev
+                      disabled
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                  {%- endif -%}
+
+                  <div class="npp-pack-carousel-track" data-pack-carousel-track>
+              {%- endif -%}
+
+              {%- assign values = '' -%}
+              {%- assign card_counter = 0 -%}
+              {%- liquid
+                assign variants_available_arr = product.variants | map: 'available'
+                assign variants_option1_arr = product.variants | map: 'option1'
+                assign variants_option2_arr = product.variants | map: 'option2'
+                assign variants_option3_arr = product.variants | map: 'option3'
+              -%}
+
+              {%- for variant in product.variants -%}
+                {%- assign value = variant.options[option_index] -%}
+                {%- unless values contains value -%}
+                  {%- assign card_counter = card_counter | plus: 1 -%}
+                  {%- liquid
+                    assign values = values | join: ';'
+                    assign values = values | append: ';' | append: value
+                    assign values = values | split: ';'
+                    assign option_stock = 'soldout'
+
+                    for option1_name in variants_option1_arr
+                      case option.position
+                        when 1
+                          if variants_option1_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+                            assign option_stock = 'available'
+                          endif
+                        when 2
+                          if option1_name == product.selected_or_first_available_variant.option1 and variants_option2_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+                            assign option_stock = 'available'
+                          endif
+                        when 3
+                          if option1_name == product.selected_or_first_available_variant.option1 and variants_option2_arr[forloop.index0] == product.selected_or_first_available_variant.option2 and variants_option3_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+                            assign option_stock = 'available'
+                          endif
+                      endcase
+                    endfor
+
+                    # Find matching variant for this option value and current selections
+                    assign matched_variant = variant
+                    if product.options.size > 1
+                      for v in product.variants
+                        assign is_match = true
+                        if option_index == 0
+                          if v.option1 != value
+                            assign is_match = false
+                          endif
+                          if product.options.size > 1 and v.option2 != product.selected_or_first_available_variant.option2
+                            assign is_match = false
+                          endif
+                          if product.options.size > 2 and v.option3 != product.selected_or_first_available_variant.option3
+                            assign is_match = false
+                          endif
+                        elsif option_index == 1
+                          if v.option1 != product.selected_or_first_available_variant.option1
+                            assign is_match = false
+                          endif
+                          if v.option2 != value
+                            assign is_match = false
+                          endif
+                          if product.options.size > 2 and v.option3 != product.selected_or_first_available_variant.option3
+                            assign is_match = false
+                          endif
+                        elsif option_index == 2
+                          if v.option1 != product.selected_or_first_available_variant.option1
+                            assign is_match = false
+                          endif
+                          if v.option2 != product.selected_or_first_available_variant.option2
+                            assign is_match = false
+                          endif
+                          if v.option3 != value
+                            assign is_match = false
+                          endif
+                        endif
+                        if is_match
+                          assign matched_variant = v
+                          break
+                        endif
+                      endfor
+                    endif
+
+                    assign option_image = blank
+                    if matched_variant.image != blank
+                      assign option_image = matched_variant.image
+                    elsif matched_variant.featured_media != blank
+                      assign option_image = matched_variant.featured_media.preview_image
+                    elsif product.featured_image != blank
+                      assign option_image = product.featured_image
+                    endif
+
+                    # Dynamic titles and subtitles
+                    assign pack_title = value
+                    assign pack_subtitle = ''
+                    if matched_variant.metafields.custom.duration != blank
+                      assign pack_title = matched_variant.metafields.custom.duration
+                      assign pack_subtitle = matched_variant.metafields.custom.quantity | default: value
+                    elsif matched_variant.metafields.custom.pack_title != blank
+                      assign pack_title = matched_variant.metafields.custom.pack_title
+                      assign pack_subtitle = matched_variant.metafields.custom.quantity | default: value
+                    else
+                      assign pack_title = value
+                      if matched_variant.metafields.custom.quantity != blank
+                        assign pack_subtitle = matched_variant.metafields.custom.quantity
+                      endif
+                    endif
+
+                    # Savings calculation
+                    assign has_savings = false
+                    assign savings_amount = 0
+                    if matched_variant.compare_at_price > matched_variant.price
+                      assign savings_amount = matched_variant.compare_at_price | minus: matched_variant.price
+                      if savings_amount > 0
+                        assign has_savings = true
+                      endif
+                    endif
+
+                    # Badge (Most Popular)
+                    assign badge_text = ''
+                    if matched_variant.metafields.custom.badge != blank
+                      assign badge_text = matched_variant.metafields.custom.badge
+                    elsif matched_variant.metafields.custom.tag != blank
+                      assign badge_text = matched_variant.metafields.custom.tag
+                    else
+                      assign highlight_idx = block.settings.pack_card_highlight_index | default: 1
+                      if highlight_idx > 0 and card_counter == highlight_idx
+                        assign badge_text = block.settings.pack_card_badge_text | default: 'Most Popular'
+                      endif
+                    endif
+
+                    # Tax footnote
+                    assign show_tax = block.settings.show_pack_tax
+                    if show_tax == nil
+                      assign show_tax = true
+                    endif
+                    assign tax_text = block.settings.pack_card_tax_text | default: 'Inclusive of all taxes'
+                  -%}
+
+                  <input
+                    class="product-form__radio"
+                    type="radio"
+                    id="option-{{ product.id }}-{{ option.name | handle }}-{{ forloop.index0 }}-{{ section.id }}"
+                    name="{{ option.name }}"
+                    value="{{ value | escape }}"
+                    {% if option.selected_value == value %}checked{% endif %}
+                    {% if show_variant_image_group %}
+                      data-filter=".filter-{{ value | handle }}"
+                      data-metafields-vig="{{ matched_variant.metafields.custom.variant_image_group }}"
+                    {% endif %}
+                    data-variant-id="{{ matched_variant.id }}"
+                    onchange="var h=this.closest('fieldset')?.querySelector('[data-header-option]');if(h)h.innerText=this.value;"
+                  >
+                  {%- if is_pack_option and enable_pack_cards -%}
+                    <label
+                      class="product-form__label npp-pack-card {{ option_stock }}{% if badge_text != blank %} has-badge{% endif %}"
+                      for="option-{{ product.id }}-{{ option.name | handle }}-{{ forloop.index0 }}-{{ section.id }}"
+                      data-variant-id="{{ matched_variant.id }}"
+                    >
+                      {%- if badge_text != blank -%}
+                        <span class="npp-pack-card__badge">{{ badge_text }}</span>
+                      {%- endif -%}
+
+                      <span class="npp-pack-card__check" aria-hidden="true">
+                        <svg class="npp-pack-card__check-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M16.5 5.5L7.5 14.5L3.5 10.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+
+                      {%- if option_image != blank -%}
+                        <div class="npp-pack-card__image-wrap">
+                          {{
+                            option_image
+                            | image_url: width: 240
+                            | image_tag:
+                              loading: 'lazy',
+                              widths: '120, 180, 240',
+                              sizes: '(max-width: 767px) 90px, 120px',
+                              alt: pack_title
+                          }}
+                        </div>
+                      {%- endif -%}
+
+                      <div class="npp-pack-card__content">
+                        <span class="npp-pack-card__title">{{ pack_title }}</span>
+                        {%- if pack_subtitle != blank and pack_subtitle != pack_title -%}
+                          <span class="npp-pack-card__subtitle">{{ pack_subtitle }}</span>
+                        {%- endif -%}
+
+                        <div class="npp-pack-card__prices"><span class="npp-pack-card__price">{{ matched_variant.price | money }}</span>{%- if matched_variant.compare_at_price > matched_variant.price -%}<s class="npp-pack-card__compare-price">{{ matched_variant.compare_at_price | money }}</s>{%- endif -%}</div>
+
+                        {%- if block.settings.show_pack_savings != false and has_savings -%}
+                          <span class="npp-pack-card__savings">
+                            Save {{ savings_amount | money }}
+                          </span>
+                        {%- endif -%}
+
+                        {%- if show_tax and tax_text != blank -%}
+                          <span class="npp-pack-card__tax">{{ tax_text }}</span>
+                        {%- endif -%}
+                      </div>
+                    </label>
+                  {%- else -%}
+                    <label
+                      class="product-form__label npp-variant-label {{ option_stock }}{% if is_pack_option %} npp-variant-label--pack{% else %} npp-variant-label--flavor{% endif %}"
+                      for="option-{{ product.id }}-{{ option.name | handle }}-{{ forloop.index0 }}-{{ section.id }}"
+                      data-variant-id="{{ matched_variant.id }}"
+                    >
+                      {%- unless is_pack_option -%}
+                        {%- if option_image != blank -%}
+                          <span class="npp-variant-icon" aria-hidden="true">
+                            {{
+                              option_image
+                              | image_url: width: 72
+                              | image_tag:
+                                loading: 'lazy',
+                                widths: '36, 72',
+                                sizes: '36px',
+                                alt: value
+                            }}
+                          </span>
+                        {%- endif -%}
+                      {%- endunless -%}
+
+                      <span class="text option_meta_cover">
+                        <span class="option_value">{{ value }}</span>
+                        {%- if is_pack_option and matched_variant.metafields.custom.quantity != blank -%}
+                          <span class="variant_meta_data">{{ matched_variant.metafields.custom.quantity }}</span>
+                        {%- endif -%}
+                      </span>
+                    </label>
+                  {%- endif -%}
+                {%- endunless -%}
+              {%- endfor -%}
+
+              {%- if is_pack_option and enable_pack_cards and pack_layout == 'carousel' -%}
+                  </div>
+
+                  {%- if show_carousel_arrows -%}
+                    <button
+                      type="button"
+                      class="npp-pack-side-arrow npp-pack-side-arrow--next"
+                      aria-label="Next pack"
+                      data-pack-arrow-next
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            </fieldset>
+          {%- endfor -%}
+
+          <script type="application/json">
+            {{ product.variants | json }}
+          </script>
+        </variant-radios>
+      {%- else -%}
+        <variant-selects
+          class="no-js-hidden product-option has-default"
+          data-product="{{ product.id }}"
+          data-section="{{ section.id }}"
+          data-url="{{ product.url }}"
+        >
+          {%- for option in product.options_with_values -%}
+            <div
+              class="product-form__input product-form__input--dropdown"
+              data-product-attribute="set-select"
+              data-option-index="{{ forloop.index0 }}"
+            >
+              <label class="form__label" for="option-{{ forloop.index0 }}">
+                {{ option.name | append: ':' }}
+                <span data-header-option>{{ option.selected_value }}</span>
+              </label>
+              <div class="form__select select">
+                <select
+                  id="option-{{ forloop.index0 }}"
+                  class="select__select"
+                  name="options[{{ option.name | escape }}]"
+                >
+                  {%- for value in option.values -%}
+                    <option
+                      value="{{ value | escape }}"
+                      {% if option.selected_value == value %}selected="selected"{% endif %}
+                    >
+                      {{ value }}
+                    </option>
+                  {%- endfor -%}
+                </select>
+              </div>
+            </div>
+          {%- endfor -%}
+          <script type="application/json">
+            {{ product.variants | json }}
+          </script>
+        </variant-selects>
+      {%- endif -%}
+    </div>
+
+    <noscript>
+      <div class="product-form__input{% if product.has_only_default_variant %} hidden{% endif %}">
+        <label class="form__label" for="Variants-{{ section.id }}">
+          {{ 'products.product.product_variants' | t }}
+        </label>
+        <div class="select">
+          <select name="id" id="Variants-{{ section.id }}" class="select__select" form="product-form">
+            {%- for variant in product.variants -%}
+              <option
+                {% if variant == product.selected_or_first_available_variant %}selected="selected"{% endif %}
+                {% if variant.available == false %}disabled{% endif %}
+                value="{{ variant.id }}"
+              >
+                {{ variant.title }}
+                {%- if variant.available == false %} - {{ 'products.product.sold_out' | t }}{% endif %}
+                - {{ variant.price | money | strip_html }}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+      </div>
+    </noscript>
+  {%- endif -%}
+
+  <script>
+    (function() {
+      function initPackCarousels() {
+        var wraps = document.querySelectorAll('[data-pack-carousel-wrap]');
+        wraps.forEach(function(wrap) {
+          var track = wrap.querySelector('[data-pack-carousel-track]');
+          if (!track) return;
+          if (track.__packCarouselInit) {
+            if (typeof track.__updateArrows === 'function') {
+              track.__updateArrows();
+            }
+            return;
+          }
+          track.__packCarouselInit = true;
+
+          var fieldset = wrap.closest('fieldset');
+          var prevBtns = fieldset ? fieldset.querySelectorAll('[data-pack-arrow-prev]') : wrap.querySelectorAll('[data-pack-arrow-prev]');
+          var nextBtns = fieldset ? fieldset.querySelectorAll('[data-pack-arrow-next]') : wrap.querySelectorAll('[data-pack-arrow-next]');
+
+          function updateArrows() {
+            var atStart = track.scrollLeft <= 5;
+            var atEnd = (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 5);
+            prevBtns.forEach(function(btn) { btn.disabled = atStart; });
+            nextBtns.forEach(function(btn) { btn.disabled = atEnd; });
+          }
+          track.__updateArrows = updateArrows;
+
+          function getStep() {
+            var card = track.querySelector('.npp-pack-card');
+            return card ? (card.offsetWidth + 8) : (track.clientWidth / 3);
+          }
+
+          prevBtns.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              track.scrollBy({ left: -getStep(), behavior: 'smooth' });
+            });
+          });
+
+          nextBtns.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              track.scrollBy({ left: getStep(), behavior: 'smooth' });
+            });
+          });
+
+          track.addEventListener('scroll', function() {
+            updateArrows();
+          }, { passive: true });
+
+          setTimeout(function() {
+            var activeRadio = track.querySelector('.product-form__radio:checked');
+            if (activeRadio && activeRadio.nextElementSibling) {
+              var card = activeRadio.nextElementSibling;
+              var cardLeft = card.offsetLeft;
+              var cardWidth = card.offsetWidth;
+              if (cardLeft < track.scrollLeft || (cardLeft + cardWidth) > (track.scrollLeft + track.clientWidth)) {
+                track.scrollTo({ left: Math.max(0, cardLeft - 10), behavior: 'smooth' });
+              }
+            }
+            updateArrows();
+          }, 150);
+
+          window.addEventListener('resize', updateArrows);
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPackCarousels);
+      } else {
+        initPackCarousels();
+      }
+      document.addEventListener('shopify:section:load', initPackCarousels);
+      document.addEventListener('shopify:section:select', initPackCarousels);
+      document.addEventListener('shopify:block:select', initPackCarousels);
+    })();
+  </script>
+</div>

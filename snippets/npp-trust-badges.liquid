@@ -1,0 +1,390 @@
+{% doc %}
+  Renders consecutive Trust Badge blocks as one row inside Product Information.
+  @param {section} section - Product Information section
+  @param {block} first_block - First trust badge in the current run
+{% enddoc %}
+
+{%- liquid
+  assign trust_count = 0
+  assign trust_started = false
+  for badge in section.blocks
+    if badge.id == first_block.id
+      assign trust_started = true
+    endif
+    unless trust_started
+      continue
+    endunless
+    if badge.type != 'trust_badge'
+      break
+    endif
+    assign badge_label = badge.settings.label | strip
+    if badge_label != blank or badge.settings.image != blank
+      assign trust_count = trust_count | plus: 1
+    endif
+  endfor
+-%}
+
+{%- if section.settings.show_trust_badges and trust_count > 0 -%}
+  {%- liquid
+    assign trust_shadow_alpha = section.settings.trust_shadow_opacity | divided_by: 100.0
+    assign trust_shadow = section.settings.trust_shadow_color | color_modify: 'alpha', trust_shadow_alpha
+  -%}
+  <div
+    class="npp-trust-badges npp-trust-badges--{{ section.settings.trust_layout }} npp-trust-badges--align-{{ section.settings.trust_align }} npp-trust-badges--text-{{ section.settings.trust_text_align }}{% if section.settings.trust_equal_width %} npp-trust-badges--equal{% endif %}{% if section.settings.trust_shadow %} npp-trust-badges--shadow{% endif %}{% if section.settings.trust_divider %} npp-trust-badges--divided{% endif %}{% unless section.settings.show_trust_badges_desktop %} npp-trust-badges--hide-desktop{% endunless %}{% unless section.settings.show_trust_badges_mobile %} npp-trust-badges--hide-mobile{% endunless %}"
+    style="
+      --npp-trust-cols: {{ section.settings.trust_columns_desktop }};
+      --npp-trust-cols-md: {{ section.settings.trust_columns_tablet }};
+      --npp-trust-cols-sm: {{ section.settings.trust_columns_mobile }};
+      --npp-trust-gap-x: {{ section.settings.trust_gap_x }}px;
+      --npp-trust-gap-y: {{ section.settings.trust_gap_y }}px;
+      --npp-trust-pad: {{ section.settings.trust_padding }}px;
+      --npp-trust-radius: {{ section.settings.trust_radius }}px;
+      --npp-trust-border-w: {{ section.settings.trust_border_width }}px;
+      --npp-trust-border: {{ section.settings.trust_border_color }};
+      --npp-trust-bg: {{ section.settings.trust_badge_bg }};
+      --npp-trust-label: {{ section.settings.trust_label_color }};
+      --npp-trust-label-size: {{ section.settings.trust_font_size }}px;
+      --npp-trust-label-size-mb: {{ section.settings.trust_font_size_mobile }}px;
+      --npp-trust-label-weight: {{ section.settings.trust_font_weight }};
+      --npp-trust-label-lh: {{ section.settings.trust_line_height }};
+      --npp-trust-label-gap: {{ section.settings.trust_label_gap }}px;
+      --npp-trust-img-w: {{ section.settings.trust_image_width }}px;
+      --npp-trust-img-h: {{ section.settings.trust_image_height }}px;
+      --npp-trust-img-w-mb: {{ section.settings.trust_image_width_mobile }}px;
+      --npp-trust-img-h-mb: {{ section.settings.trust_image_height_mobile }}px;
+      --npp-trust-width: {{ section.settings.trust_width }}%;
+      --npp-trust-mt: {{ section.settings.trust_spacing_top }}px;
+      --npp-trust-mb: {{ section.settings.trust_spacing_bottom }}px;
+      --npp-trust-shadow: {{ trust_shadow }};
+      --npp-trust-divider: {{ section.settings.trust_divider_color }};
+    "
+  >
+    <ul class="npp-trust-badges__list" role="list">
+      {%- liquid
+        assign trust_started = false
+      -%}
+      {%- for badge in section.blocks -%}
+        {%- if badge.id == first_block.id -%}
+          {%- assign trust_started = true -%}
+        {%- endif -%}
+        {%- unless trust_started -%}
+          {%- continue -%}
+        {%- endunless -%}
+        {%- if badge.type != 'trust_badge' -%}
+          {%- break -%}
+        {%- endif -%}
+        {%- assign badge_label = badge.settings.label | strip -%}
+        {%- if badge_label == blank and badge.settings.image == blank -%}
+          {%- continue -%}
+        {%- endif -%}
+        {%- liquid
+          assign badge_alt = badge.settings.image_alt | strip
+          if badge_alt == blank
+            assign badge_alt = badge_label
+          endif
+          assign badge_img_w = section.settings.trust_image_width
+          assign badge_img_h = section.settings.trust_image_height
+          if badge.settings.image_width > 0
+            assign badge_img_w = badge.settings.image_width
+          endif
+          if badge.settings.image_height > 0
+            assign badge_img_h = badge.settings.image_height
+          endif
+          assign badge_linked = false
+          if badge.settings.enable_link and badge.settings.link != blank
+            assign badge_linked = true
+          endif
+        -%}
+        <li
+          class="npp-trust-badges__item{% if badge.settings.image_width > 0 or badge.settings.image_height > 0 %} npp-trust-badges__item--custom-size{% endif %}"
+          style="--badge-img-w: {{ badge_img_w }}px; --badge-img-h: {{ badge_img_h }}px; --badge-img-bg: {{ badge.settings.image_background }}; --badge-img-radius: {{ badge.settings.image_radius }}px; --badge-img-fit: {{ badge.settings.image_fit }}; --badge-img-align: {{ badge.settings.image_align }};"
+          {{ badge.shopify_attributes }}
+        >
+          {%- if badge_linked -%}
+            <a class="npp-trust-badges__link" href="{{ badge.settings.link }}">
+          {%- endif -%}
+          {%- if badge.settings.image != blank -%}
+            <span class="npp-trust-badges__media">
+              {{
+                badge.settings.image
+                | image_url: width: 240
+                | image_tag:
+                  widths: '48, 72, 96, 144, 192',
+                  sizes: '48px',
+                  width: badge_img_w,
+                  height: badge_img_h,
+                  alt: badge_alt,
+                  loading: 'lazy',
+                  class: 'npp-trust-badges__img'
+              }}
+            </span>
+          {%- endif -%}
+          {%- if badge_label != blank -%}
+            {%- liquid
+              assign label_words = badge_label | split: ' '
+              assign label_word_count = label_words | size
+              assign label_break_at = 0
+              if label_word_count == 2
+                assign label_break_at = 1
+              elsif label_word_count == 3
+                assign label_break_at = 2
+              elsif label_word_count > 3
+                assign label_break_at = label_word_count | divided_by: 2
+              endif
+              assign label_line_one = ''
+              assign label_line_two = ''
+              for word in label_words
+                if label_break_at > 0 and forloop.index <= label_break_at
+                  if label_line_one == blank
+                    assign label_line_one = word
+                  else
+                    assign label_line_one = label_line_one | append: ' ' | append: word
+                  endif
+                elsif label_break_at > 0
+                  if label_line_two == blank
+                    assign label_line_two = word
+                  else
+                    assign label_line_two = label_line_two | append: ' ' | append: word
+                  endif
+                endif
+              endfor
+            -%}
+            <span class="npp-trust-badges__label">
+              {%- if label_break_at > 0 -%}
+                <span class="npp-trust-badges__line">{{ label_line_one | escape }}</span>
+                {%- if label_line_two != blank -%}
+                  <span class="npp-trust-badges__line">{{ label_line_two | escape }}</span>
+                {%- endif -%}
+              {%- else -%}
+                {{ badge_label | escape }}
+              {%- endif -%}
+            </span>
+          {%- endif -%}
+          {%- if badge_linked -%}
+            </a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .npp-trust-badges {
+    width: min(100%, var(--npp-trust-width, 100%));
+    max-width: 100%;
+    min-width: 0;
+    margin: var(--npp-trust-mt, 4px) 0 var(--npp-trust-mb, 4px);
+  }
+
+  .npp-trust-badges--align-center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .npp-trust-badges--align-right {
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  .npp-trust-badges__list {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: var(--npp-trust-gap-y, 8px) var(--npp-trust-gap-x, 8px);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .npp-trust-badges--align-center .npp-trust-badges__list {
+    justify-content: center;
+  }
+
+  .npp-trust-badges--align-right .npp-trust-badges__list {
+    justify-content: flex-end;
+  }
+
+  .npp-trust-badges--grid .npp-trust-badges__list {
+    display: grid;
+    grid-template-columns: repeat(var(--npp-trust-cols, 4), minmax(0, 1fr));
+    justify-content: stretch;
+  }
+
+  .npp-trust-badges__item {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    margin: 0;
+    padding: var(--npp-trust-pad, 4px);
+    background: var(--npp-trust-bg, #ffffff);
+    border: var(--npp-trust-border-w, 0px) solid var(--npp-trust-border, #e6ebf2);
+    border-radius: var(--npp-trust-radius, 0px);
+    text-align: center;
+  }
+
+  .npp-trust-badges--equal .npp-trust-badges__item {
+    flex: 1 1 0;
+  }
+
+  .npp-trust-badges--text-left .npp-trust-badges__item {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .npp-trust-badges--text-right .npp-trust-badges__item {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .npp-trust-badges--shadow .npp-trust-badges__item {
+    box-shadow: 0 4px 12px var(--npp-trust-shadow, rgba(27, 58, 110, 0.12));
+  }
+
+  .npp-trust-badges--divided:not(.npp-trust-badges--grid) .npp-trust-badges__item + .npp-trust-badges__item {
+    border-left: 1px solid var(--npp-trust-divider, #e6ebf2);
+  }
+
+  .npp-trust-badges__link {
+    display: flex;
+    flex-direction: column;
+    align-items: inherit;
+    width: 100%;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .npp-trust-badges__media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: var(--badge-img-w, var(--npp-trust-img-w, 44px));
+    height: var(--badge-img-h, var(--npp-trust-img-h, 44px));
+    overflow: hidden;
+    background: var(--badge-img-bg, #f7f9fc);
+    border-radius: var(--badge-img-radius, 22px);
+  }
+
+  .npp-trust-badges__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: var(--badge-img-fit, contain);
+    object-position: var(--badge-img-align, center);
+  }
+
+  .npp-trust-badges__label {
+    display: block;
+    width: 100%;
+    margin-top: var(--npp-trust-label-gap, 6px);
+    color: var(--npp-trust-label, #232323);
+    font-size: var(--npp-trust-label-size, 12px);
+    font-weight: var(--npp-trust-label-weight, 600);
+    line-height: var(--npp-trust-label-lh, 1.35);
+    overflow-wrap: break-word;
+  }
+
+  .npp-trust-badges__line {
+    display: inline;
+  }
+
+  .npp-trust-badges__line + .npp-trust-badges__line::before {
+    content: " ";
+  }
+
+  .npp-trust-badges__media + .npp-trust-badges__label {
+    margin-top: var(--npp-trust-label-gap, 6px);
+  }
+
+  .npp-trust-badges__label:first-child {
+    margin-top: 0;
+  }
+
+  @media screen and (max-width: 989px) {
+    .npp-trust-badges--grid .npp-trust-badges__list {
+      grid-template-columns: repeat(var(--npp-trust-cols-md, 4), minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-new-products .npp-trust-badges {
+      order: 11;
+      width: min(100%, var(--npp-trust-width, 100%));
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+
+    .npp-trust-badges--grid .npp-trust-badges__list {
+      grid-template-columns: repeat(var(--npp-trust-cols-sm, 4), minmax(0, 1fr));
+    }
+
+    .npp-trust-badges__list {
+      column-gap: max(8px, var(--npp-trust-gap-x, 8px));
+      row-gap: max(8px, var(--npp-trust-gap-y, 8px));
+    }
+
+    .npp-trust-badges__item {
+      container-type: inline-size;
+      padding: 2px 0;
+    }
+
+    .npp-trust-badges__item:not(.npp-trust-badges__item--custom-size) .npp-trust-badges__media {
+      width: max(44px, var(--npp-trust-img-w-mb, 44px));
+      height: max(44px, var(--npp-trust-img-h-mb, 44px));
+      margin-bottom: 0;
+    }
+
+    .npp-trust-badges__label,
+    .npp-trust-badges__media + .npp-trust-badges__label {
+      margin-top: max(6px, var(--npp-trust-label-gap, 6px));
+      font-size: 10px;
+      line-height: 1.25;
+      min-height: 2.5em;
+      letter-spacing: 0;
+      overflow-wrap: normal;
+      word-break: normal;
+    }
+
+    .npp-trust-badges__line {
+      display: block;
+      white-space: nowrap;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .npp-trust-badges__line + .npp-trust-badges__line::before {
+      content: none;
+    }
+
+    @media screen and (max-width: 359px) {
+      .npp-trust-badges__list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 16px;
+        row-gap: 12px;
+      }
+
+      .npp-trust-badges__label,
+      .npp-trust-badges__media + .npp-trust-badges__label,
+      .npp-trust-badges__line {
+        font-size: 11px;
+      }
+    }
+
+    .npp-trust-badges--hide-mobile {
+      display: none;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .npp-trust-badges--hide-desktop {
+      display: none;
+    }
+  }
+{% endstylesheet %}

@@ -1,0 +1,582 @@
+{%- liquid
+  assign offer_active = false
+  if section.settings.enable_offer and section.settings.enable_sticky
+    assign offer_active = true
+  endif
+
+  assign buy_qty = section.settings.buy_quantity | default: 1
+  assign free_qty = section.settings.free_quantity | default: 1
+  assign required_count = buy_qty | plus: free_qty
+  assign catalog_collection = section.settings.offer_collection
+  assign restrict_collection = false
+  if catalog_collection != blank
+    assign restrict_collection = true
+  endif
+
+  assign progress_template = section.settings.progress_message | default: 'Add [count] more product(s) to unlock the deal!'
+  assign initial_progress = progress_template | replace: '[count]', required_count
+  assign unlocked_text = section.settings.unlocked_message
+  if unlocked_text == blank
+    assign unlocked_text = section.settings.deal_text
+  endif
+  assign disabled_label = section.settings.disabled_btn_text | default: 'Select products' | replace: '[count]', required_count
+  assign position = section.settings.sticky_position | default: 'bottom'
+  assign mobile_layout = section.settings.mobile_layout | default: 'scroll'
+-%}
+
+{%- if offer_active -%}
+  {{ 'bogo-sticky-cart.css' | asset_url | stylesheet_tag }}
+
+  {% style %}
+    #bogo-offer-{{ section.id }} {
+      --bogo-banner-bg: {{ section.settings.banner_bg }};
+      --bogo-banner-color: {{ section.settings.banner_color }};
+      --bogo-text: {{ section.settings.text_color }};
+      --bogo-selected-bg: {{ section.settings.selected_bg }};
+      --bogo-empty-bg: {{ section.settings.empty_bg }};
+      --bogo-border: {{ section.settings.border_color }};
+      --bogo-radius: {{ section.settings.box_radius }}px;
+      --bogo-image-size: {{ section.settings.image_size }}px;
+      --bogo-title-size: {{ section.settings.title_size }}px;
+      --bogo-price-size: {{ section.settings.price_size }}px;
+      --bogo-progress-size: {{ section.settings.progress_size }}px;
+      --bogo-btn-bg: {{ section.settings.btn_bg }};
+      --bogo-btn-color: {{ section.settings.btn_color }};
+      --bogo-btn-disabled-bg: {{ section.settings.disabled_btn_bg }};
+      --bogo-btn-disabled-color: {{ section.settings.disabled_btn_color }};
+      --bogo-btn-radius: {{ section.settings.btn_radius }}px;
+      --bogo-gap: {{ section.settings.box_gap }}px;
+      --bogo-padding-desktop: {{ section.settings.padding_desktop }}px;
+      --bogo-padding-mobile: {{ section.settings.padding_mobile }}px;
+      --bogo-slot-width: {{ section.settings.slot_width }}px;
+      --bogo-mobile-columns: {{ section.settings.mobile_columns }};
+    }
+  {% endstyle %}
+
+  <div
+    id="bogo-offer-{{ section.id }}"
+    class="bogo-offer bogo-offer--{{ position }} bogo-offer--{{ mobile_layout }}{% unless section.settings.show_images %} bogo-offer--hide-images{% endunless %}{% unless section.settings.show_prices %} bogo-offer--hide-prices{% endunless %}{% unless section.settings.show_remove %} bogo-offer--hide-remove{% endunless %}"
+    data-bogo-offer
+  >
+    <div class="bogo-offer__banner-bar">
+      {%- if section.settings.show_progress -%}
+        <p class="bogo-offer__banner" data-bogo-banner>{{ initial_progress }}</p>
+      {%- else -%}
+        <p class="bogo-offer__banner" data-bogo-banner hidden></p>
+      {%- endif -%}
+      <button type="button" class="bogo-offer__close-bar" data-bogo-close-bar aria-label="Minimize offer">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 1l10 10M11 1L1 11"/></svg>
+      </button>
+    </div>
+
+    <div class="bogo-offer__row">
+      <div class="bogo-offer__slots-col">
+        <div class="bogo-offer__slots" data-bogo-slots role="list" aria-label="{{ section.settings.picker_heading | escape }}">
+          {%- for slot_index in (1..required_count) -%}
+            <button type="button" class="bogo-offer__slot is-empty" data-bogo-slot="{{ forloop.index0 }}" aria-label="Select product {{ slot_index }}">
+              <span class="bogo-offer__plus" aria-hidden="true">+</span>
+            </button>
+          {%- endfor -%}
+        </div>
+        <div class="bogo-offer__total-bar" data-bogo-total-bar>
+          <span class="bogo-offer__total-label" data-bogo-total-label>{{ section.settings.total_label | default: 'Total:' }}</span>
+          <span class="bogo-offer__total-price" data-bogo-total-price>₹ 0.00</span>
+          <span class="bogo-offer__total-compare" data-bogo-total-compare hidden></span>
+          <span class="bogo-offer__total-badge" data-bogo-total-badge hidden></span>
+        </div>
+      </div>
+      <div class="bogo-offer__actions">
+        <button type="button" class="bogo-offer__submit is-disabled" data-bogo-submit data-state="locked" aria-disabled="true">
+          <span data-bogo-submit-text>{{ disabled_label }}</span>
+          <span class="bogo-offer__spinner" data-bogo-spinner hidden></span>
+        </button>
+        <p class="bogo-offer__status" data-bogo-status hidden></p>
+      </div>
+    </div>
+
+    <div class="bogo-offer-picker" data-bogo-picker hidden>
+      <button type="button" class="bogo-offer-picker__backdrop" data-bogo-picker-close aria-label="Close product list"></button>
+      <div class="bogo-offer-picker__panel" role="dialog" aria-modal="true" aria-labelledby="BogoPickerTitle-{{ section.id }}">
+        <div class="bogo-offer-picker__header">
+          <h2 id="BogoPickerTitle-{{ section.id }}">{{ section.settings.picker_heading | escape }}</h2>
+          <button type="button" data-bogo-picker-close aria-label="Close">&times;</button>
+        </div>
+        <div class="bogo-offer-picker__list" data-bogo-picker-list></div>
+      </div>
+    </div>
+
+    <script type="application/json" data-bogo-config>
+      {
+        "sectionId": {{ section.id | json }},
+        "offerType": {{ section.settings.offer_type | json }},
+        "buy": {{ buy_qty }},
+        "free": {{ free_qty }},
+        "required": {{ required_count }},
+        "showProgress": {{ section.settings.show_progress | json }},
+        "showImages": {{ section.settings.show_images | json }},
+        "showPrices": {{ section.settings.show_prices | json }},
+        "showRemove": {{ section.settings.show_remove | json }},
+        "position": {{ position | json }},
+        "progressTemplate": {{ progress_template | json }},
+        "unlockedMessage": {{ unlocked_text | json }},
+        "buttonText": {{ section.settings.btn_text | json }},
+        "disabledText": {{ section.settings.disabled_btn_text | json }},
+        "loadingText": {{ section.settings.loading_text | json }},
+        "successMessage": {{ section.settings.success_message | json }},
+        "validationMessage": {{ section.settings.validation_message | json }},
+        "errorMessage": {{ section.settings.error_message | json }},
+        "soldOutMessage": {{ 'This product is sold out.' | json }},
+        "fullMessage": {{ 'All offer spots are filled. Remove a product to replace it.' | json }},
+        "collectionMessage": {{ 'This product is not included in the offer collection.' | json }},
+        "invalidMessage": {{ 'Select an available product option to continue.' | json }},
+        "chooseMessage": {{ 'Choose a product below to fill this spot.' | json }},
+        "partialMessage": {{ 'Only the open spots in this offer were filled.' | json }},
+        "restrictCollection": {{ restrict_collection | json }},
+        "collectionHandle": {% if catalog_collection != blank %}{{ catalog_collection.handle | json }}{% else %}null{% endif %},
+        "rootUrl": {{ routes.root_url | json }},
+        "moneyFormat": {{ shop.money_format | json }},
+        "currencySymbol": {{ cart.currency.symbol | default: shop.currency.symbol | json }},
+        "totalLabel": {{ section.settings.total_label | default: 'Total:' | json }},
+        "showBogoDiscount": {{ section.settings.show_bogo_discount_preview | default: false | json }}
+      }
+    </script>
+    <script type="application/json" data-bogo-catalog>
+      [
+        {%- if catalog_collection != blank -%}
+          {%- for product in catalog_collection.products limit: 50 -%}
+            {%- unless forloop.first -%},{%- endunless -%}
+            {
+              "id": {{ product.id }},
+              "title": {{ product.title | json }},
+              "image": {% if product.featured_image %}{{ product.featured_image | image_url: width: 200 | json }}{% else %}null{% endif %},
+              "variants": [
+                {%- for variant in product.variants -%}
+                  {%- unless forloop.first -%},{%- endunless -%}
+                  {
+                    "id": {{ variant.id }},
+                    "title": {{ variant.title | json }},
+                    "available": {{ variant.available | json }},
+                    "price": {{ variant.price }},
+                    "image": {% if variant.image %}{{ variant.image | image_url: width: 200 | json }}{% else %}null{% endif %}
+                  }
+                {%- endfor -%}
+              ]
+            }
+          {%- endfor -%}
+        {%- endif -%}
+      ]
+    </script>
+  </div>
+
+  <button type="button" class="bogo-offer__reopen-btn" id="bogo-reopen-{{ section.id }}" data-bogo-reopen-bar aria-label="Open BOGO offer" hidden>
+    <span class="bogo-offer__reopen-icon">🎁</span>
+    <span class="bogo-offer__reopen-text" data-bogo-reopen-text>BOGO Deal</span>
+  </button>
+
+  <script src="{{ 'bogo-sticky-cart.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "BOGO Sticky Cart",
+  "tag": "section",
+  "class": "bogo-sticky-cart-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Product boxes equal products to buy plus free products. Selected variants are added together. The free-product price is applied by your Shopify discount or bundle app, not by this section."
+    },
+    {
+      "type": "header",
+      "content": "Offer"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_offer",
+      "label": "Enable offer",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "offer_type",
+      "label": "Offer type",
+      "default": "buy_x_get_x",
+      "options": [
+        { "value": "buy_x_get_x", "label": "Buy X Get X" },
+        { "value": "buy_x_get_y", "label": "Buy X Get Y" }
+      ],
+      "info": "Both types use products to buy plus free products as the required selection count."
+    },
+    {
+      "type": "range",
+      "id": "buy_quantity",
+      "label": "Products to buy (X)",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "free_quantity",
+      "label": "Free products (Y)",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "text",
+      "id": "progress_message",
+      "label": "Progress message",
+      "default": "Add [count] more product(s) to unlock the deal!",
+      "info": "Use [count] for the number of products still needed."
+    },
+    {
+      "type": "text",
+      "id": "unlocked_message",
+      "label": "Unlocked message",
+      "default": "Deal unlocked! You can add your products to the cart."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_progress",
+      "label": "Show progress message",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "deal_text",
+      "label": "Fallback unlocked message",
+      "default": "🎊 You’ve unlocked a special deal! 🎊"
+    },
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "collection",
+      "id": "offer_collection",
+      "label": "Offer collection",
+      "info": "Customers can select products from this collection. Leave blank to use the products shown on the page."
+    },
+    {
+      "type": "text",
+      "id": "picker_heading",
+      "label": "Product picker heading",
+      "default": "Select a product"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Add to cart text",
+      "default": "Add to cart"
+    },
+    {
+      "type": "text",
+      "id": "disabled_btn_text",
+      "label": "Disabled button text",
+      "default": "Select products",
+      "info": "Use [count] to show how many products are still needed."
+    },
+    {
+      "type": "text",
+      "id": "loading_text",
+      "label": "Loading text",
+      "default": "Adding to cart..."
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Products added to your cart."
+    },
+    {
+      "type": "text",
+      "id": "validation_message",
+      "label": "Validation message",
+      "default": "Select [count] more product(s) before adding this offer to the cart.",
+      "info": "Shown when Add to cart is used before every spot is filled."
+    },
+    {
+      "type": "text",
+      "id": "error_message",
+      "label": "Error message",
+      "default": "Could not add these products to the cart. Please try again."
+    },
+    {
+      "type": "header",
+      "content": "Sticky cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky",
+      "label": "Enable sticky cart",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "sticky_position",
+      "label": "Position",
+      "default": "bottom",
+      "options": [
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "top", "label": "Top" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile product layout",
+      "default": "scroll",
+      "options": [
+        { "value": "scroll", "label": "Horizontal scroll" },
+        { "value": "columns", "label": "Columns" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "mobile_columns",
+      "label": "Mobile columns",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "slot_width",
+      "label": "Product box width",
+      "min": 180,
+      "max": 420,
+      "step": 10,
+      "default": 320,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "box_gap",
+      "label": "Space between boxes",
+      "min": 4,
+      "max": 28,
+      "step": 2,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_desktop",
+      "label": "Desktop padding",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "label": "Mobile padding",
+      "min": 4,
+      "max": 32,
+      "step": 2,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "banner_bg",
+      "label": "Background",
+      "default": "#1a3b6b"
+    },
+    {
+      "type": "color",
+      "id": "banner_color",
+      "label": "Progress text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "selected_bg",
+      "label": "Selected box background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "empty_bg",
+      "label": "Empty box background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Button background",
+      "default": "#1a3b6b"
+    },
+    {
+      "type": "color",
+      "id": "btn_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "disabled_btn_bg",
+      "label": "Disabled button background",
+      "default": "#c8c8c8"
+    },
+    {
+      "type": "color",
+      "id": "disabled_btn_color",
+      "label": "Disabled button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Type and shape"
+    },
+    {
+      "type": "range",
+      "id": "box_radius",
+      "label": "Box corner radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "btn_radius",
+      "label": "Button corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "label": "Product image size",
+      "min": 28,
+      "max": 96,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Product title size",
+      "min": 11,
+      "max": 22,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "label": "Product price size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "progress_size",
+      "label": "Progress message size",
+      "min": 11,
+      "max": 24,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Product details"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_images",
+      "label": "Show product images",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_prices",
+      "label": "Show product prices",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_remove",
+      "label": "Show remove icon",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Labels"
+    },
+    {
+      "type": "text",
+      "id": "box_label_singular",
+      "label": "Item in box (singular)",
+      "default": "item in Box"
+    },
+    {
+      "type": "text",
+      "id": "box_label_plural",
+      "label": "Items in box (plural)",
+      "default": "items in Box"
+    },
+    {
+      "type": "text",
+      "id": "clear_label",
+      "label": "Clear button label",
+      "default": "Clear"
+    },
+    {
+      "type": "text",
+      "id": "total_label",
+      "label": "Total label",
+      "default": "Total:"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bogo_discount_preview",
+      "label": "Show BOGO discount preview in total",
+      "default": true,
+      "info": "Enable when BOGO automatic discount is active in Shopify admin."
+    }
+  ],
+  "presets": [
+    {
+      "name": "BOGO Sticky Cart"
+    }
+  ]
+}
+{% endschema %}

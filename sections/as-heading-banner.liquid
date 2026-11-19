@@ -1,0 +1,525 @@
+{%- liquid
+  assign banner_link = section.settings.banner_link
+
+  # Resolve Desktop Image ONLY from "Who it is for" product metafields
+  assign desktop_image = ''
+  if product.metafields.custom.who_it_is_for_image.value != blank
+    assign desktop_image = product.metafields.custom.who_it_is_for_image.value
+  elsif product.metafields.custom.who_it_is_for.value != blank
+    assign desktop_image = product.metafields.custom.who_it_is_for.value
+  elsif product.metafields.custom.who_is_it_for_image.value != blank
+    assign desktop_image = product.metafields.custom.who_is_it_for_image.value
+  elsif product.metafields.custom.who_is_it_for.value != blank
+    assign desktop_image = product.metafields.custom.who_is_it_for.value
+  elsif product.metafields.custom.who_it_for_image.value != blank
+    assign desktop_image = product.metafields.custom.who_it_for_image.value
+  elsif product.metafields.custom.who_it_for.value != blank
+    assign desktop_image = product.metafields.custom.who_it_for.value
+  elsif product.metafields.custom.who_it_is_for_banner.value != blank
+    assign desktop_image = product.metafields.custom.who_it_is_for_banner.value
+  elsif product.metafields.custom.who_it_is_for_image != blank and product.metafields.custom.who_it_is_for_image.src != blank
+    assign desktop_image = product.metafields.custom.who_it_is_for_image
+  elsif product.metafields.custom.who_it_is_for != blank and product.metafields.custom.who_it_is_for.src != blank
+    assign desktop_image = product.metafields.custom.who_it_is_for
+  endif
+
+  # Fallback: scan custom metafields for desktop who_it_is_for
+  if desktop_image == blank
+    for mf in product.metafields.custom
+      assign k_lower = mf.first | downcase
+      if k_lower contains 'who' and k_lower contains 'for'
+        unless k_lower contains 'mob' or k_lower contains 'mbl'
+          if mf.last.value != blank
+            assign desktop_image = mf.last.value
+            break
+          endif
+        endunless
+      endif
+    endfor
+  endif
+
+  # Validate desktop_image
+  assign has_valid_desktop = false
+  if desktop_image != blank
+    if desktop_image.src != blank or desktop_image.width != blank
+      assign has_valid_desktop = true
+    else
+      assign d_str = desktop_image | append: '' | strip
+      if d_str contains 'http' or d_str contains '//' or d_str contains 'shopify://'
+        assign has_valid_desktop = true
+      endif
+    endif
+  endif
+  if has_valid_desktop == false
+    assign desktop_image = ''
+  endif
+
+  # Resolve Mobile Image ONLY from "Who it is for" product metafields
+  assign mobile_image = ''
+  if product.metafields.custom.who_it_is_for_mobile_image.value != blank
+    assign mobile_image = product.metafields.custom.who_it_is_for_mobile_image.value
+  elsif product.metafields.custom.who_it_is_for_mobile.value != blank
+    assign mobile_image = product.metafields.custom.who_it_is_for_mobile.value
+  elsif product.metafields.custom.who_it_is_for_image_mobile.value != blank
+    assign mobile_image = product.metafields.custom.who_it_is_for_image_mobile.value
+  elsif product.metafields.custom.who_is_it_for_mobile_image.value != blank
+    assign mobile_image = product.metafields.custom.who_is_it_for_mobile_image.value
+  elsif product.metafields.custom.who_is_it_for_mobile.value != blank
+    assign mobile_image = product.metafields.custom.who_is_it_for_mobile.value
+  elsif product.metafields.custom.who_it_for_mobile_image.value != blank
+    assign mobile_image = product.metafields.custom.who_it_for_mobile_image.value
+  elsif product.metafields.custom.who_it_for_mobile.value != blank
+    assign mobile_image = product.metafields.custom.who_it_for_mobile.value
+  elsif product.metafields.custom.who_it_is_for_mbl.value != blank
+    assign mobile_image = product.metafields.custom.who_it_is_for_mbl.value
+  elsif product.metafields.custom.who_it_is_for_mob.value != blank
+    assign mobile_image = product.metafields.custom.who_it_is_for_mob.value
+  elsif product.metafields.custom.who_it_is_for_mobile_image != blank and product.metafields.custom.who_it_is_for_mobile_image.src != blank
+    assign mobile_image = product.metafields.custom.who_it_is_for_mobile_image
+  elsif product.metafields.custom.who_it_is_for_mobile != blank and product.metafields.custom.who_it_is_for_mobile.src != blank
+    assign mobile_image = product.metafields.custom.who_it_is_for_mobile
+  endif
+
+  # Fallback: scan custom metafields for mobile who_it_is_for
+  if mobile_image == blank
+    for mf in product.metafields.custom
+      assign k_lower = mf.first | downcase
+      if k_lower contains 'who' and k_lower contains 'for'
+        if k_lower contains 'mob' or k_lower contains 'mbl'
+          if mf.last.value != blank
+            assign mobile_image = mf.last.value
+            break
+          endif
+        endif
+      endif
+    endfor
+  endif
+
+  # Validate custom mobile_image
+  assign has_custom_mobile = false
+  if mobile_image != blank
+    if mobile_image.src != blank or mobile_image.width != blank
+      assign has_custom_mobile = true
+    else
+      assign m_str = mobile_image | append: '' | strip
+      if m_str contains 'http' or m_str contains '//' or m_str contains 'shopify://'
+        assign has_custom_mobile = true
+      endif
+    endif
+  endif
+
+  # If mobile image is not set or not valid, fallback to desktop image
+  if has_custom_mobile == false
+    assign mobile_image = desktop_image
+  endif
+
+  # Strict check: only show if product actually has a banner metafield uploaded
+  assign has_banner = false
+  if has_valid_desktop
+    assign has_banner = true
+  elsif has_custom_mobile
+    assign has_banner = true
+  endif
+-%}
+
+{%- if has_banner -%}
+  <style>
+    #shopify-section-{{ section.id }} {
+      width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .as-heading-banner {
+      padding-top: {{ section.settings['pedding-top-desk'] }}px;
+      padding-bottom: {{ section.settings['pedding-bottom-desk'] }}px;
+      padding-left: 0;
+      padding-right: 0;
+      margin: 0;
+      width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .as-heading-wrapper {
+      margin-bottom: {{ section.settings.heading_margin_bottom | default: 24 }}px;
+      text-align: {{ section.settings.heading_alignment }};
+      padding-left: {{ section.settings.container_padding_left | default: 80 }}px;
+      padding-right: {{ section.settings.container_padding_right | default: 80 }}px;
+      box-sizing: border-box;
+    }
+
+    #shopify-section-{{ section.id }} .as-heading-title {
+      margin: 0;
+      color: {{ section.settings.heading_color }};
+      font-size: {{ section.settings.heading_size_desk }}px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    #shopify-section-{{ section.id }} .as-banner-inner,
+    #shopify-section-{{ section.id }} .as-banner-link {
+      display: block;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    {%- if section.settings.banner_layout == 'contained' -%}
+      #shopify-section-{{ section.id }} .as-banner-inner {
+        padding-left: {{ section.settings.container_padding_left | default: 80 }}px;
+        padding-right: {{ section.settings.container_padding_right | default: 80 }}px;
+        box-sizing: border-box;
+      }
+    {%- endif -%}
+
+    #shopify-section-{{ section.id }} .as-image-box,
+    #shopify-section-{{ section.id }} .as-image-boxmobil {
+      margin: 0;
+      padding: 0;
+      line-height: 0;
+    }
+
+    #shopify-section-{{ section.id }} .as-image-box img,
+    #shopify-section-{{ section.id }} .as-image-boxmobil img {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0;
+    }
+
+    /* Desktop: show desktop image only */
+    #shopify-section-{{ section.id }} .as-image-box {
+      display: block;
+    }
+
+    #shopify-section-{{ section.id }} .as-image-boxmobil {
+      display: none;
+    }
+
+    @media screen and (max-width: 800px) {
+      #shopify-section-{{ section.id }} .as-heading-banner {
+        padding-top: {{ section.settings['pedding-top-tab'] }}px;
+        padding-bottom: {{ section.settings['pedding-bottom-tab'] }}px;
+      }
+    }
+
+    /* Mobile: show mobile image only if distinct mobile image exists */
+    @media screen and (max-width: 749px) {
+      #shopify-section-{{ section.id }} .as-heading-banner {
+        padding-top: {{ section.settings['pedding-top-mbl'] }}px;
+        padding-bottom: {{ section.settings['pedding-bottom-mbl'] }}px;
+      }
+
+      #shopify-section-{{ section.id }} .as-heading-wrapper {
+        margin-bottom: {{ section.settings.heading_margin_bottom_mobile | default: 16 }}px;
+        padding-left: {{ section.settings.container_padding_left_mobile | default: 15 }}px;
+        padding-right: {{ section.settings.container_padding_right_mobile | default: 15 }}px;
+      }
+
+      {%- if section.settings.banner_layout == 'contained' -%}
+        #shopify-section-{{ section.id }} .as-banner-inner {
+          padding-left: {{ section.settings.container_padding_left_mobile | default: 15 }}px;
+          padding-right: {{ section.settings.container_padding_right_mobile | default: 15 }}px;
+        }
+      {%- endif -%}
+
+      #shopify-section-{{ section.id }} .as-heading-title {
+        font-size: {{ section.settings.heading_size_mbl }}px;
+      }
+
+      {%- if has_custom_mobile -%}
+        #shopify-section-{{ section.id }} .as-image-box {
+          display: none !important;
+        }
+
+        #shopify-section-{{ section.id }} .as-image-boxmobil {
+          display: block !important;
+        }
+      {%- else -%}
+        #shopify-section-{{ section.id }} .as-image-box {
+          display: block !important;
+        }
+
+        #shopify-section-{{ section.id }} .as-image-boxmobil {
+          display: none !important;
+        }
+      {%- endif -%}
+    }
+  </style>
+
+  <section class="as-heading-banner" id="as-heading-banner-{{ section.id }}">
+    {%- if section.settings.heading != blank -%}
+      <div class="container-1170">
+        <div class="as-heading-wrapper">
+          <h2 class="as-heading-title">{{ section.settings.heading }}</h2>
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div class="as-banner-inner">
+      {%- if banner_link != blank -%}
+        <a
+          class="as-banner-link"
+          href="{{ banner_link }}"
+          {% if section.settings.open_in_new_tab %}
+            target="_blank" rel="noopener noreferrer"
+          {% endif %}
+          aria-label="{{ section.settings.heading | default: 'Banner' }}"
+        >
+      {%- endif -%}
+
+      {%- if desktop_image != blank -%}
+        <div class="as-image-box">
+          {%- if desktop_image.src or desktop_image.width -%}
+            {{
+              desktop_image
+              | image_url: width: 2400
+              | image_tag:
+                loading: 'lazy',
+                widths: '750, 1100, 1500, 1780, 2000, 2400',
+                sizes: '100vw',
+                alt: desktop_image.alt | default: section.settings.heading | default: 'Banner'
+            }}
+          {%- else -%}
+            <img
+              src="{{ desktop_image }}"
+              loading="lazy"
+              alt="{{ section.settings.heading | default: 'Banner' }}"
+              style="display: block; width: 100%; height: auto;"
+            >
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if has_custom_mobile and mobile_image != blank -%}
+        <div class="as-image-boxmobil">
+          {%- if mobile_image.src or mobile_image.width -%}
+            {{
+              mobile_image
+              | image_url: width: 1200
+              | image_tag:
+                loading: 'lazy',
+                widths: '375, 550, 750, 990, 1200',
+                sizes: '100vw',
+                alt: mobile_image.alt | default: section.settings.heading | default: 'Banner'
+            }}
+          {%- else -%}
+            <img
+              src="{{ mobile_image }}"
+              loading="lazy"
+              alt="{{ section.settings.heading | default: 'Banner' }}"
+              style="display: block; width: 100%; height: auto;"
+            >
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if banner_link != blank -%}
+        </a>
+      {%- endif -%}
+    </div>
+  </section>
+{%- else -%}
+  <style>
+    #shopify-section-{{ section.id }} {
+      display: none !important;
+    }
+  </style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "As Heading & Banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Who It Is For"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1b3a6e"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desk",
+      "label": "Heading font size (Desktop)",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mbl",
+      "label": "Heading font size (Mobile)",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "label": "Space below heading (Desktop)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom_mobile",
+      "label": "Space below heading (Mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Banner link"
+    },
+    {
+      "type": "url",
+      "id": "banner_link",
+      "label": "Banner link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open link in a new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Side Padding (Desktop / Mobile)"
+    },
+    {
+      "type": "select",
+      "id": "banner_layout",
+      "label": "Banner width style",
+      "options": [
+        { "value": "fullwidth", "label": "Full Width (Edge-to-Edge)" },
+        { "value": "contained", "label": "Padded Container (80px desktop / 15px mobile)" }
+      ],
+      "default": "fullwidth"
+    },
+    {
+      "type": "range",
+      "id": "container_padding_left",
+      "label": "Left & Right padding (Desktop)",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "container_padding_left_mobile",
+      "label": "Left & Right padding (Mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Spacing top"
+    },
+    {
+      "type": "range",
+      "id": "pedding-top-desk",
+      "label": "Desktop",
+      "min": 0,
+      "max": 100,
+      "default": 25,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pedding-top-tab",
+      "label": "Tablet",
+      "min": 0,
+      "max": 100,
+      "default": 20,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pedding-top-mbl",
+      "label": "Mobile",
+      "min": 0,
+      "max": 100,
+      "default": 15,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Spacing bottom"
+    },
+    {
+      "type": "range",
+      "id": "pedding-bottom-desk",
+      "label": "Desktop",
+      "min": 0,
+      "max": 100,
+      "default": 25,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pedding-bottom-tab",
+      "label": "Tablet",
+      "min": 0,
+      "max": 100,
+      "default": 20,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pedding-bottom-mbl",
+      "label": "Mobile",
+      "min": 0,
+      "max": 100,
+      "default": 15,
+      "step": 5,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "As Heading & Banner"
+    }
+  ]
+}
+{% endschema %}

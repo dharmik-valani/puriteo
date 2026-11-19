@@ -1,0 +1,247 @@
+/* Premium search — scoped to Header Basic beside-logo search only.
+   Layout / spacing only. Product cards keep theme styles (card 09). */
+
+.header-basic--search-beside-logo .header-basic__logo-search .header__search {
+  max-width: 640px;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .header__search .search-modal__form .field,
+.header-basic--search-beside-logo .header-basic__search-field {
+  min-height: 48px;
+  padding: 4px 4px 4px 16px;
+  border-color: #d7e3f2;
+  background: #f8fbfe;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .header__search .search-modal__form .search__input {
+  height: 40px;
+  font-size: 14px;
+  color: #1b3a6e;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .header__search .search-modal__form .search__input::placeholder {
+  color: #8a9bb5;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .header__search .search-modal__form .search__button {
+  width: 44px;
+  min-width: 44px;
+  height: 40px;
+  min-height: 40px;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .header__search:focus-within .search-modal__form .field,
+.header-basic--search-beside-logo .header-basic__logo-search .header__search:focus-within .header-basic__search-field {
+  border-color: #1b3a6e;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(27, 58, 110, 0.1);
+}
+
+/* Dropdown panel */
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsWrap,
+.header-basic--search-beside-logo .header-basic__logo-search .predictive-search.quickSearchResultsWrap {
+  top: calc(100% + 12px);
+  left: 0;
+  right: auto;
+  width: min(780px, calc(100vw - 48px));
+  padding: 0;
+  border: 1px solid #e6eef8;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 18px 48px rgba(27, 58, 110, 0.12);
+  overflow: hidden; /* keep radius; scroll lives on .quickSearchResults */
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResults {
+  max-height: min(78vh, 720px);
+  padding: 22px 0 28px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResults .container {
+  padding-left: 24px;
+  padding-right: 24px;
+  max-width: none;
+  width: 100%;
+}
+
+/* Section titles + spacing */
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .search-block-title {
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1b3a6e;
+  line-height: 1.3;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .search-block-title .text {
+  padding: 0;
+  background: transparent;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .quickSearchTrending {
+  padding-bottom: 22px;
+  margin-bottom: 0;
+  border-bottom: 1px solid #e6eef8;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .quickSearchProduct {
+  margin-top: 20px;
+  padding-top: 0;
+  padding-bottom: 4px;
+}
+
+/* Full card height visible in search (ATC stays hidden via theme search CSS) */
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .products-grid .card,
+.header-basic--search-beside-logo .header-basic__logo-search #predictive-search-results-list .products-grid .card {
+  overflow: visible;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .products-grid .card-information,
+.header-basic--search-beside-logo .header-basic__logo-search #predictive-search-results-list .products-grid .card-information {
+  padding-bottom: 14px;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .as-search-block-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .as-search-block-heading .search-block-title {
+  margin: 0;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .as-search-view-all__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  color: #1b3a6e;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .as-search-view-all__link:hover {
+  color: #0f2447;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .as-search-view-all__link svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Trending chips — layout only */
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .list-item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .list-item .item {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .list-item .link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px 8px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: #eef4fb;
+  color: #1b3a6e;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-transform: capitalize;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .list-item .link:hover {
+  background: #dce8f7;
+  color: #0f2447;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .list-item .link .text {
+  margin: 0;
+}
+
+/* Product grid — alignment only; cards use theme styles */
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .products-grid,
+.header-basic--search-beside-logo .header-basic__logo-search #predictive-search-results-list .products-grid,
+.header-basic--search-beside-logo .header-basic__logo-search .predictive-search__results-list .products-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  letter-spacing: normal;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .products-grid .product,
+.header-basic--search-beside-logo .header-basic__logo-search #predictive-search-results-list .products-grid .product,
+.header-basic--search-beside-logo .header-basic__logo-search .predictive-search__results-list .products-grid .product {
+  display: flex;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+  padding: 0 !important;
+  margin: 0 !important;
+  float: none !important;
+}
+
+/* Show 3 cards only in the search dropdown */
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .products-grid .product:nth-child(n + 4),
+.header-basic--search-beside-logo .header-basic__logo-search #predictive-search-results-list .products-grid .product:nth-child(n + 4) {
+  display: none;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .products-grid .product-item,
+.header-basic--search-beside-logo .header-basic__logo-search #predictive-search-results-list .products-grid .product-item {
+  width: 100%;
+  height: 100%;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .products-grid .card,
+.header-basic--search-beside-logo .header-basic__logo-search #predictive-search-results-list .products-grid .card {
+  height: 100%;
+}
+
+.header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .productViewAll {
+  margin-top: 12px;
+  padding: 14px 0 0;
+  border-top: 1px solid #e6eef8;
+  text-align: right;
+}
+
+@media screen and (max-width: 1024px) {
+  .header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsWrap,
+  .header-basic--search-beside-logo .header-basic__logo-search .predictive-search.quickSearchResultsWrap {
+    width: min(100vw - 24px, 780px);
+  }
+
+  .header-basic--search-beside-logo .header-basic__logo-search .quickSearchResultsBlock .products-grid,
+  .header-basic--search-beside-logo .header-basic__logo-search #predictive-search-results-list .products-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}

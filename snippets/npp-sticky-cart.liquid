@@ -1,0 +1,1181 @@
+{% doc %}
+  Renders the 3-tier conversion sticky bar for the new product page template.
+  @param {product} product
+  @param {variant} [current_variant]
+  @param {section} section
+{% enddoc %}
+
+{%- liquid
+  assign current_variant = current_variant | default: product.selected_or_first_available_variant
+  assign compare_price = current_variant.compare_at_price
+  assign price = current_variant.price
+
+  assign savings = 0
+  if compare_price > price
+    assign savings = compare_price | minus: price
+  endif
+
+  assign ribbon_text = section.settings.sticky_ribbon_text | default: 'Control cravings & reduce overeating at just ₹41/day'
+  if product.metafields.custom.sticky_bar_banner != blank
+    assign ribbon_text = product.metafields.custom.sticky_bar_banner
+  elsif product.metafields.custom.per_day_cost != blank
+    assign ribbon_text = product.metafields.custom.per_day_cost
+  endif
+
+  assign price_block = section.blocks | where: "type", "price" | first
+  assign price_color = section.settings.sticky_price_color | default: price_block.settings.color_price | default: '#1b3a6e'
+  assign compare_price_color = section.settings.sticky_compare_color | default: price_block.settings.compare_price_color | default: '#6b7280'
+
+  assign ribbon_bg = section.settings.sticky_ribbon_bg | default: '#5E7CE2'
+  assign ribbon_color = section.settings.sticky_ribbon_color | default: '#FFFFFF'
+  assign btn_text = section.settings.sticky_btn_text | default: 'BUY NOW'
+  assign btn_bg = section.settings.sticky_btn_bg
+  if btn_bg == blank or btn_bg == '#004141'
+    assign btn_bg = settings.btnBClr | default: '#3f3586'
+  endif
+  assign btn_color = section.settings.sticky_btn_color | default: '#FFFFFF'
+  assign savings_bg = section.settings.sticky_savings_bg | default: '#EAF8F0'
+  assign savings_color = section.settings.sticky_savings_color | default: '#15803D'
+  assign trust_customers = section.settings.sticky_trust_customers | default: '50 Lakh+ Happy Customers'
+  assign trust_reviews = section.settings.sticky_trust_reviews | default: '261+ verified reviews'
+  assign trust_bg = section.settings.sticky_trust_bg | default: '#F0FAF0'
+  assign trust_color = section.settings.sticky_trust_color | default: '#004141'
+  assign star_color = section.settings.sticky_star_color | default: '#F59E0B'
+
+  assign thumb_image = current_variant.image
+  if thumb_image == blank
+    assign thumb_image = product.featured_image
+  endif
+
+  assign sticky_always_visible = true
+-%}
+
+<style>
+.npp-sticky-cart {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 98;
+  pointer-events: none;
+  transform: translateY(115%);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  box-sizing: border-box;
+}
+
+.npp-sticky-cart.is-visible,
+.npp-sticky-cart.always-visible {
+  transform: translateY(0) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure sticky add to cart is visible by default when on new-product-page */
+.product-new-products .productView-stickyCart.always-visible,
+.product-new-products .productView-stickyCart.always-on-desktop {
+  top: auto !important;
+  bottom: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+@media (max-width: 767px) {
+  .product-new-products .productView-stickyCart {
+    top: auto !important;
+    bottom: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Hide sticky cart when any Reel / Video Modal / Popup is open */
+body:has([class*="ins-modal"]:not([style*="display: none"]), [class*="ins-video-modal"]:not([style*="display: none"]), [class*="reel-modal"]:not([style*="display: none"]), [class*="shoppable-video"]:not([style*="display: none"]), [class*="popup"]:has(video)) .npp-sticky-cart,
+body:has([class*="ins-modal"]:not([style*="display: none"]), [class*="ins-video-modal"]:not([style*="display: none"]), [class*="reel-modal"]:not([style*="display: none"]), [class*="shoppable-video"]:not([style*="display: none"]), [class*="popup"]:has(video)) .productView-stickyCart,
+body.ins-modal-open .npp-sticky-cart,
+body.modal-open .npp-sticky-cart,
+body.has-reel-open .npp-sticky-cart,
+body.ins-modal-open .productView-stickyCart,
+body.modal-open .productView-stickyCart,
+body.has-reel-open .productView-stickyCart,
+.npp-sticky-cart.is-hidden-by-modal,
+.product-new-products .productView-stickyCart.is-hidden-by-modal {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(115%) !important;
+  z-index: -1 !important;
+}
+
+/* When mobile hamburger menu or drawer is open, keep sticky cart in the background behind drawer & backdrop */
+body.menu_open .npp-sticky-cart,
+body.menu-open .npp-sticky-cart,
+body.overflow-hidden-mobile .npp-sticky-cart,
+body:has(.header-compact-drawer.is-open) .npp-sticky-cart,
+body:has(#navigation-mobile.halo-sidebar.is-open) .npp-sticky-cart,
+body.menu_open .productView-stickyCart,
+body.menu-open .productView-stickyCart,
+body.overflow-hidden-mobile .productView-stickyCart,
+body:has(.header-compact-drawer.is-open) .productView-stickyCart,
+body:has(#navigation-mobile.halo-sidebar.is-open) .productView-stickyCart {
+  z-index: 10 !important;
+  pointer-events: none !important;
+}
+.npp-sticky-cart__inner {
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  margin: 0 auto;
+}
+/* Tier 1: Top Ribbon */
+.npp-sticky-cart__ribbon {
+  background: var(--npp-sticky-ribbon-bg, #5E7CE2);
+  color: var(--npp-sticky-ribbon-color, #ffffff);
+  padding: 4px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.npp-sticky-cart__ribbon-text {
+  margin: 0;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 15.6px;
+  font-weight: 500;
+  letter-spacing: 0.044px;
+  color: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Tier 2: Main Bar */
+.npp-sticky-cart__main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  gap: 12px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.npp-sticky-cart__product {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.npp-sticky-cart__image-wrap {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.npp-sticky-cart__image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.npp-sticky-cart__pricing {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.npp-sticky-cart__prices {
+  display: flex;
+  align-items: center !important;
+  gap: 6px;
+  line-height: 1.2;
+  white-space: nowrap !important;
+  flex-wrap: nowrap !important;
+}
+
+.npp-sticky-cart__compare-wrap {
+  font-size: 11px;
+  color: var(--npp-sticky-compare-color, #6b7280) !important;
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center !important;
+  line-height: 1.2;
+  white-space: nowrap !important;
+  flex-shrink: 0;
+}
+
+.npp-sticky-cart__compare-wrap.is-hidden {
+  display: none !important;
+}
+
+.npp-sticky-cart__compare {
+  text-decoration: line-through;
+  color: inherit;
+  font-weight: inherit;
+  line-height: 1.2;
+  white-space: nowrap !important;
+  display: inline-block !important;
+}
+
+.npp-sticky-cart__price {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--npp-sticky-price-color, #1b3a6e) !important;
+  line-height: 1.2;
+  letter-spacing: -0.2px;
+  display: inline-flex;
+  align-items: center !important;
+  white-space: nowrap !important;
+  flex-shrink: 0;
+}
+
+.npp-sticky-cart__badge-wrap {
+  display: flex;
+  white-space: nowrap !important;
+  margin-top: 2px;
+}
+
+.npp-sticky-cart__badge-wrap.is-hidden {
+  display: none !important;
+}
+
+.npp-sticky-cart__badge {
+  background: var(--npp-sticky-savings-bg, #EAF8F0);
+  color: var(--npp-sticky-savings-color, #15803D);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  line-height: 14px;
+  white-space: nowrap !important;
+  width: fit-content;
+}
+
+.npp-sticky-cart__action {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 111px;
+  max-width: 220px;
+}
+
+.npp-sticky-cart__form {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.npp-sticky-cart__btn {
+  background: var(--npp-sticky-btn-bg, #004141);
+  color: var(--npp-sticky-btn-color, #ffffff);
+  border: 0;
+  outline: none;
+  border-radius: 8px;
+  padding: 8px 28px;
+  min-height: 40px;
+  max-height: 40px;
+  height: 40px;
+  min-width: 111px;
+  flex-grow: 1;
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 15.6px;
+  font-weight: 700;
+  letter-spacing: 0.056px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease, background-color 0.2s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+.npp-sticky-cart__btn:hover {
+  opacity: 0.94;
+  transform: translateY(-1px);
+}
+
+.npp-sticky-cart__btn:active {
+  transform: translateY(0);
+}
+
+.npp-sticky-cart__btn:disabled {
+  background: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Tier 3: Bottom Trust Strip */
+.npp-sticky-cart__trust {
+  background: var(--npp-sticky-trust-bg, #F0FAF0);
+  color: var(--npp-sticky-trust-color, #004141);
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+  min-height: 24px;
+  box-sizing: border-box;
+}
+
+.npp-sticky-cart__trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  line-height: 15.6px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.npp-sticky-cart__trust-star {
+  color: var(--npp-sticky-star-color, #F59E0B);
+  font-size: 11px;
+  line-height: 1;
+}
+
+.npp-sticky-cart__btn [data-sticky-btn-text] {
+  display: inline !important;
+}
+
+/* Desktop Dock View (Matches Oziva reference layout) */
+@media (min-width: 769px) {
+  .npp-sticky-cart {
+    padding: 0 16px 12px;
+  }
+
+  .npp-sticky-cart__inner {
+    width: 100%;
+    max-width: 950px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .npp-sticky-cart__ribbon {
+    padding: 4px 8px;
+    text-align: center;
+  }
+
+  .npp-sticky-cart__ribbon-text {
+    margin: 0;
+    font-size: 13px;
+    line-height: 15.6px;
+    font-weight: 500;
+    letter-spacing: 0.044px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .npp-sticky-cart__main {
+    padding: 4px 40px;
+    gap: 16px;
+    min-height: 62px;
+    height: 62px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .npp-sticky-cart__product {
+    gap: 12px;
+    display: flex;
+    align-items: center;
+  }
+
+  .npp-sticky-cart__image-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .npp-sticky-cart__pricing {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .npp-sticky-cart__prices {
+    gap: 8px;
+    display: flex;
+    align-items: center !important;
+  }
+
+  .npp-sticky-cart__compare-wrap {
+    font-size: 13px !important;
+    color: var(--npp-sticky-compare-color, #6b7280) !important;
+    font-weight: 400 !important;
+    display: inline-flex;
+    align-items: center !important;
+  }
+
+  .npp-sticky-cart__compare {
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    text-decoration: line-through;
+  }
+
+  .npp-sticky-cart__price {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: var(--npp-sticky-price-color, #1b3a6e) !important;
+    display: inline-flex;
+    align-items: center !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.2px !important;
+  }
+
+  .npp-sticky-cart__badge-wrap {
+    margin-top: 2px;
+  }
+
+  .npp-sticky-cart__badge {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 2px 8px !important;
+    border-radius: 4px;
+    line-height: 14px;
+  }
+
+  .npp-sticky-cart__action {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: none;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .npp-sticky-cart__form {
+    width: auto;
+  }
+
+  .npp-sticky-cart__btn {
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    width: 236px !important;
+    min-width: 236px !important;
+    padding: 8px 42px !important;
+    font-size: 16px !important;
+    line-height: 1.2 !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    letter-spacing: 0.056px !important;
+    box-sizing: border-box !important;
+  }
+
+  .npp-sticky-cart__trust {
+    padding: 4px 16px;
+    gap: 24px;
+    min-height: 24px;
+    font-size: 11px;
+    line-height: 15.6px;
+    font-weight: 500;
+    justify-content: center;
+  }
+
+  .npp-sticky-cart__trust-item {
+    font-size: 11px;
+    line-height: 15.6px;
+    font-weight: 500;
+  }
+
+  .npp-sticky-cart__trust-star {
+    font-size: 11px;
+    line-height: 1;
+  }
+}
+
+/* Mobile Dock View */
+@media (max-width: 768px) {
+  .npp-sticky-cart {
+    padding: 0;
+  }
+
+  .npp-sticky-cart__inner {
+    width: 100%;
+    border-radius: 14px 14px 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .npp-sticky-cart__ribbon {
+    padding: 4px;
+    text-align: center;
+  }
+
+  .npp-sticky-cart__ribbon-text {
+    font-size: 13px;
+    line-height: 15.6px;
+    font-weight: 500;
+    letter-spacing: 0.044px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .npp-sticky-cart__main {
+    padding: 8px;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .npp-sticky-cart__product {
+    gap: 10px;
+    min-width: 0;
+    flex: 0 1 auto;
+    overflow: hidden;
+  }
+
+  .npp-sticky-cart__image-wrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .npp-sticky-cart__pricing {
+    gap: 2px;
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+
+  .npp-sticky-cart__prices {
+    gap: 6px;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+    line-height: 1.2 !important;
+    align-items: center !important;
+  }
+
+  .npp-sticky-cart__compare-wrap {
+    font-size: 11px !important;
+    color: var(--npp-sticky-compare-color, #6b7280) !important;
+    font-weight: 400 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+    line-height: 1.2 !important;
+    flex-shrink: 0;
+  }
+
+  .npp-sticky-cart__compare {
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    white-space: nowrap !important;
+    line-height: 1.2 !important;
+  }
+
+  .npp-sticky-cart__price {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: var(--npp-sticky-price-color, #1b3a6e) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.2px !important;
+    flex-shrink: 0;
+  }
+
+  .npp-sticky-cart__badge-wrap {
+    display: flex !important;
+    white-space: nowrap !important;
+    margin-top: 2px;
+  }
+
+  .npp-sticky-cart__badge {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    padding: 2px 6px !important;
+    white-space: nowrap !important;
+    border-radius: 4px !important;
+    line-height: 14px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+
+  .npp-sticky-cart__action {
+    flex: 1 1 auto;
+    min-width: 111px;
+    max-width: 195px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .npp-sticky-cart__form {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .npp-sticky-cart__btn {
+    padding: 8px 24px;
+    min-height: 40px;
+    max-height: 40px;
+    height: 40px;
+    min-width: 111px;
+    width: 100%;
+    flex-grow: 1;
+    font-size: 14px;
+    line-height: 15.6px;
+    font-weight: 700;
+    letter-spacing: 0.056px;
+    border-radius: 8px;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .npp-sticky-cart__trust {
+    font-size: 11px;
+    line-height: 15.6px;
+    font-weight: 500;
+    padding: 4px 16px;
+    gap: 8px;
+    min-height: 24px;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    justify-content: space-around;
+  }
+
+  .npp-sticky-cart__trust-item {
+    font-size: 11px;
+    line-height: 15.6px;
+    font-weight: 500;
+    white-space: nowrap !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .npp-sticky-cart__trust-star {
+    font-size: 11px;
+    line-height: 1;
+  }
+}
+
+@media (max-width: 380px) {
+  .npp-sticky-cart__ribbon-text {
+    font-size: 12px;
+    line-height: 15px;
+  }
+
+  .npp-sticky-cart__main {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .npp-sticky-cart__product {
+    gap: 6px;
+  }
+
+  .npp-sticky-cart__image-wrap {
+    width: 38px;
+    height: 38px;
+  }
+
+  .npp-sticky-cart__prices {
+    gap: 4px;
+  }
+
+  .npp-sticky-cart__compare-wrap {
+    font-size: 10px !important;
+  }
+
+  .npp-sticky-cart__compare {
+    font-size: 10px !important;
+  }
+
+  .npp-sticky-cart__price {
+    font-size: 15px !important;
+  }
+
+  .npp-sticky-cart__badge {
+    font-size: 9px !important;
+    padding: 1.5px 5px !important;
+  }
+
+  .npp-sticky-cart__action {
+    min-width: 100px;
+    max-width: 160px;
+  }
+
+  .npp-sticky-cart__btn {
+    padding: 8px 16px;
+    min-width: 100px;
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    font-size: 13px;
+  }
+
+  .npp-sticky-cart__trust {
+    font-size: 10px;
+    gap: 6px;
+    padding: 4px 8px;
+  }
+
+  .npp-sticky-cart__trust-item {
+    font-size: 10px;
+  }
+}
+</style>
+
+<npp-sticky-cart
+  id="npp-sticky-cart-{{ section.id }}"
+  class="npp-sticky-cart{% if sticky_always_visible %} is-visible always-visible{% endif %}"
+  style="
+    --npp-sticky-ribbon-bg: {{ ribbon_bg }};
+    --npp-sticky-ribbon-color: {{ ribbon_color }};
+    --npp-sticky-btn-bg: {{ btn_bg }};
+    --npp-sticky-btn-color: {{ btn_color }};
+    --npp-sticky-price-color: {{ price_color }};
+    --npp-sticky-compare-color: {{ compare_price_color }};
+    --npp-sticky-savings-bg: {{ savings_bg }};
+    --npp-sticky-savings-color: {{ savings_color }};
+    --npp-sticky-trust-bg: {{ trust_bg }};
+    --npp-sticky-trust-color: {{ trust_color }};
+    --npp-sticky-star-color: {{ star_color }};
+  "
+  data-product-id="{{ product.id }}"
+  data-section-id="{{ section.id }}"
+  {% if sticky_always_visible %}data-always-visible="true"{% endif %}
+>
+  <div class="npp-sticky-cart__inner">
+    <!-- Tier 1: Top Ribbon -->
+    {% comment %} {%- if ribbon_text != blank -%}
+      <div class="npp-sticky-cart__ribbon">
+        <p class="npp-sticky-cart__ribbon-text" data-sticky-ribbon>{{ ribbon_text | escape }}</p>
+      </div>
+    {%- endif -%} {% endcomment %}
+
+    <!-- Tier 2: Main Conversion Bar -->
+    <div class="npp-sticky-cart__main">
+      <div class="npp-sticky-cart__product">
+        <div class="npp-sticky-cart__image-wrap">
+          <img
+            class="npp-sticky-cart__image"
+            data-sticky-image
+            src="{{ thumb_image | image_url: width: 140 }}"
+            alt="{{ thumb_image.alt | default: product.title | escape }}"
+            width="52"
+            height="52"
+            loading="lazy"
+          >
+        </div>
+        <div class="npp-sticky-cart__pricing">
+          <div class="npp-sticky-cart__prices">
+            <span class="npp-sticky-cart__compare-wrap{% if compare_price <= price or compare_price == blank %} is-hidden{% endif %}" data-sticky-compare-wrap>
+              <s class="npp-sticky-cart__compare" data-sticky-compare>{{ compare_price | money }}</s>
+            </span>
+            <span class="npp-sticky-cart__price" data-sticky-price>{{ price | money }}</span>
+          </div>
+          <div class="npp-sticky-cart__badge-wrap{% if savings <= 0 %} is-hidden{% endif %}" data-sticky-badge-wrap>
+            <span class="npp-sticky-cart__badge" data-sticky-badge>Save&nbsp;<span data-sticky-savings>{{ savings | money }}</span>&nbsp;today!</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="npp-sticky-cart__action">
+        <form method="post" action="/cart/add" class="npp-sticky-cart__form" data-sticky-form>
+          <input type="hidden" name="id" value="{{ current_variant.id }}" data-sticky-variant-id>
+          <input type="hidden" name="return_to" value="/checkout">
+            
+
+ 
+          {% comment %} <button
+            type="button"
+            onclick="onStickyBuyNowClick(this)"
+id="npp-sticky-buy-now"
+            class="npp-sticky-cart__btn"
+            data-sticky-submit
+            {% comment %} onclick="onBuyNowClick(this, '#{{ current_variant.id }}')" id="gokwik-buy-now" {% endcomment %}
+            {% unless current_variant.available %}disabled{% endunless %}
+          >
+            <span data-sticky-btn-text>
+              {%- if current_variant.available -%}
+                {{ btn_text | escape }}
+              {%- else -%}
+                {{ 'products.product.sold_out' | t }}
+              {%- endif -%}
+            </span>
+          </button> {% endcomment %}
+
+          <button
+  type="button"
+  class="npp-sticky-cart__btn"
+  data-sticky-submit
+  id="gokwik-buy-now-sticky"
+  {% unless current_variant.available %}disabled{% endunless %}
+>
+  
+   <span data-sticky-btn-text>
+              {%- if current_variant.available -%}
+                {{ btn_text | escape }}
+              {%- else -%}
+                {{ 'products.product.sold_out' | t }}
+              {%- endif -%}
+            </span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tier 3: Bottom Trust Strip -->
+    {%- if trust_customers != blank or trust_reviews != blank -%}
+      <div class="npp-sticky-cart__trust">
+        {%- if trust_customers != blank -%}
+          <span class="npp-sticky-cart__trust-item">
+            <span class="npp-sticky-cart__trust-star">★</span>
+            <span class="npp-sticky-cart__trust-label">{{ trust_customers | escape }}</span>
+          </span>
+        {%- endif -%}
+        {%- if trust_reviews != blank -%}
+          <span class="npp-sticky-cart__trust-item">
+            <span class="npp-sticky-cart__trust-star">★</span>
+            <span class="npp-sticky-cart__trust-label">{{ trust_reviews | escape }}</span>
+          </span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {% comment %} <script type="application/json" data-sticky-variants-json>
+    {{ product.variants | json }}
+  </script> {% endcomment %}
+</npp-sticky-cart>
+
+<script>
+  if (!customElements.get('npp-sticky-cart')) {
+    class NppStickyCart extends HTMLElement {
+      connectedCallback() {
+        this.variants = [];
+        try {
+          const jsonEl = this.querySelector('[data-sticky-variants-json]');
+          if (jsonEl) this.variants = JSON.parse(jsonEl.textContent || '[]');
+        } catch (e) {
+          console.warn('[NppStickyCart] Error parsing variants JSON', e);
+        }
+
+        this.variantInput = this.querySelector('[data-sticky-variant-id]');
+        this.priceEl = this.querySelector('[data-sticky-price]');
+        this.compareWrap = this.querySelector('[data-sticky-compare-wrap]');
+        this.compareEl = this.querySelector('[data-sticky-compare]');
+        this.badgeWrap = this.querySelector('[data-sticky-badge-wrap]');
+        this.savingsEl = this.querySelector('[data-sticky-savings]');
+        this.imageEl = this.querySelector('[data-sticky-image]');
+        this.submitBtn = this.querySelector('[data-sticky-submit]');
+        this.btnTextEl = this.querySelector('[data-sticky-btn-text]');
+
+        this.initScroll();
+        this.initVariantListener();
+        this.initFormSubmit();
+      }
+
+      initScroll() {
+        if (this.dataset.alwaysVisible === 'true' || this.classList.contains('always-visible')) {
+          this.classList.add('is-visible');
+          return;
+        }
+
+        const target = document.querySelector('.npp-block--buy_buttons') || document.querySelector('.productView-action') || document.querySelector('.product-form__buttons') || document.querySelector('.productView-product');
+        if (!target) {
+          this.classList.add('is-visible');
+          return;
+        }
+
+        const onScroll = () => {
+          const rect = target.getBoundingClientRect();
+          // Show once customer scrolls past the main buy buttons
+          if (rect.bottom < 0) {
+            this.classList.add('is-visible');
+          } else {
+            this.classList.remove('is-visible');
+          }
+        };
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+
+      initVariantListener() {
+        const updateFromVariantId = (variantId) => {
+          if (!variantId || !this.variants.length) return;
+          const matched = this.variants.find(v => String(v.id) === String(variantId));
+          if (matched) this.syncVariant(matched);
+        };
+
+        // Listen for standard form changes and pack card clicks
+        document.addEventListener('change', (e) => {
+          if (e.target.name === 'id') {
+            updateFromVariantId(e.target.value);
+          } else if (e.target.matches('[data-variant-id]')) {
+            updateFromVariantId(e.target.getAttribute('data-variant-id'));
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          const card = e.target.closest('.npp-pack-card, [data-variant-id]');
+          if (card) {
+            const vid = card.getAttribute('data-variant-id');
+            if (vid) updateFromVariantId(vid);
+          }
+        });
+      }
+
+      syncVariant(variant) {
+        if (this.variantInput) this.variantInput.value = variant.id;
+
+        const price = variant.price;
+        const comparePrice = variant.compare_at_price;
+
+        if (this.priceEl) this.priceEl.innerHTML = this.formatMoney(price);
+
+        if (comparePrice && comparePrice > price) {
+          if (this.compareEl) this.compareEl.innerHTML = this.formatMoney(comparePrice);
+          if (this.compareWrap) this.compareWrap.classList.remove('is-hidden');
+          const saveVal = comparePrice - price;
+          if (this.savingsEl) this.savingsEl.innerHTML = this.formatMoney(saveVal);
+          if (this.badgeWrap) this.badgeWrap.classList.remove('is-hidden');
+        } else {
+          if (this.compareWrap) this.compareWrap.classList.add('is-hidden');
+          if (this.badgeWrap) this.badgeWrap.classList.add('is-hidden');
+        }
+
+        if (variant.featured_image && variant.featured_image.src && this.imageEl) {
+          this.imageEl.src = variant.featured_image.src;
+        }
+
+        if (this.submitBtn) {
+          if (variant.available) {
+            this.submitBtn.disabled = false;
+            if (this.btnTextEl) this.btnTextEl.textContent = 'BUY NOW';
+          } else {
+            this.submitBtn.disabled = true;
+            if (this.btnTextEl) this.btnTextEl.textContent = 'Sold Out';
+          }
+        }
+      }
+
+      formatMoney(cents) {
+        if (!cents && cents !== 0) return '';
+        const amount = Math.round(Number(cents) / 100);
+        return '₹' + amount.toLocaleString('en-IN');
+      }
+
+      {% comment %} initFormSubmit() {
+  const form = this.querySelector('[data-sticky-form]');
+  const submitBtn = this.querySelector('[data-sticky-submit]');
+  if (!form || !submitBtn) return;
+
+  const triggerBuyNow = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (submitBtn.disabled) return;
+
+    const variantID = this.variantInput?.value;
+    const variant = this.variants.find(
+      (item) => String(item.id) === String(variantID)
+    );
+
+    if (!variantID || (variant && !variant.available)) return;
+
+    // Find the main GoKwik button, never the sticky button.
+    const mainBtn = Array.from(
+      document.querySelectorAll('[id="gokwik-buy-now-sticky"]')
+    ).find((button) => !this.contains(button));
+
+    if (
+      !mainBtn ||
+      mainBtn.disabled ||
+      typeof window.onBuyNowClick !== 'function'
+    ) {
+      console.warn('[NppStickyCart] Main GoKwik button is not ready.');
+      return;
+    }
+
+    // Uses the sticky quantity if present; otherwise defaults to 1.
+    const quantityInput = form.querySelector('[name="quantity"]');
+    const quantity = Math.max(
+      1,
+      parseInt(quantityInput?.value || '1', 10) || 1
+    );
+
+    window.onBuyNowClick(mainBtn, false, [
+      { id: variantID, quantity: quantity }
+    ]);
+  };
+
+  submitBtn.addEventListener('click', triggerBuyNow);
+  form.addEventListener('submit', triggerBuyNow);
+} {% endcomment %}
+
+
+initFormSubmit() {
+  const form = this.querySelector('[data-sticky-form]');
+  const submitBtn = this.querySelector('[data-sticky-submit]');
+  if (!form || !submitBtn) return;
+
+  const triggerBuyNow = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (submitBtn.disabled) return;
+
+    // Read the variant that syncVariant() keeps updated.
+    const variantID = this.variantInput?.value;
+    if (!variantID) {
+      console.warn('[NppStickyCart] No selected variant.');
+      return;
+    }
+
+    const variant = this.variants.find(
+      (item) => String(item.id) === String(variantID)
+    );
+
+    if (variant && !variant.available) return;
+
+    // No quantity field in the supplied sticky form: defaults to 1.
+    const quantityInput = form.querySelector('[name="quantity"]');
+    const quantity = Math.max(
+      1,
+      parseInt(quantityInput?.value || '1', 10) || 1
+    );
+
+    if (typeof window.onBuyNowClick !== 'function') {
+      console.warn('[NppStickyCart] GoKwik is not ready yet.');
+      return;
+    }
+
+    // Same argument structure used in product-button.liquid.
+    window.onBuyNowClick(submitBtn, false, [
+      { id: variantID, quantity: quantity }
+    ]);
+    
+  };
+
+  submitBtn.addEventListener('click', triggerBuyNow);
+  form.addEventListener('submit', triggerBuyNow);
+} 
+
+      {% comment %} initFormSubmit() {
+        const form = this.querySelector('[data-sticky-form]');
+        const submitBtn = this.querySelector('[data-sticky-submit]');
+        if (!form) return;
+
+        const triggerPageBuyNow = (e) => {
+          const currentVariantId = this.variantInput ? this.variantInput.value : null;
+
+          // 1. Sync current variant into the main product page form(s)
+          if (currentVariantId) {
+            const allIdInputs = document.querySelectorAll(
+              '.productView-form input[name="id"], .productView-action input[name="id"], form[action*="/cart/add"] input[name="id"]'
+            );
+            allIdInputs.forEach((inp) => {
+              if (inp !== this.variantInput && inp.value !== currentVariantId) {
+                inp.value = currentVariantId;
+                inp.dispatchEvent(new Event('change', { bubbles: true }));
+              }
+            });
+          }
+
+          // 2. Find the product page Buy Now button (GoKwik / Dynamic checkout)
+          const pageBuyNowBtn = document.getElementById('gokwik-buy-now')
+            || document.querySelector('.productView-payment #gokwik-buy-now')
+            || document.querySelector('.productView-payment button:not([data-sticky-submit])')
+            || document.querySelector('.shopify-payment-button__button')
+            || document.querySelector('[data-shopify="payment-button"]')
+            || document.querySelector('.productView-payment [data-gokwik-checkout], .gokwik-checkout button, .gokwik-checkout');
+
+          if (pageBuyNowBtn) {
+            if (e) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+
+            pageBuyNowBtn.removeAttribute('disabled');
+            pageBuyNowBtn.classList.remove('disabled');
+
+            try {
+              if (typeof window.onBuyNowClick === 'function' && (pageBuyNowBtn.id === 'gokwik-buy-now' || (pageBuyNowBtn.getAttribute('onclick') && pageBuyNowBtn.getAttribute('onclick').includes('onBuyNowClick')))) {
+                window.onBuyNowClick(pageBuyNowBtn);
+              } else {
+                pageBuyNowBtn.click();
+              }
+            } catch (err) {
+              console.warn('[NppStickyCart] Error triggering page Buy Now button, falling back to click()', err);
+              pageBuyNowBtn.click();
+            }
+            return false;
+          }
+
+          // 3. If onBuyNowClick is globally available
+          if (typeof window.onBuyNowClick === 'function') {
+            if (e) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+            window.onBuyNowClick(submitBtn || form);
+            return false;
+          }
+        };
+
+        if (submitBtn) {
+          submitBtn.addEventListener('click', (e) => {
+            triggerPageBuyNow(e);
+          });
+        }
+
+        form.addEventListener('submit', (e) => {
+          triggerPageBuyNow(e);
+        });
+      } {% endcomment %}
+    }
+
+    customElements.define('npp-sticky-cart', NppStickyCart);
+  }
+</script>

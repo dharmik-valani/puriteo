@@ -1,0 +1,1593 @@
+{%- liquid
+  assign bg_desktop = section.settings.background_image_desktop
+  assign bg_mobile = section.settings.background_image_mobile
+  if bg_mobile == blank
+    assign bg_mobile = bg_desktop
+  endif
+
+  assign full_bleed = section.settings.full_bleed
+  assign border_radius = section.settings.border_radius | default: 0
+  assign bg_color = section.settings.background_color | default: '#ffe8c8'
+  assign gradient_enabled = section.settings.enable_gradient
+  assign gradient_start = section.settings.gradient_start | default: '#ffd28a'
+  assign gradient_mid = section.settings.gradient_mid | default: '#ffd6e0'
+  assign gradient_end = section.settings.gradient_end | default: '#ffe8c8'
+  assign bg_position = section.settings.background_position | default: 'center center'
+
+  assign strip_height_desktop = section.settings.strip_height_desktop | default: 120
+  assign strip_height_mobile = section.settings.strip_height_mobile | default: 90
+  assign left_width_desktop = section.settings.left_width_desktop | default: 20
+  assign left_width_mobile = section.settings.left_width_mobile | default: 26
+  assign right_width_desktop = section.settings.right_width_desktop | default: 24
+  assign right_width_mobile = section.settings.right_width_mobile | default: 30
+  assign left_image_height_desktop = section.settings.left_image_height_desktop | default: 180
+  assign left_image_height_mobile = section.settings.left_image_height_mobile | default: 130
+  assign right_image_height_desktop = section.settings.right_image_height_desktop | default: 200
+  assign right_image_height_mobile = section.settings.right_image_height_mobile | default: 140
+  assign content_padding_x = section.settings.content_padding_x | default: 80
+  assign content_padding_x_mobile = section.settings.content_padding_x_mobile | default: 15
+  assign cta_gap_desktop = section.settings.cta_gap_desktop | default: 10
+  assign cta_gap_mobile = section.settings.cta_gap_mobile | default: 6
+  assign secondary_offset_desktop = section.settings.secondary_offset_desktop | default: 0
+  assign secondary_offset_mobile = section.settings.secondary_offset_mobile | default: 0
+  assign hide_right_image_mobile = section.settings.hide_right_image_mobile
+  if section.settings.hide_right_image_mobile == nil
+    assign hide_right_image_mobile = true
+  endif
+  assign mobile_cta_layout = section.settings.mobile_cta_layout | default: 'stacked'
+  assign mobile_cta_align = section.settings.mobile_cta_align | default: 'center'
+  assign left_width_mobile_solo = section.settings.left_width_mobile_solo | default: 38
+  assign overflow_space_desktop = section.settings.overflow_space_desktop | default: 20
+  assign overflow_space_mobile = section.settings.overflow_space_mobile | default: 12
+
+  assign padding_top = section.settings.padding_top | default: 0
+  assign padding_bottom = section.settings.padding_bottom | default: 0
+  assign padding_left = section.settings.padding_left | default: 0
+  assign padding_right = section.settings.padding_right | default: 0
+  assign padding_top_mobile = section.settings.padding_top_mobile | default: 0
+  assign padding_bottom_mobile = section.settings.padding_bottom_mobile | default: 0
+  assign padding_left_mobile = section.settings.padding_left_mobile | default: 0
+  assign padding_right_mobile = section.settings.padding_right_mobile | default: 0
+  assign margin_top = section.settings.margin_top | default: 0
+  assign margin_bottom = section.settings.margin_bottom | default: 0
+  assign margin_top_mobile = section.settings.margin_top_mobile | default: 0
+  assign margin_bottom_mobile = section.settings.margin_bottom_mobile | default: 0
+
+  assign pill_font_size = section.settings.pill_font_size | default: 24
+  assign pill_font_size_mobile = section.settings.pill_font_size_mobile | default: 14
+  assign pill_padding_y = section.settings.pill_padding_y | default: 12
+  assign pill_padding_x = section.settings.pill_padding_x | default: 28
+  assign pill_radius = section.settings.pill_radius | default: 50
+  assign secondary_font_size = section.settings.secondary_font_size | default: 24
+  assign secondary_font_size_mobile = section.settings.secondary_font_size_mobile | default: 14
+  assign cta_arrow_size = section.settings.cta_arrow_size | default: 34
+  assign cta_arrow_size_mobile = section.settings.cta_arrow_size_mobile | default: 28
+  assign open_in_new_tab = section.settings.open_in_new_tab
+
+  assign enable_slider = section.settings.enable_slider
+  assign autoplay = section.settings.autoplay
+  assign autoplay_speed = section.settings.autoplay_speed | default: 4 | times: 1000
+  assign show_dots = section.settings.show_dots
+  assign slide_count = section.blocks.size
+  if enable_slider == false or slide_count <= 1
+    assign use_slider = false
+  else
+    assign use_slider = true
+  endif
+-%}
+
+<style>
+  /* Desktop-first so Theme Editor desktop preview picks up desktop height settings */
+  #shopify-section-{{ section.id }},
+  #shopify-section-{{ section.id }}.shopify-section,
+  #shopify-section-{{ section.id }}.section-strip-banner {
+    --strip-left-img-h: {{ left_image_height_desktop }}px;
+    --strip-right-img-h: {{ right_image_height_desktop }}px;
+    --strip-h: {{ strip_height_desktop }}px;
+    margin-top: {{ margin_top }}px;
+    margin-bottom: {{ margin_bottom }}px;
+    overflow: visible !important;
+  }
+  #shopify-section-{{ section.id }} .strip-banner {
+    width: 100%;
+    /* Vertical only — no side padding on the main section so gradient stays full width */
+    padding: {{ padding_top | plus: overflow_space_desktop }}px 0 {{ padding_bottom | plus: overflow_space_desktop }}px 0;
+    box-sizing: border-box;
+    overflow: visible;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__frame {
+    position: relative;
+    width: 100%;
+    max-width: {% if full_bleed %}none{% else %}var(--page-width, 1200px){% endif %};
+    margin: 0 auto;
+    height: var(--strip-h);
+    min-height: var(--strip-h);
+    max-height: var(--strip-h);
+    border-radius: {{ border_radius }}px;
+    overflow: visible;
+    background-color: {{ bg_color }};
+    {% if gradient_enabled %}
+    background-image: linear-gradient(90deg, {{ gradient_start }} 0%, {{ gradient_mid }} 50%, {{ gradient_end }} 100%);
+    {% endif %}
+  }
+  #shopify-section-{{ section.id }} .strip-banner__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__bg picture,
+  #shopify-section-{{ section.id }} .strip-banner__bg img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: {{ bg_position }};
+  }
+  #shopify-section-{{ section.id }} .strip-banner__track {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__slide {
+    display: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__slide.is-active,
+  #shopify-section-{{ section.id }} .strip-banner__slide:only-child {
+    display: block;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__slide-link,
+  #shopify-section-{{ section.id }} .strip-banner__slide-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 16px;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 {{ content_padding_x }}px;
+    box-sizing: border-box;
+    text-decoration: none;
+    color: inherit;
+    overflow: visible;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__left,
+  #shopify-section-{{ section.id }} .strip-banner__right {
+    position: relative;
+    z-index: 2;
+    display: block;
+    align-self: stretch;
+    height: 100%;
+    min-height: 100%;
+    overflow: visible;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__left {
+    width: {{ left_width_desktop }}%;
+    max-width: {{ left_width_desktop }}%;
+    justify-self: start;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__right {
+    width: {{ right_width_desktop }}%;
+    max-width: {{ right_width_desktop }}%;
+    justify-self: end;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__media {
+    position: absolute;
+    top: 50%;
+    display: block;
+    width: auto;
+    max-width: none;
+    height: var(--strip-left-img-h);
+    line-height: 0;
+    transform: translateY(-50%);
+    pointer-events: none;
+    overflow: visible;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__left .strip-banner__media {
+    left: 0;
+    height: var(--strip-left-img-h);
+  }
+  #shopify-section-{{ section.id }} .strip-banner__right .strip-banner__media {
+    right: 0;
+    left: auto;
+    height: var(--strip-right-img-h);
+  }
+  #shopify-section-{{ section.id }} .strip-banner__media img,
+  #shopify-section-{{ section.id }} .strip-banner__media-img {
+    display: block !important;
+    position: static !important;
+    width: auto !important;
+    max-width: none !important;
+    height: 100% !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__left .strip-banner__media img,
+  #shopify-section-{{ section.id }} .strip-banner__media-img--left {
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.14));
+  }
+  #shopify-section-{{ section.id }} .strip-banner__right .strip-banner__media img,
+  #shopify-section-{{ section.id }} .strip-banner__media-img--right {
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.16));
+  }
+  #shopify-section-{{ section.id }} .strip-banner__placeholder {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 64px;
+    padding: 8px;
+    border: 1px dashed rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.35);
+    color: #555;
+    font-size: 11px;
+    text-align: center;
+    line-height: 1.3;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__cta {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    text-align: center;
+    gap: {{ cta_gap_desktop }}px;
+    min-width: 0;
+    z-index: 3;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__pill-wrap {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__sparkles {
+    position: absolute;
+    top: -10px;
+    left: 6px;
+    display: flex;
+    gap: 3px;
+    pointer-events: none;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__sparkles span {
+    display: block;
+    width: 2px;
+    height: 9px;
+    border-radius: 2px;
+    background: currentColor;
+    transform: rotate(-28deg);
+  }
+  #shopify-section-{{ section.id }} .strip-banner__sparkles span:nth-child(2) { height: 13px; margin-top: -2px; }
+  #shopify-section-{{ section.id }} .strip-banner__sparkles span:nth-child(3) { height: 8px; margin-top: 2px; }
+  #shopify-section-{{ section.id }} .strip-banner__pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2em;
+    padding: {{ pill_padding_y }}px {{ pill_padding_x }}px;
+    border-radius: {{ pill_radius }}px;
+    font-size: {{ pill_font_size }}px;
+    font-weight: 700;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__secondary {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+    font-size: {{ secondary_font_size }}px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: normal;
+    white-space: nowrap;
+    flex-shrink: 0;
+    vertical-align: middle;
+    transform: translateY({{ secondary_offset_desktop }}px);
+  }
+  #shopify-section-{{ section.id }} .strip-banner__secondary--script {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__cta-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: {{ cta_arrow_size }}px;
+    height: {{ cta_arrow_size }}px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__cta-arrow svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__dots {
+    display: {% if use_slider and show_dots %}flex{% else %}none{% endif %};
+    position: absolute;
+    left: 50%;
+    bottom: -18px;
+    z-index: 4;
+    transform: translateX(-50%);
+    gap: 6px;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__dot {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: {{ section.settings.dots_color | default: '#c9a3b0' }};
+    cursor: pointer;
+  }
+  #shopify-section-{{ section.id }} .strip-banner__dot.is-active {
+    background: {{ section.settings.dots_active_color | default: '#e91e8c' }};
+  }
+
+  /* Mobile only */
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} {
+      --strip-left-img-h: {{ left_image_height_mobile }}px;
+      --strip-right-img-h: {{ right_image_height_mobile }}px;
+      --strip-h: {{ strip_height_mobile }}px;
+      margin-top: {{ margin_top_mobile }}px;
+      margin-bottom: {{ margin_bottom_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .strip-banner {
+      /* Vertical only — Product GIF side padding is on the slide, not the section */
+      padding: {{ padding_top_mobile | plus: overflow_space_mobile }}px 0 {{ padding_bottom_mobile | plus: overflow_space_mobile }}px 0;
+      margin-top: -{{ overflow_space_mobile }}px;
+      margin-bottom: -{{ overflow_space_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__frame {
+      height: {{ strip_height_mobile }}px !important;
+      min-height: {{ strip_height_mobile }}px !important;
+      max-height: {{ strip_height_mobile }}px !important;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__slide-link,
+    #shopify-section-{{ section.id }} .strip-banner__slide-inner {
+      {% if hide_right_image_mobile %}
+      grid-template-columns: minmax(0, {{ left_width_mobile_solo }}%) minmax(0, 1fr);
+      {% else %}
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      {% endif %}
+      padding: 0 {{ content_padding_x_mobile }}px;
+      column-gap: 8px;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__left,
+    #shopify-section-{{ section.id }} .strip-banner__right {
+      height: 100% !important;
+      min-height: 0 !important;
+      max-height: 100% !important;
+      overflow: visible !important;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__left {
+      width: 100%;
+      max-width: 100%;
+      justify-self: start;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__right {
+      width: 100%;
+      max-width: 100%;
+      justify-self: end;
+      {% if hide_right_image_mobile %}display: none !important;{% endif %}
+    }
+    #shopify-section-{{ section.id }} .strip-banner__left .strip-banner__media,
+    #shopify-section-{{ section.id }} .strip-banner__media--left {
+      position: absolute !important;
+      top: 50% !important;
+      left: 0 !important;
+      right: auto !important;
+      bottom: auto !important;
+      transform: translateY(-50%) !important;
+      width: auto !important;
+      max-width: none !important;
+      height: {{ left_image_height_mobile }}px !important;
+      max-height: none !important;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__right .strip-banner__media,
+    #shopify-section-{{ section.id }} .strip-banner__media--right {
+      position: absolute !important;
+      top: 50% !important;
+      right: 0 !important;
+      left: auto !important;
+      bottom: auto !important;
+      transform: translateY(-50%) !important;
+      width: auto !important;
+      max-width: none !important;
+      height: {{ right_image_height_mobile }}px !important;
+      max-height: none !important;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__left .strip-banner__media img,
+    #shopify-section-{{ section.id }} .strip-banner__media-img--left {
+      height: {{ left_image_height_mobile }}px !important;
+      width: auto !important;
+      max-width: none !important;
+      max-height: none !important;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__right .strip-banner__media img,
+    #shopify-section-{{ section.id }} .strip-banner__media-img--right {
+      height: {{ right_image_height_mobile }}px !important;
+      width: auto !important;
+      max-width: none !important;
+      max-height: none !important;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__cta {
+      {% if mobile_cta_layout == 'stacked' %}
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: {% if mobile_cta_align == 'left' %}flex-start{% elsif mobile_cta_align == 'right' %}flex-end{% else %}center{% endif %};
+      justify-content: center;
+      text-align: {% if mobile_cta_align == 'left' %}left{% elsif mobile_cta_align == 'right' %}right{% else %}center{% endif %};
+      {% else %}
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: {% if mobile_cta_align == 'left' %}flex-start{% elsif mobile_cta_align == 'right' %}flex-end{% else %}center{% endif %};
+      {% endif %}
+      gap: {{ cta_gap_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__pill {
+      padding: {{ pill_padding_y | times: 0.75 | round }}px {{ pill_padding_x | times: 0.6 | round }}px;
+      font-size: {{ pill_font_size_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__secondary {
+      font-size: {{ secondary_font_size_mobile }}px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transform: translateY({{ secondary_offset_mobile }}px);
+    }
+    #shopify-section-{{ section.id }} .strip-banner__cta-arrow {
+      width: {{ cta_arrow_size_mobile }}px;
+      height: {{ cta_arrow_size_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .strip-banner__cta-arrow svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+</style>
+
+<div
+  class="strip-banner"
+  id="StripBanner-{{ section.id }}"
+  data-strip-banner
+  data-autoplay="{% if use_slider and autoplay %}true{% else %}false{% endif %}"
+  data-autoplay-speed="{{ autoplay_speed }}"
+>
+  <div class="strip-banner__frame">
+    {%- if bg_desktop != blank or bg_mobile != blank -%}
+      <div class="strip-banner__bg" aria-hidden="true">
+        <picture>
+          {%- if bg_mobile != blank and bg_mobile != bg_desktop -%}
+            <source media="(max-width: 749px)" srcset="{{ bg_mobile | image_url: width: 1200 }}">
+          {%- endif -%}
+          {%- assign bg_fallback = bg_desktop | default: bg_mobile -%}
+          <img
+            src="{{ bg_fallback | image_url: width: 2400 }}"
+            alt=""
+            width="{{ bg_fallback.width }}"
+            height="{{ bg_fallback.height }}"
+            loading="lazy"
+          >
+        </picture>
+      </div>
+    {%- endif -%}
+
+    <div class="strip-banner__track" data-slider="{% if use_slider %}true{% else %}false{% endif %}">
+      {%- if slide_count > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign left_image = block.settings.left_image
+            assign left_image_mobile = block.settings.left_image_mobile
+            if left_image_mobile == blank
+              assign left_image_mobile = left_image
+            endif
+            assign block_product = block.settings.product
+            if left_image == blank and block_product != blank and block_product.featured_media
+              assign left_image = block_product.featured_media.preview_image
+              assign left_image_mobile = left_image
+            endif
+
+            assign right_image = block.settings.right_image
+            assign right_image_mobile = block.settings.right_image_mobile
+            if right_image_mobile == blank
+              assign right_image_mobile = right_image
+            endif
+
+            assign slide_link = block.settings.link
+            if slide_link == blank and block_product != blank
+              assign slide_link = block_product.url
+            endif
+            if slide_link == blank
+              assign slide_link = section.settings.default_link
+            endif
+
+            assign left_alt = block.settings.left_alt
+            if left_alt == blank and block_product != blank
+              assign left_alt = block_product.title
+            endif
+            if left_alt == blank
+              assign left_alt = 'Product'
+            endif
+            assign right_alt = block.settings.right_alt | default: 'Lifestyle'
+
+            assign show_pill = block.settings.show_pill
+            if block.settings.show_pill == nil
+              assign show_pill = true
+            endif
+            assign pill_1 = block.settings.pill_text_1
+            assign pill_2 = block.settings.pill_text_2
+            assign pill_1_color = block.settings.pill_text_1_color | default: section.settings.default_pill_text_1_color | default: '#e91e8c'
+            assign pill_2_color = block.settings.pill_text_2_color | default: section.settings.default_pill_text_2_color | default: '#e91e8c'
+            assign pill_bg = block.settings.pill_background | default: section.settings.default_pill_background | default: '#ffffff'
+            assign pill_glow = block.settings.pill_glow_color | default: section.settings.default_pill_glow | default: '#f7a8c8'
+            assign show_sparkles = block.settings.show_sparkles
+
+            assign show_secondary = block.settings.show_secondary_text
+            if block.settings.show_secondary_text == nil
+              assign show_secondary = true
+            endif
+            assign secondary_text = block.settings.secondary_text
+            assign secondary_color = block.settings.secondary_text_color | default: section.settings.default_secondary_color | default: '#111111'
+            assign secondary_style = block.settings.secondary_text_style | default: 'normal'
+
+            assign show_arrow = block.settings.show_cta_arrow
+            if block.settings.show_cta_arrow == nil
+              assign show_arrow = true
+            endif
+            assign arrow_bg = block.settings.cta_arrow_bg | default: section.settings.default_arrow_bg | default: '#111111'
+            assign arrow_color = block.settings.cta_arrow_color | default: section.settings.default_arrow_color | default: '#ffffff'
+
+            assign show_left = block.settings.show_left_image
+            if block.settings.show_left_image == nil
+              assign show_left = true
+            endif
+            assign show_right = block.settings.show_right_image
+            if block.settings.show_right_image == nil
+              assign show_right = true
+            endif
+          -%}
+          <div
+            class="strip-banner__slide{% if forloop.first %} is-active{% endif %}"
+            {{ block.shopify_attributes }}
+            data-strip-slide
+            {% if forloop.first %}aria-hidden="false"{% else %}aria-hidden="true"{% endif %}
+          >
+            {%- if slide_link != blank -%}
+              <a class="strip-banner__slide-link" href="{{ slide_link }}"{% if open_in_new_tab %} target="_blank" rel="noopener"{% endif %}>
+            {%- else -%}
+              <div class="strip-banner__slide-inner">
+            {%- endif -%}
+
+              {%- if show_left -%}
+                <div class="strip-banner__left">
+                  {%- if left_image != blank or left_image_mobile != blank -%}
+                    <picture class="strip-banner__media strip-banner__media--left" style="height: var(--strip-left-img-h);">
+                      {%- if left_image_mobile != blank and left_image_mobile != left_image -%}
+                        <source media="(max-width: 749px)" srcset="{{ left_image_mobile | image_url: width: 1400 }}">
+                      {%- endif -%}
+                      {%- assign left_fallback = left_image | default: left_image_mobile -%}
+                      <img
+                        class="strip-banner__media-img strip-banner__media-img--left"
+                        src="{{ left_fallback | image_url: width: 1400 }}"
+                        alt="{{ left_alt | escape }}"
+                        {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
+                      >
+                    </picture>
+                  {%- else -%}
+                    <div class="strip-banner__placeholder">Left product GIF</div>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+              <div class="strip-banner__cta">
+                {%- if show_pill -%}
+                  {%- if pill_1 != blank or pill_2 != blank -%}
+                    <div class="strip-banner__pill-wrap">
+                      {%- if show_sparkles -%}
+                        <div class="strip-banner__sparkles" style="color: {{ pill_2_color }};" aria-hidden="true"><span></span><span></span><span></span></div>
+                      {%- endif -%}
+                      <div
+                        class="strip-banner__pill"
+                        style="background: {{ pill_bg }}; box-shadow: 0 6px 20px {{ pill_glow }};"
+                      >
+                        {%- if pill_1 != blank -%}<span style="color: {{ pill_1_color }};">{{ pill_1 }}</span>{%- endif -%}
+                        {%- if pill_2 != blank -%}<span style="color: {{ pill_2_color }};">{{ pill_2 }}</span>{%- endif -%}
+                      </div>
+                    </div>
+                  {%- endif -%}
+                {%- endif -%}
+
+                {%- if show_secondary and secondary_text != blank -%}
+                  <p
+                    class="strip-banner__secondary{% if secondary_style == 'script' %} strip-banner__secondary--script{% endif %}"
+                    style="color: {{ secondary_color }};"
+                  >
+                    {{ secondary_text }}
+                  </p>
+                {%- endif -%}
+
+                {%- if show_arrow -%}
+                  <span class="strip-banner__cta-arrow" style="background: {{ arrow_bg }}; color: {{ arrow_color }};" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </span>
+                {%- endif -%}
+              </div>
+
+              {%- if show_right -%}
+                <div class="strip-banner__right">
+                  {%- if right_image != blank or right_image_mobile != blank -%}
+                    <picture class="strip-banner__media strip-banner__media--right" style="height: var(--strip-right-img-h);">
+                      {%- if right_image_mobile != blank and right_image_mobile != right_image -%}
+                        <source media="(max-width: 749px)" srcset="{{ right_image_mobile | image_url: width: 1400 }}">
+                      {%- endif -%}
+                      {%- assign right_fallback = right_image | default: right_image_mobile -%}
+                      <img
+                        class="strip-banner__media-img strip-banner__media-img--right"
+                        src="{{ right_fallback | image_url: width: 1400 }}"
+                        alt="{{ right_alt | escape }}"
+                        loading="lazy"
+                      >
+                    </picture>
+                  {%- else -%}
+                    <div class="strip-banner__placeholder">Right image / GIF</div>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+            {%- if slide_link != blank -%}
+              </a>
+            {%- else -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        <div class="strip-banner__slide is-active">
+          <div class="strip-banner__slide-inner">
+            <div class="strip-banner__left"><div class="strip-banner__placeholder">Add Product GIF block</div></div>
+            <div class="strip-banner__cta">
+              <div class="strip-banner__pill" style="background:#fff;box-shadow:0 6px 20px #f7a8c8;">
+                <span style="color:#e91e8c;">Get a</span>
+                <span style="color:#e91e8c;">FREEBIE</span>
+              </div>
+              <p class="strip-banner__secondary">on orders Rs. 799+</p>
+            </div>
+            <div class="strip-banner__right"><div class="strip-banner__placeholder">Right image</div></div>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if use_slider and show_dots -%}
+      <div class="strip-banner__dots" data-strip-dots>
+        {%- for block in section.blocks -%}
+          <button type="button" class="strip-banner__dot{% if forloop.first %} is-active{% endif %}" data-strip-dot="{{ forloop.index0 }}" aria-label="Slide {{ forloop.index }}"></button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- if use_slider -%}
+<script>
+  (function () {
+    var root = document.getElementById('StripBanner-{{ section.id }}');
+    if (!root) return;
+    var slides = Array.prototype.slice.call(root.querySelectorAll('[data-strip-slide]'));
+    if (slides.length < 2) return;
+    var dots = Array.prototype.slice.call(root.querySelectorAll('[data-strip-dot]'));
+    var index = 0;
+    var timer = null;
+    var autoplay = root.getAttribute('data-autoplay') === 'true';
+    var speed = parseInt(root.getAttribute('data-autoplay-speed'), 10) || 4000;
+
+    function goTo(i) {
+      index = (i + slides.length) % slides.length;
+      slides.forEach(function (slide, idx) {
+        var active = idx === index;
+        slide.classList.toggle('is-active', active);
+        slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
+      dots.forEach(function (dot, idx) {
+        dot.classList.toggle('is-active', idx === index);
+      });
+    }
+
+    function start() {
+      if (!autoplay) return;
+      stop();
+      timer = setInterval(function () { goTo(index + 1); }, speed);
+    }
+
+    function stop() {
+      if (timer) clearInterval(timer);
+      timer = null;
+    }
+
+    dots.forEach(function (dot) {
+      dot.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        goTo(parseInt(dot.getAttribute('data-strip-dot'), 10) || 0);
+        start();
+      });
+    });
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+    start();
+  })();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Strip banner",
+  "tag": "section",
+  "class": "section-strip-banner",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Each Product GIF block has its own left image, right image, text, and link."
+    },
+    {
+      "type": "header",
+      "content": "Gradient / background strip"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_desktop",
+      "label": "Background image (desktop)",
+      "info": "Optional. Leave empty to use gradient only."
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_mobile",
+      "label": "Background image (mobile)"
+    },
+    {
+      "type": "select",
+      "id": "background_position",
+      "label": "Background position",
+      "default": "center center",
+      "options": [
+        { "value": "left center", "label": "Left" },
+        { "value": "center center", "label": "Center" },
+        { "value": "right center", "label": "Right" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fallback color",
+      "default": "#ffe8c8"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_gradient",
+      "label": "Enable gradient background",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "gradient_start",
+      "label": "Gradient start",
+      "default": "#ffd28a"
+    },
+    {
+      "type": "color",
+      "id": "gradient_mid",
+      "label": "Gradient middle",
+      "default": "#ffd6e0"
+    },
+    {
+      "type": "color",
+      "id": "gradient_end",
+      "label": "Gradient end",
+      "default": "#ffe8c8"
+    },
+    {
+      "type": "header",
+      "content": "Strip height (gradient bar)"
+    },
+    {
+      "type": "range",
+      "id": "strip_height_desktop",
+      "label": "Gradient strip height (desktop)",
+      "min": 60,
+      "max": 220,
+      "step": 4,
+      "unit": "px",
+      "default": 120,
+      "info": "Height of the colored bar only."
+    },
+    {
+      "type": "range",
+      "id": "strip_height_mobile",
+      "label": "Gradient strip height (mobile)",
+      "min": 50,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "default": 90
+    },
+    {
+      "type": "range",
+      "id": "overflow_space_desktop",
+      "label": "Pop-out clearance (desktop)",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 20,
+      "info": "White space above and below the gradient bar."
+    },
+    {
+      "type": "range",
+      "id": "overflow_space_mobile",
+      "label": "Pop-out clearance (mobile)",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 12,
+      "info": "White space above and below the gradient bar on mobile."
+    },
+    {
+      "type": "header",
+      "content": "Left image size"
+    },
+    {
+      "type": "range",
+      "id": "left_width_desktop",
+      "label": "Left area width (desktop)",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "left_width_mobile",
+      "label": "Left area width (mobile)",
+      "min": 16,
+      "max": 40,
+      "step": 1,
+      "unit": "%",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "left_image_height_desktop",
+      "label": "Left image height (desktop)",
+      "min": 80,
+      "max": 400,
+      "step": 4,
+      "unit": "px",
+      "default": 180,
+      "info": "Left image height on desktop."
+    },
+    {
+      "type": "range",
+      "id": "left_image_height_mobile",
+      "label": "Left image height (mobile)",
+      "min": 70,
+      "max": 260,
+      "step": 2,
+      "unit": "px",
+      "default": 150,
+      "info": "Left image height on mobile."
+    },
+    {
+      "type": "header",
+      "content": "Right image size"
+    },
+    {
+      "type": "range",
+      "id": "right_width_desktop",
+      "label": "Right area width (desktop)",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "unit": "%",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "right_width_mobile",
+      "label": "Right area width (mobile)",
+      "min": 16,
+      "max": 45,
+      "step": 1,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "right_image_height_desktop",
+      "label": "Right image height (desktop)",
+      "min": 80,
+      "max": 400,
+      "step": 4,
+      "unit": "px",
+      "default": 200,
+      "info": "Right image height on desktop."
+    },
+    {
+      "type": "range",
+      "id": "right_image_height_mobile",
+      "label": "Right image height (mobile)",
+      "min": 70,
+      "max": 260,
+      "step": 2,
+      "unit": "px",
+      "default": 140,
+      "info": "Right image height on mobile."
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_right_image_mobile",
+      "label": "Hide right image on mobile",
+      "default": true,
+      "info": "Hides the right image on mobile only."
+    },
+    {
+      "type": "select",
+      "id": "mobile_cta_layout",
+      "label": "Mobile text layout",
+      "default": "stacked",
+      "options": [
+        { "value": "stacked", "label": "Stacked (pill / offer / arrow)" },
+        { "value": "row", "label": "Horizontal row" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "mobile_cta_align",
+      "label": "Mobile text alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "left_width_mobile_solo",
+      "label": "Left image width when right is hidden",
+      "min": 24,
+      "max": 55,
+      "step": 1,
+      "unit": "%",
+      "default": 42,
+      "info": "Used on mobile when the right image is hidden."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_bleed",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Strip corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "content_padding_x",
+      "label": "Product GIF side padding (desktop)",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 80,
+      "info": "Left and right padding inside the Product GIF only. Does not pad the main section or gradient."
+    },
+    {
+      "type": "range",
+      "id": "content_padding_x_mobile",
+      "label": "Product GIF side padding (mobile)",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 15,
+      "info": "Left and right padding inside the Product GIF on mobile."
+    },
+    {
+      "type": "range",
+      "id": "cta_gap_desktop",
+      "label": "Gap between pill / text / arrow (desktop)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 10,
+      "info": "Spacing between pill, offer text, and arrow."
+    },
+    {
+      "type": "range",
+      "id": "cta_gap_mobile",
+      "label": "Gap between pill / text / arrow (mobile)",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 6,
+      "info": "Spacing between pill, offer text, and arrow on mobile."
+    },
+    {
+      "type": "url",
+      "id": "default_link",
+      "label": "Default link (fallback)",
+      "info": "Used only when a slide has no link of its own."
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open links in new tab",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Default text styles"
+    },
+    {
+      "type": "color",
+      "id": "default_pill_text_1_color",
+      "label": "Default pill part 1 color",
+      "default": "#e91e8c"
+    },
+    {
+      "type": "color",
+      "id": "default_pill_text_2_color",
+      "label": "Default pill part 2 color",
+      "default": "#e91e8c"
+    },
+    {
+      "type": "color",
+      "id": "default_pill_background",
+      "label": "Default pill background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "default_pill_glow",
+      "label": "Default pill glow",
+      "default": "#f7a8c8"
+    },
+    {
+      "type": "color",
+      "id": "default_secondary_color",
+      "label": "Default offer text color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "default_arrow_bg",
+      "label": "Default arrow background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "default_arrow_color",
+      "label": "Default arrow icon color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "pill_font_size",
+      "label": "Pill font size (desktop)",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "pill_font_size_mobile",
+      "label": "Pill font size (mobile)",
+      "min": 11,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_y",
+      "label": "Pill padding top/bottom",
+      "min": 4,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "pill_padding_x",
+      "label": "Pill padding left/right",
+      "min": 10,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "pill_radius",
+      "label": "Pill corner radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "secondary_font_size",
+      "label": "Offer text size (desktop)",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "secondary_font_size_mobile",
+      "label": "Offer text size (mobile)",
+      "min": 11,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "secondary_offset_desktop",
+      "label": "Offer text lower offset (desktop)",
+      "min": 0,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "info": "Higher value moves offer text lower."
+    },
+    {
+      "type": "range",
+      "id": "secondary_offset_mobile",
+      "label": "Offer text lower offset (mobile)",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "info": "Higher value moves offer text lower."
+    },
+    {
+      "type": "range",
+      "id": "cta_arrow_size",
+      "label": "Arrow size (desktop)",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "cta_arrow_size_mobile",
+      "label": "Arrow size (mobile)",
+      "min": 18,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "Slider"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "label": "Enable slider for multiple Product GIF blocks",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Autoplay speed",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Show dots",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "dots_color",
+      "label": "Dot color",
+      "default": "#c9a3b0"
+    },
+    {
+      "type": "color",
+      "id": "dots_active_color",
+      "label": "Active dot color",
+      "default": "#e91e8c"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing (desktop)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "Padding left",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "Padding right",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Margin top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Section spacing (mobile)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "Padding left",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "Padding right",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_top_mobile",
+      "label": "Margin top",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom_mobile",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_gif",
+      "name": "Product GIF",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Left product GIF / image"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_left_image",
+          "label": "Show left image",
+          "default": true
+        },
+        {
+          "type": "image_picker",
+          "id": "left_image",
+          "label": "Left GIF / image (desktop)",
+          "info": "Transparent PNG or animated GIF recommended."
+        },
+        {
+          "type": "image_picker",
+          "id": "left_image_mobile",
+          "label": "Left GIF / image (mobile)"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product (optional)",
+          "info": "Fallback image + default link if no custom link is set."
+        },
+        {
+          "type": "text",
+          "id": "left_alt",
+          "label": "Left image alt text",
+          "default": "Product"
+        },
+        {
+          "type": "header",
+          "content": "Right lifestyle GIF / image"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_right_image",
+          "label": "Show right image",
+          "default": true
+        },
+        {
+          "type": "image_picker",
+          "id": "right_image",
+          "label": "Right GIF / image (desktop)"
+        },
+        {
+          "type": "image_picker",
+          "id": "right_image_mobile",
+          "label": "Right GIF / image (mobile)"
+        },
+        {
+          "type": "text",
+          "id": "right_alt",
+          "label": "Right image alt text",
+          "default": "Lifestyle"
+        },
+        {
+          "type": "header",
+          "content": "Text for this GIF"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_pill",
+          "label": "Show pill badge",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "pill_text_1",
+          "label": "Pill text (part 1)",
+          "default": "Get a"
+        },
+        {
+          "type": "color",
+          "id": "pill_text_1_color",
+          "label": "Part 1 color",
+          "default": "#e91e8c"
+        },
+        {
+          "type": "text",
+          "id": "pill_text_2",
+          "label": "Pill text (part 2)",
+          "default": "FREEBIE"
+        },
+        {
+          "type": "color",
+          "id": "pill_text_2_color",
+          "label": "Part 2 color",
+          "default": "#e91e8c"
+        },
+        {
+          "type": "color",
+          "id": "pill_background",
+          "label": "Pill background",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "pill_glow_color",
+          "label": "Pill glow",
+          "default": "#f7a8c8"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_sparkles",
+          "label": "Show sparkles",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_secondary_text",
+          "label": "Show offer text",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "secondary_text",
+          "label": "Offer text",
+          "default": "on orders Rs. 799+"
+        },
+        {
+          "type": "color",
+          "id": "secondary_text_color",
+          "label": "Offer text color",
+          "default": "#111111"
+        },
+        {
+          "type": "select",
+          "id": "secondary_text_style",
+          "label": "Offer text style",
+          "default": "normal",
+          "info": "Use Normal to keep all words on the same line level.",
+          "options": [
+            { "value": "normal", "label": "Normal" },
+            { "value": "script", "label": "Script / italic" }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "show_cta_arrow",
+          "label": "Show circle arrow",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "cta_arrow_bg",
+          "label": "Arrow background",
+          "default": "#111111"
+        },
+        {
+          "type": "color",
+          "id": "cta_arrow_color",
+          "label": "Arrow icon color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "header",
+          "content": "Link for this GIF"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Slide link",
+          "info": "Each Product GIF block can have a different link."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Strip banner",
+      "blocks": [
+        {
+          "type": "product_gif",
+          "settings": {
+            "pill_text_1": "Get a",
+            "pill_text_2": "FREEBIE",
+            "secondary_text": "on orders Rs. 799+"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

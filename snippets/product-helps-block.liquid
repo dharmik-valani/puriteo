@@ -1,0 +1,201 @@
+{%- liquid
+  assign help_items_count = 0
+
+  comment
+    Check product metafields benefit_text1..10 and benefit_icon1..10 (reusing existing theme logic)
+  endcomment
+  for i in (1..10)
+    assign t_key = 'benefit_text' | append: i
+    assign i_key = 'benefit_icon' | append: i
+    assign b_text = product.metafields.custom[t_key] | strip_html | strip
+    assign b_icon = product.metafields.custom[i_key].value | default: product.metafields.custom[i_key]
+
+    if b_text != blank or b_icon != blank
+      assign help_items_count = help_items_count | plus: 1
+    endif
+  endfor
+
+  comment
+    Also check if product has a list metafield custom.helps or custom.product_helps
+  endcomment
+  assign list_metafield = product.metafields.custom.helps.value | default: product.metafields.custom.helps
+  if list_metafield == blank
+    assign list_metafield = product.metafields.custom.product_helps.value | default: product.metafields.custom.product_helps
+  endif
+  if list_metafield != blank
+    for item in list_metafield
+      if item != blank
+        assign help_items_count = help_items_count | plus: 1
+      endif
+    endfor
+  endif
+
+  assign hide_if_empty = block.settings.hide_if_empty | default: true
+  assign show_block = true
+  if hide_if_empty and help_items_count == 0 and request.design_mode == false
+    assign show_block = false
+  endif
+
+  assign heading_text = block.settings.heading | default: 'Helps'
+-%}
+
+{%- if show_block -%}
+  {%- liquid
+    assign spacing_top = block.settings.spacing_top | default: 0
+    assign spacing_bottom = block.settings.spacing_bottom | default: 0
+    assign spacing_top_mb = block.settings.spacing_top_mb | default: 0
+    assign spacing_bottom_mb = block.settings.spacing_bottom_mb | default: 0
+
+    assign container_bg = block.settings.container_bg | default: '#ffffff'
+    assign container_radius = block.settings.container_radius | default: 20
+    assign heading_color = block.settings.heading_color | default: '#111111'
+    assign card_bg = block.settings.card_bg | default: '#ffffff'
+    assign card_border_color = block.settings.card_border_color | default: '#ff6fa2'
+    assign card_border_width = block.settings.card_border_width | default: 1.5
+    assign card_radius = block.settings.card_radius | default: 14
+    assign text_color = block.settings.text_color | default: '#111111'
+    assign text_font_size = block.settings.text_font_size | default: 15
+    assign text_font_size_mb = block.settings.text_font_size_mb | default: 13
+    assign text_font_weight = block.settings.text_font_weight | default: '600'
+    assign icon_size = block.settings.icon_size | default: 38
+    assign icon_size_mb = block.settings.icon_size_mb | default: 32
+  -%}
+
+  <div
+    class="productView-moreItem npp-block npp-block--product_helps{% if settings.banner_animation == 'effect_fade_up' %} scroll-trigger animate--slide-in{% endif %}"
+    style="
+      --spacing-top: {{ spacing_top }}px;
+      --spacing-bottom: {{ spacing_bottom }}px;
+      --spacing-top-mb: {{ spacing_top_mb }}px;
+      --spacing-bottom-mb: {{ spacing_bottom_mb }}px;
+      --helps-sp-top: {{ spacing_top }}px;
+      --helps-sp-bottom: {{ spacing_bottom }}px;
+      --helps-sp-top-mb: {{ spacing_top_mb }}px;
+      --helps-sp-bottom-mb: {{ spacing_bottom_mb }}px;
+      --helps-container-bg: {{ container_bg }};
+      --helps-container-radius: {{ container_radius }}px;
+      --helps-heading-color: {{ heading_color }};
+      --helps-card-bg: {{ card_bg }};
+      --helps-card-border: {{ card_border_color }};
+      --helps-card-border-width: {{ card_border_width }}px;
+      --helps-card-radius: {{ card_radius }}px;
+      --helps-text-color: {{ text_color }};
+      --helps-font-size: {{ text_font_size }}px;
+      --helps-font-size-mb: {{ text_font_size_mb }}px;
+      --helps-font-weight: {{ text_font_weight }};
+      --helps-icon-size: {{ icon_size }}px;
+      --helps-icon-size-mb: {{ icon_size_mb }}px;
+    "
+    {{ block.shopify_attributes }}
+  >
+    <div class="npp-helps-box">
+      {%- if heading_text != blank -%}
+        <div class="npp-helps-heading-wrap">
+          <h3 class="npp-helps-heading">{{ heading_text | escape }}</h3>
+        </div>
+      {%- endif -%}
+
+      <div class="npp-helps-grid">
+        {%- assign rendered_any = false -%}
+
+        {% comment %} Source 1: Product metafields benefit_text1..10 and benefit_icon1..10 {% endcomment %}
+        {%- for i in (1..10) -%}
+          {%- liquid
+            assign t_key = 'benefit_text' | append: i
+            assign i_key = 'benefit_icon' | append: i
+            assign item_text = product.metafields.custom[t_key] | strip_html | strip
+            assign item_icon = product.metafields.custom[i_key].value | default: product.metafields.custom[i_key]
+          -%}
+
+          {%- if item_text != blank or item_icon != blank -%}
+            {%- assign rendered_any = true -%}
+            <div class="npp-helps-card">
+              {%- if item_icon != blank -%}
+                <div class="npp-helps-icon">
+                  {%- if item_icon.media_type != blank or item_icon.src != blank or item_icon.width != blank -%}
+                    {{ item_icon | image_url: width: 100 | image_tag: loading: 'lazy', alt: item_text, class: 'npp-helps-icon-img', width: 38, height: 38 }}
+                  {%- elsif item_icon contains '<svg' -%}
+                    {{ item_icon }}
+                  {%- else -%}
+                    <img
+                      src="{{ item_icon | image_url: width: 100 }}"
+                      alt="{{ item_text | escape }}"
+                      loading="lazy"
+                      class="npp-helps-icon-img"
+                      width="38"
+                      height="38"
+                    >
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+              {%- if item_text != blank -%}
+                <span class="npp-helps-text">{{ item_text }}</span>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+
+        {% comment %} Source 2: List metafields (custom.helps / custom.product_helps) {% endcomment %}
+        {%- if list_metafield != blank -%}
+          {%- for item in list_metafield -%}
+            {%- liquid
+              assign item_text = item.text.value | default: item.text | default: item.title.value | default: item.title | default: item
+              assign item_icon = item.icon.value | default: item.icon | default: item.image.value | default: item.image
+            -%}
+            {%- if item_text != blank -%}
+              {%- assign rendered_any = true -%}
+              <div class="npp-helps-card">
+                {%- if item_icon != blank -%}
+                  <div class="npp-helps-icon">
+                    {%- if item_icon.media_type != blank or item_icon.src != blank or item_icon.width != blank -%}
+                      {{ item_icon | image_url: width: 100 | image_tag: loading: 'lazy', alt: item_text, class: 'npp-helps-icon-img', width: 38, height: 38 }}
+                    {%- elsif item_icon contains '<svg' -%}
+                      {{ item_icon }}
+                    {%- else -%}
+                      <img
+                        src="{{ item_icon | image_url: width: 100 }}"
+                        alt="{{ item_text | escape }}"
+                        loading="lazy"
+                        class="npp-helps-icon-img"
+                        width="38"
+                        height="38"
+                      >
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+                <span class="npp-helps-text">{{ item_text }}</span>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+
+        {%- if rendered_any == false and request.design_mode -%}
+          <div class="npp-helps-card">
+            <div class="npp-helps-icon">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#ff6fa2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            </div>
+            <span class="npp-helps-text">Controls Oil</span>
+          </div>
+          <div class="npp-helps-card">
+            <div class="npp-helps-icon">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#ff6fa2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </div>
+            <span class="npp-helps-text">Refreshes Skin</span>
+          </div>
+          <div class="npp-helps-card">
+            <div class="npp-helps-icon">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#ff6fa2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            </div>
+            <span class="npp-helps-text">High UV Protection</span>
+          </div>
+          <div class="npp-helps-card">
+            <div class="npp-helps-icon">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#ff6fa2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <span class="npp-helps-text">Light Hydration</span>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}

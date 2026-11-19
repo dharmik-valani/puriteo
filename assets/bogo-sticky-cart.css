@@ -1,0 +1,727 @@
+.bogo-sticky-cart-section {
+  margin: 0;
+  padding: 0;
+  max-width: none;
+}
+
+.bogo-offer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 999990;
+  background: #ffffff;
+  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.12);
+  font-family: inherit;
+  color: var(--bogo-text, #1a1a1a);
+  transition: transform 0.25s ease;
+}
+
+.bogo-offer--bottom {
+  bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bogo-offer--top {
+  top: 0;
+  padding-top: env(safe-area-inset-top);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.12);
+}
+
+body.bogo-offer-active {
+  padding-bottom: var(--bogo-offer-height, 105px);
+}
+
+body.bogo-offer-active.bogo-offer-at-top {
+  padding-top: var(--bogo-offer-height, 105px);
+  padding-bottom: 0;
+}
+
+.bogo-offer__banner-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bogo-banner-bg, #1a3b6b);
+}
+
+.bogo-offer__banner {
+  margin: 0;
+  background: var(--bogo-banner-bg, #1a3b6b);
+  color: var(--bogo-banner-color, #ffffff);
+  text-align: center;
+  font-size: var(--bogo-progress-size, 13px);
+  font-weight: 600;
+  line-height: 1.3;
+  padding: 6px 36px 6px 16px;
+  letter-spacing: 0.2px;
+}
+
+.bogo-offer__close-bar {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 0;
+  color: var(--bogo-banner-color, #ffffff);
+  opacity: 0.75;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.bogo-offer__close-bar:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.bogo-offer__reopen-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 999990;
+  background: var(--bogo-banner-bg, #1a3b6b);
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 50px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+  padding: 8px 16px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bogo-offer__reopen-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+}
+
+.bogo-offer.is-minimized {
+  transform: translateY(110%);
+  pointer-events: none;
+}
+
+.bogo-offer--top.is-minimized {
+  transform: translateY(-110%);
+}
+
+.bogo-offer.is-minimized ~ .bogo-offer__reopen-btn,
+body.bogo-offer-minimized .bogo-offer__reopen-btn {
+  display: inline-flex;
+}
+
+.bogo-offer__row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 20px 6px;
+  max-width: 1360px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.bogo-offer__slots-col {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 1px;
+}
+
+.bogo-offer__total-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 1px 4px 0;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.bogo-offer__total-label {
+  font-weight: 600;
+  color: #475569;
+}
+
+.bogo-offer__total-price {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--bogo-banner-bg, #1a3b6b);
+  letter-spacing: -0.2px;
+}
+
+.bogo-offer__total-compare {
+  font-size: 12px;
+  color: #94a3b8;
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.bogo-offer__total-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #067647;
+  background: #edfcf2;
+  border: 1px solid #bbf7d0;
+  padding: 1px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.1px;
+}
+
+.bogo-offer__slots {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--bogo-gap, 12px);
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 6px 8px 1px 4px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bogo-offer__slots::-webkit-scrollbar {
+  height: 4px;
+}
+
+.bogo-offer__slots::-webkit-scrollbar-thumb {
+  background: rgba(26, 59, 107, 0.3);
+  border-radius: 99px;
+}
+
+.bogo-offer__slot {
+  position: relative;
+  flex: 0 1 var(--bogo-slot-width, 320px);
+  width: var(--bogo-slot-width, 320px);
+  max-width: 360px;
+  min-height: 64px;
+  scroll-snap-align: start;
+  border: 1px solid var(--bogo-border, #e2e8f0);
+  border-radius: var(--bogo-radius, 8px);
+  background: var(--bogo-empty-bg, #ffffff);
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bogo-offer__slot:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.bogo-offer__slot.is-filled {
+  background: var(--bogo-selected-bg, #ffffff);
+}
+
+.bogo-offer__slot.is-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #94a3b8;
+  cursor: pointer;
+  font: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  border-style: dashed;
+}
+
+.bogo-offer__slot.is-empty:hover,
+.bogo-offer__slot.is-empty:focus-visible {
+  border-color: var(--bogo-banner-bg, #1a3b6b);
+  color: var(--bogo-banner-bg, #1a3b6b);
+  background: #f8fafc;
+  outline: none;
+}
+
+.bogo-offer__plus {
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 300;
+}
+
+.bogo-offer__filled {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 64px;
+  margin: 0;
+  padding: 6px 30px 6px 8px;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.bogo-offer__image {
+  width: var(--bogo-image-size, 48px);
+  height: var(--bogo-image-size, 48px);
+  object-fit: contain;
+  flex: 0 0 auto;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #f1f5f9;
+}
+
+.bogo-offer--hide-images .bogo-offer__image,
+.bogo-offer--hide-prices .bogo-offer__price,
+.bogo-offer--hide-remove .bogo-offer__remove {
+  display: none;
+}
+
+.bogo-offer__copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+  justify-content: center;
+}
+
+.bogo-offer__title,
+.bogo-offer__variant {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bogo-offer__title {
+  font-size: var(--bogo-title-size, 13px);
+  font-weight: 600;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+  color: #1e293b;
+}
+
+.bogo-offer__variant {
+  font-size: 11px;
+  line-height: 1.2;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.bogo-offer__price {
+  font-size: var(--bogo-price-size, 12px);
+  font-weight: 700;
+  color: var(--bogo-banner-bg, #1a3b6b);
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.bogo-offer__remove {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  z-index: 10;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: #0f172a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  pointer-events: auto;
+}
+
+.bogo-offer__remove:hover {
+  background: #dc2626;
+  transform: scale(1.15);
+}
+
+.bogo-offer__remove svg {
+  pointer-events: none;
+  width: 9px;
+  height: 9px;
+}
+
+.bogo-offer__actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.bogo-offer__submit {
+  min-width: 170px;
+  min-height: 44px;
+  padding: 10px 22px;
+  border: 0;
+  border-radius: var(--bogo-btn-radius, 8px);
+  background: var(--bogo-btn-bg, #1a3b6b);
+  color: var(--bogo-btn-color, #ffffff);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: opacity 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bogo-offer__submit:not(.is-disabled):hover {
+  opacity: 0.94;
+  transform: translateY(-1px);
+}
+
+.bogo-offer__submit.is-disabled {
+  background: var(--bogo-btn-disabled-bg, #c8c8c8);
+  color: var(--bogo-btn-disabled-color, #ffffff);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.bogo-offer__submit.is-loading {
+  cursor: progress;
+}
+
+.bogo-offer__submit.is-success {
+  background: #067647;
+  color: #ffffff;
+}
+
+.bogo-offer__spinner {
+  display: none;
+  width: 15px;
+  height: 15px;
+  margin-left: 8px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  vertical-align: -2px;
+  animation: bogo-offer-spin 0.7s linear infinite;
+}
+
+.bogo-offer__submit.is-loading .bogo-offer__spinner {
+  display: inline-block;
+}
+
+.bogo-offer__status {
+  margin: 3px 0 0;
+  padding: 0;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.bogo-offer__status.is-error {
+  color: #b42318;
+}
+
+.bogo-offer__status.is-success {
+  color: #067647;
+}
+
+.bogo-offer-picker[hidden],
+.bogo-offer-picker:not(:not([hidden])) {
+  display: none !important;
+}
+
+.bogo-offer-picker {
+  position: fixed;
+  inset: 0;
+  z-index: 1000000;
+}
+
+.bogo-offer-picker__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 12, 40, 0.46);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.bogo-offer-picker__panel {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--bogo-offer-height, 105px) + 12px);
+  transform: translateX(-50%);
+  width: min(560px, calc(100% - 24px));
+  max-height: min(60vh, 520px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+.bogo-offer-picker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #ececec;
+}
+
+.bogo-offer-picker__header h2 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.bogo-offer-picker__header button,
+.bogo-offer-picker__product button {
+  border: 0;
+  background: var(--bogo-btn-bg, #1a3b6b);
+  color: #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.bogo-offer-picker__header button {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  color: #111111;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  transition: background 0.15s ease;
+}
+
+.bogo-offer-picker__header button:hover {
+  background: #f1f5f9;
+}
+
+.bogo-offer-picker__list {
+  overflow: auto;
+  padding: 8px;
+}
+
+.bogo-offer-picker__product {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.bogo-offer-picker__product img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.bogo-offer-picker__meta {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.bogo-offer-picker__meta select {
+  max-width: 100%;
+  font: inherit;
+  font-size: 12px;
+  padding: 4px;
+}
+
+.bogo-offer-picker__product button {
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.bogo-offer-picker__product button:disabled,
+.bogo-offer-picker__product.is-sold-out {
+  opacity: 0.55;
+}
+
+@keyframes bogo-offer-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media screen and (max-width: 749px) {
+  .bogo-offer__row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: var(--bogo-padding-mobile, 8px) 12px;
+  }
+
+  .bogo-offer__total-bar {
+    padding: 2px 4px 4px;
+    justify-content: flex-start;
+  }
+
+  .bogo-offer__slot {
+    flex: 0 0 min(260px, 78vw);
+    width: min(260px, 78vw);
+    min-height: 58px;
+  }
+
+  .bogo-offer__filled {
+    min-height: 58px;
+    padding: 6px 28px 6px 8px;
+  }
+
+  .bogo-offer__image {
+    width: 42px;
+    height: 42px;
+  }
+
+  .bogo-offer__actions,
+  .bogo-offer__submit {
+    width: 100%;
+  }
+
+  .bogo-offer__submit {
+    min-height: 42px;
+  }
+
+  .bogo-offer--columns .bogo-offer__slots {
+    display: grid;
+    grid-template-columns: repeat(var(--bogo-mobile-columns, 2), minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .bogo-offer--columns .bogo-offer__slot {
+    width: auto;
+    flex-basis: auto;
+    min-width: 0;
+  }
+
+  .bogo-offer-picker__panel {
+    width: calc(100% - 16px);
+  }
+}
+
+body.bogo-offer-active #halo-card-mobile-popup {
+  z-index: 1000005;
+}
+
+body.bogo-offer-active #halo-card-mobile-popup.show {
+  top: auto;
+  bottom: calc(var(--bogo-offer-height, 105px) + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  max-height: calc(100vh - var(--bogo-offer-height, 105px) - 24px);
+}
+
+body.bogo-offer-active.quick_shop_popup_mobile .background-overlay,
+body.bogo-offer-active .background-overlay.show {
+  z-index: 1000000;
+}
+
+/* ==========================================================================
+   BOGO Offers Collection Template: Disable Opening Product Page From Product Cards
+   ========================================================================== */
+body.template-collection-bogo-offers .product-item .card-link,
+body.template-collection-bogo-offers .product-card .card-link,
+body.template-collection-bogo-offers [data-product-id] .card-link,
+body.template-suffix-bogo-offers .product-item .card-link,
+body.template-suffix-bogo-offers .product-card .card-link,
+body.template-suffix-bogo-offers [data-product-id] .card-link {
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
+body.template-collection-bogo-offers .product-item .card-media,
+body.template-collection-bogo-offers .product-item .card-media img,
+body.template-collection-bogo-offers .product-item .card-media video,
+body.template-collection-bogo-offers [data-product-id] .card-media img,
+body.template-suffix-bogo-offers .product-item .card-media,
+body.template-suffix-bogo-offers .product-item .card-media img,
+body.template-suffix-bogo-offers .product-item .card-media video,
+body.template-suffix-bogo-offers [data-product-id] .card-media img {
+  cursor: default !important;
+}
+
+body.template-collection-bogo-offers .product-item .card-title,
+body.template-collection-bogo-offers .product-card .card-title,
+body.template-collection-bogo-offers [data-product-id] .card-title,
+body.template-suffix-bogo-offers .product-item .card-title,
+body.template-suffix-bogo-offers .product-card .card-title,
+body.template-suffix-bogo-offers [data-product-id] .card-title {
+  pointer-events: none !important;
+  cursor: default !important;
+  text-decoration: none !important;
+}
+
+body.template-collection-bogo-offers .product-item .card-title:hover,
+body.template-suffix-bogo-offers .product-item .card-title:hover {
+  text-decoration: none !important;
+}
+
+body.template-collection-bogo-offers .product-item .card-title:before,
+body.template-collection-bogo-offers .product-item .card-title:after,
+body.template-collection-bogo-offers .product-item .link-underline:before,
+body.template-collection-bogo-offers .product-item .link-underline:after,
+body.template-suffix-bogo-offers .product-item .card-title:before,
+body.template-suffix-bogo-offers .product-item .card-title:after,
+body.template-suffix-bogo-offers .product-item .link-underline:before,
+body.template-suffix-bogo-offers .product-item .link-underline:after {
+  display: none !important;
+  transform: none !important;
+  width: 0 !important;
+}
+
+/* Any other links to product page within card (excluding add-to-cart, swatches, quickview, wishlist) */
+body.template-collection-bogo-offers .product-item a[href*="/products/"]:not(.button-ATC):not([data-btn-addtocart]):not([data-quickshop-popup]):not([data-open-quick-view-popup]):not([data-wishlist]),
+body.template-suffix-bogo-offers .product-item a[href*="/products/"]:not(.button-ATC):not([data-btn-addtocart]):not([data-quickshop-popup]):not([data-open-quick-view-popup]):not([data-wishlist]) {
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
+/* Hide footer only on BOGO offers collection template */
+body.template-collection-bogo-offers .wrapper-footer,
+body.template-suffix-bogo-offers .wrapper-footer {
+  display: none !important;
+}
+
+/* Remove select option / quick shop popups entirely on bogo-offers collection (desktop & mobile) */
+body.template-collection-bogo-offers .variants-popup,
+body.template-suffix-bogo-offers .variants-popup,
+body.template-collection-bogo-offers #halo-card-mobile-popup,
+body.template-suffix-bogo-offers #halo-card-mobile-popup,
+body.template-collection-bogo-offers .halo-card-mobile-popup,
+body.template-suffix-bogo-offers .halo-card-mobile-popup {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+}
+
+
+

@@ -1,0 +1,1124 @@
+{%- liquid
+  assign results_image = product.metafields.custom.results_image.value | default: product.metafields.custom.results_image
+  assign results_video = product.metafields.custom.results_video.value | default: product.metafields.custom.results_video
+  assign has_video = false
+  assign has_image = false
+  assign visible_rows = 0
+
+  # 1. Check Metaobject list
+  assign results_meta_list = product.metafields.custom.results.value | default: product.metafields.custom.results
+  if results_meta_list == blank
+    assign results_meta_list = product.metafields.custom.product_results.value | default: product.metafields.custom.product_results
+  endif
+  if results_meta_list == blank
+    assign results_meta_list = product.metafields.custom.result.value | default: product.metafields.custom.result
+  endif
+  if results_meta_list == blank
+    assign results_meta_list = product.metafields.custom.product_result.value | default: product.metafields.custom.product_result
+  endif
+
+  if product != blank
+    if results_video != blank and results_video.media_type == 'video'
+      assign has_video = true
+    endif
+
+    if has_video == false and results_image != blank
+      unless results_image.media_type == 'video' or results_image.media_type == 'generic_file'
+        assign has_image = true
+      endunless
+    endif
+
+    # 2. Count visible rows from metaobjects or fallback numbered metafields
+    if results_meta_list != blank and results_meta_list.size > 0
+      for item in results_meta_list
+        assign item_claim = item.claim.value | default: item.claim | default: item.result_claim.value | default: item.result_claim | default: item.title.value | default: item.title | strip_html | strip
+        assign item_percent = item.percentage.value | default: item.percentage | default: item.percent.value | default: item.percent | default: item.result_percentage.value | default: item.result_percentage
+        if item_claim != blank or item_percent != blank
+          assign visible_rows = visible_rows | plus: 1
+        endif
+      endfor
+    else
+      for result_index in (1..3)
+        assign percent_key = 'result_' | append: result_index | append: '_percentage'
+        assign claim_key = 'result_' | append: result_index | append: '_claim'
+        assign percent_value = product.metafields.custom[percent_key].value | default: product.metafields.custom[percent_key]
+        assign claim_value = product.metafields.custom[claim_key].value | default: product.metafields.custom[claim_key] | strip_html | strip
+
+        if percent_value != blank or claim_value != blank
+          assign visible_rows = visible_rows | plus: 1
+        endif
+      endfor
+    endif
+  endif
+
+  assign show_media = false
+  if has_video or has_image
+    assign show_media = true
+  endif
+
+  assign has_results = false
+  if visible_rows > 0 or has_video or has_image
+    assign has_results = true
+  endif
+
+  # Check if results metaobject has data
+  assign has_results_metaobject = false
+  if results_meta_list != blank and results_meta_list.size > 0 and visible_rows > 0
+    assign has_results_metaobject = true
+  endif
+
+  # Check if benefits meta has data (fallback when results metaobject has no data)
+  assign banner_img = product.metafields.custom.benefits_banner.value | default: product.metafields.custom.benefits_banner
+  if banner_img == blank
+    assign banner_img = section.settings['asbenefit-img']
+  endif
+
+  assign b_title = product.metafields.custom.title.value | default: product.metafields.custom.title | strip_html | strip
+  if b_title == blank and banner_img != blank
+    assign b_title = section.settings.title | strip_html | strip
+  endif
+  if b_title == blank
+    assign b_title = section.settings.title | strip_html | strip
+  endif
+
+  assign b_pera = product.metafields.custom.pera.value | default: product.metafields.custom.pera | strip_html | strip
+  if b_pera == blank and banner_img != blank
+    assign b_pera = section.settings.pera | strip_html | strip
+  endif
+  if b_pera == blank
+    assign b_pera = section.settings.pera | strip_html | strip
+  endif
+
+  assign valid_benefits_count = 0
+  for i in (1..7)
+    assign b_key = 'benefits0' | append: i
+    assign b_val = product.metafields.custom[b_key].value | default: product.metafields.custom[b_key]
+    if b_val == blank
+      assign b_key_alt = 'benefits' | append: i
+      assign b_val = product.metafields.custom[b_key_alt].value | default: product.metafields.custom[b_key_alt]
+    endif
+    assign b_clean = b_val | strip_html | strip
+    if b_clean != blank
+      assign valid_benefits_count = valid_benefits_count | plus: 1
+    endif
+  endfor
+
+  if valid_benefits_count == 0 and section.blocks.size > 0
+    for block in section.blocks
+      assign b_item = block.settings.benefit | strip_html | strip
+      if b_item != blank and b_item != ''
+        assign valid_benefits_count = valid_benefits_count | plus: 1
+      endif
+    endfor
+  endif
+
+  assign has_benefits_section = false
+  if banner_img != blank and banner_img != ''
+    assign has_benefits_section = true
+  elsif valid_benefits_count > 0
+    assign has_benefits_section = true
+  endif
+
+  # Check if as image banner has data (fallback when neither results nor benefits has data)
+  assign banner_desktop = product.metafields.custom.main_banner
+  if banner_desktop == blank or banner_desktop == ''
+    assign banner_desktop = product.metafields.custom.main_banner.value
+  endif
+  if banner_desktop == blank or banner_desktop == ''
+    assign banner_desktop = product.metafields.custom.mainbanner
+  endif
+  if banner_desktop == blank or banner_desktop == ''
+    assign banner_desktop = product.metafields.custom.mainbanner.value
+  endif
+  if banner_desktop == blank or banner_desktop == ''
+    assign banner_desktop = product.metafields.custom['main_banner']
+  endif
+  if banner_desktop == blank or banner_desktop == ''
+    assign banner_desktop = section.settings.as_image
+  endif
+
+  assign banner_mobile = product.metafields.custom.main_bannermobile
+  if banner_mobile == blank or banner_mobile == ''
+    assign banner_mobile = product.metafields.custom.main_bannermobile.value
+  endif
+  if banner_mobile == blank or banner_mobile == ''
+    assign banner_mobile = product.metafields.custom.main_banner_mobile
+  endif
+  if banner_mobile == blank or banner_mobile == ''
+    assign banner_mobile = product.metafields.custom.main_banner_mobile.value
+  endif
+  if banner_mobile == blank or banner_mobile == ''
+    assign banner_mobile = product.metafields.custom.mainbannermobile
+  endif
+  if banner_mobile == blank or banner_mobile == ''
+    assign banner_mobile = product.metafields.custom.mainbannermobile.value
+  endif
+  if banner_mobile == blank or banner_mobile == ''
+    assign banner_mobile = section.settings.as_imagemobil
+  endif
+
+  if banner_mobile == blank or banner_mobile == ''
+    assign banner_mobile = banner_desktop
+  endif
+  if banner_desktop == blank or banner_desktop == ''
+    assign banner_desktop = banner_mobile
+  endif
+
+  assign has_banner = false
+  if banner_desktop != blank and banner_desktop != ''
+    assign has_banner = true
+  elsif banner_mobile != blank and banner_mobile != ''
+    assign has_banner = true
+  endif
+
+  # If results metaobject has data, display results.
+  # Otherwise if results metaobject has no data, show benefits_meta.
+  # If both are not present, show as image banner.
+  # If as image banner is not there, hide section.
+  assign show_results = false
+  assign show_benefits = false
+  assign show_banner = false
+
+  if has_results_metaobject
+    assign show_results = true
+  elsif has_benefits_section
+    assign show_benefits = true
+  elsif has_results
+    assign show_results = true
+  elsif has_banner
+    assign show_banner = true
+  endif
+
+  assign heading_text = section.settings.heading | default: 'Results you can see' | strip
+  assign disclaimer_text = section.settings.disclaimer | strip
+  assign heading_id = 'ProductResultsHeading-' | append: section.id
+
+  assign frame_class = 'results-benefits__frame'
+  if section.settings.image_ratio == 'auto'
+    assign frame_class = frame_class | append: ' results-benefits__frame--auto'
+  endif
+  if section.settings.image_ratio_mobile == 'auto'
+    assign frame_class = frame_class | append: ' results-benefits__frame--auto-mobile'
+  endif
+-%}
+
+{%- if show_results -%}
+  {% style %}
+    #shopify-section-{{ section.id }} .results-benefits {
+      --results-bg: {{ section.settings.background_color | default: '#11111f' }};
+      --results-heading: {{ section.settings.heading_color | default: '#ffffff' }};
+      --results-percent: {{ section.settings.percent_color | default: '#d5ff63' }};
+      --results-claim: {{ section.settings.claim_color | default: '#c8c8d6' }};
+      --results-divider: {{ section.settings.divider_color | default: '#45455c' }};
+      --results-disclaimer: {{ section.settings.disclaimer_color | default: '#b4b4c6' }};
+      --results-media-col: {{ section.settings.media_column_width | default: 46 }}%;
+      --results-radius: {{ section.settings.image_radius | default: 28 }}px;
+      --results-fit: {{ section.settings.image_fit | default: 'cover' }};
+      --results-ratio: {{ section.settings.image_ratio | default: '1 / 1' }};
+      --results-ratio-mobile: {{ section.settings.image_ratio_mobile | default: '1 / 1' }};
+      --results-heading-size: {{ section.settings.heading_size | default: 36 }}px;
+      --results-heading-size-mobile: {{ section.settings.heading_size_mobile | default: 28 }}px;
+      --results-percent-size: {{ section.settings.percent_size | default: 42 }}px;
+      --results-percent-size-mobile: {{ section.settings.percent_size_mobile | default: 32 }}px;
+      --results-claim-size: {{ section.settings.claim_size | default: 16 }}px;
+      --results-claim-size-mobile: {{ section.settings.claim_size_mobile | default: 14 }}px;
+      --results-disclaimer-size: {{ section.settings.disclaimer_size | default: 13 }}px;
+      --results-disclaimer-size-mobile: {{ section.settings.disclaimer_size_mobile | default: 12 }}px;
+      --results-pt: {{ section.settings.padding_top | default: 56 }}px;
+      --results-pb: {{ section.settings.padding_bottom | default: 56 }}px;
+      --results-pt-mobile: {{ section.settings.padding_top_mobile | default: 32 }}px;
+      --results-pb-mobile: {{ section.settings.padding_bottom_mobile | default: 32 }}px;
+    }
+  {% endstyle %}
+
+  <section
+    id="ProductResults-{{ section.id }}"
+    class="results-benefits results-benefits--page"
+    {% if heading_text != blank %}
+      aria-labelledby="{{ heading_id }}"
+    {% endif %}
+  >
+    <div class="results-benefits__layout{% unless show_media %} results-benefits__layout--single{% endunless %}">
+      {%- if show_media -%}
+        <div class="results-benefits__media">
+          <div class="{{ frame_class }}">
+            {%- if has_video -%}
+              {{ results_video | video_tag: controls: true, image_size: '1200x', class: 'results-benefits__video' }}
+            {%- elsif has_image -%}
+              {%- assign image_alt = results_image.alt | strip -%}
+              {%- if image_alt == blank -%}
+                {%- assign image_alt = product.title -%}
+              {%- endif -%}
+              {{ results_image | image_url: width: 1400 | image_tag: widths: '400, 600, 800, 1100, 1400', sizes: '(min-width: 990px) min(42vw, 640px), calc(100vw - 40px)', alt: image_alt, loading: 'lazy', class: 'results-benefits__img' }}
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="results-benefits__content">
+        {%- if heading_text != blank -%}
+          <div class="results-benefits__header">
+            <h2 id="{{ heading_id }}" class="results-benefits__heading">{{ heading_text | escape }}</h2>
+          </div>
+        {%- endif -%}
+
+        {%- if visible_rows > 0 -%}
+          <ul class="results-benefits__rows results-benefits__rows--divided" role="list">
+            {%- if results_meta_list != blank and results_meta_list.size > 0 -%}
+              {%- for item in results_meta_list -%}
+                {%- liquid
+                  assign claim_value = item.claim.value | default: item.claim | default: item.result_claim.value | default: item.result_claim | default: item.title.value | default: item.title | strip_html | strip
+                  assign percent_value = item.percentage.value | default: item.percentage | default: item.percent.value | default: item.percent | default: item.result_percentage.value | default: item.result_percentage
+                  assign percent_str = percent_value | append: '' | strip
+                -%}
+                {%- if percent_str != blank or claim_value != blank -%}
+                  <li class="results-benefits__row">
+                    {%- if percent_str != blank -%}
+                      <span class="results-benefits__percent">
+                        {{- percent_str -}}
+                        {%- unless percent_str contains '%' %}%{% endunless -%}
+                      </span>
+                    {%- endif -%}
+                    {%- if claim_value != blank -%}
+                      <span class="results-benefits__claim">{{ claim_value | escape }}</span>
+                    {%- endif -%}
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- else -%}
+              {%- for result_index in (1..3) -%}
+                {%- liquid
+                  assign percent_key = 'result_' | append: result_index | append: '_percentage'
+                  assign claim_key = 'result_' | append: result_index | append: '_claim'
+                  assign percent_value = product.metafields.custom[percent_key].value | default: product.metafields.custom[percent_key]
+                  assign percent_str = percent_value | append: '' | strip
+                  assign claim_value = product.metafields.custom[claim_key].value | default: product.metafields.custom[claim_key] | strip_html | strip
+                -%}
+                {%- if percent_str != blank or claim_value != blank -%}
+                  <li class="results-benefits__row">
+                    {%- if percent_str != blank -%}
+                      <span class="results-benefits__percent">
+                        {{- percent_str -}}
+                        {%- unless percent_str contains '%' %}%{% endunless -%}
+                      </span>
+                    {%- endif -%}
+                    {%- if claim_value != blank -%}
+                      <span class="results-benefits__claim">{{ claim_value | escape }}</span>
+                    {%- endif -%}
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if disclaimer_text != blank -%}
+          <p class="results-benefits__disclaimer">{{ disclaimer_text | escape | newline_to_br }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+{%- elsif show_benefits -%}
+  {% render 'asbenefits-meta', section: section, product: product %}
+{%- elsif show_banner -%}
+  {% render 'as-image-banner',
+    section: section,
+    product: product,
+    desktop_image: banner_desktop,
+    mobile_image: banner_mobile
+  %}
+{%- else -%}
+  {% style %}
+    #shopify-section-{{ section.id }} {
+      display: none !important;
+    }
+  {% endstyle %}
+  <script>
+    (function() {
+      var s = document.getElementById('shopify-section-{{ section.id }}');
+      if (s) s.style.display = 'none';
+    })();
+  </script>
+{%- endif -%}
+
+{% stylesheet %}
+  .results-benefits,
+  .results-benefits *,
+  .results-benefits *::before,
+  .results-benefits *::after {
+    box-sizing: border-box;
+  }
+
+  .results-benefits {
+    width: 100%;
+    max-width: 100%;
+    background: var(--results-bg, #11111f);
+    color: var(--results-claim, #c8c8d6);
+    font-family: var(--font-body-family);
+    font-style: var(--font-body-style);
+    text-align: left;
+    color-scheme: dark;
+    overflow-x: hidden;
+  }
+
+  .results-benefits--page {
+    width: 100%;
+  }
+
+  .results-benefits__layout {
+    display: grid;
+    grid-template-columns: minmax(0, var(--results-media-col, 46%)) minmax(0, 1fr);
+    align-items: center;
+    gap: 56px;
+    width: min(100%, 1200px);
+    margin-inline: auto;
+    padding: var(--results-pt, 56px) 80px var(--results-pb, 56px) 80px;
+  }
+
+  .results-benefits__layout--single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .results-benefits__media,
+  .results-benefits__content {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .results-benefits__frame {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+    aspect-ratio: var(--results-ratio, 1 / 1);
+    border-radius: var(--results-radius, 28px);
+    background: #2d2a43;
+  }
+
+  .results-benefits__frame .results-benefits__img,
+  .results-benefits__frame video {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: var(--results-fit, cover);
+    border: 0;
+    border-radius: inherit;
+  }
+
+  .results-benefits__frame--auto .results-benefits__img,
+  .results-benefits__frame--auto video {
+    position: relative;
+    inset: auto;
+    height: auto;
+  }
+
+  .results-benefits__frame--auto {
+    aspect-ratio: auto;
+    min-height: 240px;
+  }
+
+  .results-benefits__header {
+    margin: 0 0 22px;
+  }
+
+  .results-benefits__heading {
+    margin: 0;
+    color: var(--results-heading, #ffffff);
+    font-family: var(--font-body-family);
+    font-style: normal;
+    font-size: var(--results-heading-size, 36px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    text-transform: none;
+  }
+
+  .results-benefits__rows {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .results-benefits__row {
+    display: flex;
+    align-items: center;
+    gap: 12px 18px;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 16px 0;
+  }
+
+  .results-benefits__rows--divided .results-benefits__row {
+    border-bottom: 1px solid var(--results-divider, #45455c);
+  }
+
+  .results-benefits__percent {
+    flex: 0 0 auto;
+    color: var(--results-percent, #d5ff63);
+    font-size: var(--results-percent-size, 42px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .results-benefits__claim {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--results-claim, #c8c8d6);
+    font-size: var(--results-claim-size, 16px);
+    font-weight: 400;
+    line-height: 1.45;
+    overflow-wrap: break-word;
+  }
+
+  .results-benefits__disclaimer {
+    margin: 18px 0 0;
+    color: var(--results-disclaimer, #b4b4c6);
+    font-size: var(--results-disclaimer-size, 13px);
+    font-weight: 400;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+  }
+
+  @media screen and (max-width: 989px) {
+    .results-benefits__layout,
+    .results-benefits__layout--single {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+      padding: var(--results-pt-mobile, 32px) 15px var(--results-pb-mobile, 32px) 15px;
+    }
+
+    .results-benefits__media {
+      width: 100%;
+      max-width: 100%;
+      justify-self: center;
+    }
+
+    .results-benefits__frame {
+      aspect-ratio: var(--results-ratio-mobile, 1 / 1);
+      border-radius: 20px;
+    }
+
+    .results-benefits__frame--auto-mobile {
+      aspect-ratio: auto;
+      min-height: 200px;
+    }
+
+    .results-benefits__frame--auto-mobile .results-benefits__img,
+    .results-benefits__frame--auto-mobile video {
+      position: relative;
+      inset: auto;
+      height: auto;
+    }
+
+    .results-benefits__header {
+      margin-bottom: 16px;
+    }
+
+    .results-benefits__heading {
+      font-size: var(--results-heading-size-mobile, 28px);
+    }
+
+    .results-benefits__row {
+      align-items: flex-start;
+      gap: 10px 12px;
+      padding: 14px 0;
+    }
+
+    .results-benefits__percent {
+      padding-top: 0.12em;
+      font-size: var(--results-percent-size-mobile, 32px);
+    }
+
+    .results-benefits__claim {
+      font-size: var(--results-claim-size-mobile, 14px);
+    }
+
+    .results-benefits__disclaimer {
+      margin-top: 14px;
+      font-size: var(--results-disclaimer-size-mobile, 12px);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Results & benefits",
+  "tag": "div",
+  "class": "product-results-benefits",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Image, video, percentages, and claims are loaded automatically from the current product's metafields. The section hides automatically when the product has no results."
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Results you can see"
+    },
+    {
+      "type": "textarea",
+      "id": "disclaimer",
+      "label": "Disclaimer / Note",
+      "default": "Study details: sample size, duration, who ran it. Only publish figures you can back up."
+    },
+    {
+      "type": "header",
+      "content": "Media (Image & Video)"
+    },
+    {
+      "type": "range",
+      "id": "media_column_width",
+      "label": "Desktop image column width",
+      "min": 30,
+      "max": 60,
+      "step": 1,
+      "unit": "%",
+      "default": 46
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Desktop image aspect ratio",
+      "options": [
+        { "value": "1 / 1", "label": "Square (1:1)" },
+        { "value": "4 / 5", "label": "Portrait (4:5)" },
+        { "value": "3 / 4", "label": "Portrait (3:4)" },
+        { "value": "4 / 3", "label": "Landscape (4:3)" },
+        { "value": "3 / 2", "label": "Landscape (3:2)" },
+        { "value": "16 / 9", "label": "Widescreen (16:9)" },
+        { "value": "auto", "label": "Natural" }
+      ],
+      "default": "1 / 1"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio_mobile",
+      "label": "Mobile image aspect ratio",
+      "options": [
+        { "value": "1 / 1", "label": "Square (1:1)" },
+        { "value": "4 / 5", "label": "Portrait (4:5)" },
+        { "value": "3 / 4", "label": "Portrait (3:4)" },
+        { "value": "4 / 3", "label": "Landscape (4:3)" },
+        { "value": "3 / 2", "label": "Landscape (3:2)" },
+        { "value": "16 / 9", "label": "Widescreen (16:9)" },
+        { "value": "auto", "label": "Natural" }
+      ],
+      "default": "1 / 1"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        { "value": "cover", "label": "Cover" },
+        { "value": "contain", "label": "Contain" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image corner radius",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 20,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Mobile heading size",
+      "min": 18,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "percent_size",
+      "label": "Percentage size",
+      "min": 20,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "percent_size_mobile",
+      "label": "Mobile percentage size",
+      "min": 18,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "claim_size",
+      "label": "Claim size",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "claim_size_mobile",
+      "label": "Mobile claim size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "disclaimer_size",
+      "label": "Disclaimer size",
+      "min": 11,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "disclaimer_size_mobile",
+      "label": "Mobile disclaimer size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#11111F"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "percent_color",
+      "label": "Percentage",
+      "default": "#D5FF63"
+    },
+    {
+      "type": "color",
+      "id": "claim_color",
+      "label": "Claim text",
+      "default": "#C8C8D6"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Row divider",
+      "default": "#45455C"
+    },
+    {
+      "type": "color",
+      "id": "disclaimer_color",
+      "label": "Disclaimer",
+      "default": "#B4B4C6"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Desktop bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Mobile top padding",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Benefits Section (Fallback when no results)"
+    },
+    {
+      "type": "paragraph",
+      "content": "When there is no data in the results metaobject, the section displays benefits meta automatically from product metafields (benefits_banner, title, pera, benefits01-07) or from the fallback settings/blocks below."
+    },
+    {
+      "type": "image_picker",
+      "id": "asbenefit-img",
+      "label": "Benefits fallback image"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Benefits fallback title"
+    },
+    {
+      "type": "textarea",
+      "id": "pera",
+      "label": "Benefits fallback description"
+    },
+    {
+      "type": "text",
+      "id": "benefit-title",
+      "label": "Benefits list heading",
+      "default": "Benefits:"
+    },
+    {
+      "type": "header",
+      "content": "Benefits Fallback Padding"
+    },
+    {
+      "type": "range",
+      "id": "benefits_padding_top",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "benefits_padding_bottom",
+      "label": "Desktop bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "benefits_padding_top_mobile",
+      "label": "Mobile top padding",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "benefits_padding_bottom_mobile",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Benefits Fallback Styling"
+    },
+    {
+      "type": "color",
+      "id": "benefits_bg_color",
+      "label": "Background color",
+      "default": "transparent"
+    },
+    {
+      "type": "color",
+      "id": "benefits_title_color",
+      "label": "Title color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "color",
+      "id": "benefits_text_color",
+      "label": "Description color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "benefits_heading_color",
+      "label": "List heading color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "color",
+      "id": "benefits_bullet_color",
+      "label": "Bullet point color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "color",
+      "id": "benefits_list_color",
+      "label": "List item text color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "benefits_image_radius",
+      "label": "Image corner radius",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Image Banner (Fallback)"
+    },
+    {
+      "type": "paragraph",
+      "content": "When there is no data in results or benefits, the section displays an image banner automatically from product metafields (main_banner, main_bannermobile) or from the fallback settings below."
+    },
+    {
+      "type": "image_picker",
+      "id": "as_image",
+      "label": "Desktop banner image",
+      "info": "Shown on screens wider than 749px"
+    },
+    {
+      "type": "image_picker",
+      "id": "as_imagemobil",
+      "label": "Mobile banner image",
+      "info": "Shown on screens 749px and below. Falls back to desktop image if empty"
+    },
+    {
+      "type": "url",
+      "id": "banner_link",
+      "label": "Banner link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open link in a new tab",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "banner_bg",
+      "label": "Banner background color",
+      "default": "transparent"
+    },
+    {
+      "type": "select",
+      "id": "banner_image_fit",
+      "label": "Banner image fit style",
+      "options": [
+        {
+          "value": "contain",
+          "label": "Contain (Scale proportionally, no cutout)"
+        },
+        {
+          "value": "cover",
+          "label": "Cover (Fill entire screen width, crops top/bottom)"
+        }
+      ],
+      "default": "contain"
+    },
+    {
+      "type": "range",
+      "id": "banner_max_width",
+      "label": "Banner max width",
+      "min": 0,
+      "max": 2000,
+      "step": 50,
+      "unit": "px",
+      "default": 0,
+      "info": "0 is full width"
+    },
+    {
+      "type": "range",
+      "id": "banner_image_radius",
+      "label": "Banner image corner radius",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "image_height_desktop",
+      "label": "Desktop height",
+      "min": 0,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "default": 0,
+      "info": "0 uses natural height"
+    },
+    {
+      "type": "range",
+      "id": "image_height_tablet",
+      "label": "Tablet height",
+      "min": 0,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "image_height_mobile",
+      "label": "Mobile height",
+      "min": 0,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "pedding-top-desk",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 100,
+      "default": 25,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pedding-top-tab",
+      "label": "Tablet top padding",
+      "min": 0,
+      "max": 100,
+      "default": 20,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pedding-top-mbl",
+      "label": "Mobile top padding",
+      "min": 0,
+      "max": 100,
+      "default": 15,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pedding-bottom-desk",
+      "label": "Desktop bottom padding",
+      "min": 0,
+      "max": 100,
+      "default": 25,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pedding-bottom-tab",
+      "label": "Tablet bottom padding",
+      "min": 0,
+      "max": 100,
+      "default": 20,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pedding-bottom-mbl",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 100,
+      "default": 15,
+      "step": 5,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "aspoint",
+      "name": "Benefit Point",
+      "settings": [
+        {
+          "type": "text",
+          "id": "benefit",
+          "label": "Benefit"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Results & benefits",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

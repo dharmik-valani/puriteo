@@ -1,0 +1,516 @@
+.menu-dropdown__wrapper{
+    display: grid !important;
+    grid-template-columns: 1.5fr 0.5fr !important;
+}
+.menu-dropdown__column-2{
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+.menu-dropdown__column-3{
+    display: flex !important;
+    height: fit-content !important;
+}
+.megamenu_style_1 .site-nav-banner-item--right {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+}
+.prd_benefits_main{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px 15px 20px;
+    background-color: #f5f5f5;
+    margin-bottom: 20px;
+}
+.prd_benefit_inner{
+    display: grid;
+    grid-template-columns: 0.6fr 1.4fr;
+    align-items: center;
+    gap: 10px;
+}
+.as-collection-title{
+    margin: 0;
+    font-size: 30px;
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+
+@media screen and (max-width: 1280px){
+    .prd_benefits_main {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .prd_benefit_inner {
+        grid-template-columns: .5fr 1.5fr;
+    }
+}
+
+@media screen and (max-width: 770px){
+    .menu-dropdown__column{
+        max-width: 100% !important;
+    }
+    .menu-dropdown__banner{
+        grid-column-start: 1;
+        grid-column-end: 3;
+        max-width: 100% !important;
+    }
+    .site-nav-banner--item{
+        width: 100% !important;
+    }
+    .prd_benefits_main {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .prd_benefit_inner {
+        grid-template-columns: 0.3fr 1.7fr;
+        gap: 15px;
+    }
+}
+
+/* .price-item--sale, .price.price--on-sale .price-item--sale .money {
+    color: #fa2a4d !important;
+} */
+    .productView-wishlist a:hover {
+        background-color: #ff0000 !important;
+        border-color: #ff0000 !important;
+    }
+.prd_benefits_main {
+    border-radius: 10px !important;
+}
+.productView-image.fit-unset .productView-img-container img:not(.zoomImg) {
+    border-radius: 10px !important;
+}
+.slick-slide img {
+    border-radius: 10px !important;
+}
+.product-card-layout-02 .card {
+   
+    border-radius: 10px !important;
+}
+@media screen and (max-width: 320px) {
+    .prd_benefit_inner {
+        gap: 10px;
+    }
+}
+
+
+
+.header-navigation .header__icon--cart .cart-count-bubble {
+  background: #3c3486;
+  color: #ffffff;
+}
+.slick-arrow svg {
+  max-width: 65%;
+}
+.sticky-search-menu-open .header-nav-hamburger .search__input {
+  border-bottom: 1px solid lightgrey;
+  font-size: 20px !important;
+}
+button.tab-links {
+  text-align: start;
+}
+.halo-row {
+  justify-content: center;
+}
+@media only screen and (max-width: 767px) {
+  .copyright__content p {
+    line-height: 1.5em;
+  }
+  .halo-row {
+    width: 100%;
+  }
+  .halo-block-content {
+    flex-direction: column !important;
+    width: 100%;
+  }
+  .list-product-tabs {
+    width: 100% !important;
+    margin: 0 auto 30px auto !important;
+  }
+  .as_arow {
+    width: 90% !important;
+  }
+  .product-tabs-content {
+    width: 100% !important;
+  }
+  .list-product-tabs {
+    margin: 0px auto 50px auto !important;
+  }
+  .accordion {
+    width: 100%;
+    padding: 0px;
+  }
+  .footer-block__item {
+    width: 100%;
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+  .footer-block__item .rte,
+  .rte > p:first-child {
+    margin: 0px;
+  }
+  .halo-row {
+    width: 75%;
+    margin: 0 auto;
+    gap: 30px;
+  }
+  .footer-block__item .rte {
+    gap: 0;
+  }
+  .footer-block__subheading p {
+    padding: 15px 0px;
+  }
+  .halo-row {
+    width: 100% !important;
+    margin: 0 auto;
+    gap: 20px !important;
+  }
+}
+
+.footer__content-top.footer__content-bg {
+  background-position: unset;
+  background-repeat: no-repeat;
+  background-attachment: unset;
+  background-size: cover;
+  height: 100% !important;
+  width: 100% !important;
+  object-fit: cover;
+}
+.asPolicy {
+  color: white;
+}
+.asPolicy:hover {
+  color: white !important;
+  text-decoration: underline;
+}
+.asFootImgDesk {
+  margin-top: 50px !important;
+  margin-bottom: 0px !important;
+}
+.section-block-template--18227988660324__brand_slider_L4wz94 .halo-block-header .title {
+    color: #232323;
+    font-size: 30px;
+    font-weight: 500;
+}
+.tab-popup-content p{
+  font-size: 16px;
+}
+.product-tab-block .list-product-tabs.list-tab__style_2 li .tab-links {
+  font-weight: 500;
+  font-size: 20px;
+  font-family: Circular Std, sans-serif !important;
+}
+.list-product-tabs .tab-links.active {
+    border-bottom: 3px solid !important;
+}
+
+/* productd pages css */
+.halo-share-3 {
+      margin-bottom: -10px !important;
+}
+
+.product-customInformation__icon svg {
+  width: 30px;
+  height: 30px;
+}
+.product-customInformation__content .product__text.title {
+  margin-top: 0px;
+}
+.prd_benefits_main {
+    margin-bottom: 12px;
+}
+.productView-price .price.price--medium .price-item, .productView-price .price.price--medium .price-item .money {
+    font-size: 25px !important;
+    line-height: 1.2;
+    font-weight: 600;
+  display:block;
+}
+.product-form__label .text {
+    font-size: 15px !important;
+}
+.site-nav-link {
+    font-size: 16px !important;
+    font-weight: 400 !important;
+}
+.card-action .button {
+    padding-top: 13px !important;
+    padding-bottom: 13px !important;
+  border-radius: 10px !important;
+  background: #3c3487;
+  color:#fff;
+}
+ .card-action .button:hover {
+        background: #3c3487 !important;
+    }
+.card-title {
+    font-size: 18px !important;
+    font-weight: 400 !important;
+}
+.product-card-layout-02.quick_shop_option_2 .card-information {
+    padding: 20px 0 0 !important;
+}
+.as_arow {
+  
+    border-bottom: unset !important;
+}
+   .list-product-tabs .tab-links {
+    border-bottom: 1px solid lightgray !important;
+}
+.section-block-template--24289984348479__product_tab_block_j6QDhP, .section-block-template--24289984348479__product_tab_block_j6QDhP .halo-block-header .title .text {
+    background: #fff !important;
+}
+
+.footer__content-bottom {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+.halo-text-format p {
+    margin-bottom: 0;
+    font-size: 16px !important;
+}
+
+.adaptive_height img {
+    border-radius: 10px !important;
+}
+.slideshow .adaptive_height img {
+    border-radius: 0 !important;
+}
+.footer-block__newsletter .footer-block__newsletter-form .newsletter-form__button {
+    height: 50px !important;
+    font-size: 15px !important;
+    display: flex
+ !important;
+    align-items: center !important; 
+    justify-content: center !important;
+  border-radius: 40px !important;
+  
+}
+#shopify-section-template--24289984512319__brand_slider_ewV6zf .section-block-template--24289984512319__brand_slider_ewV6zf .halo-item .text {
+    
+    font-size: 16px !important;
+}
+
+.section-block-template--24289984512319__brand_slider_7GXDpQ .halo-item .text {
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+}
+.footer-block__newsletter .footer-block__newsletter-form #NewsletterForm--footer, .footer-block__newsletter .footer-block__newsletter-form [id^=NewsletterForm--] {
+    height: 50px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  border-radius: 10px !important;
+}
+@media screen and (max-width: 767px){
+   .menu-lv-item .text {
+    font-size: 15px !important;
+  }
+  .item .banner-text {
+    margin-bottom: 14px !important;
+}
+  .banner-button {
+    width: 135px !important;
+    padding: 10px 0px !important;
+}
+  .type-item--special .banner-heading {
+    margin-bottom: 13px !important;
+  }
+ .product-tab-block .list-product-tabs.enable_scroll_tab {
+        justify-content: unset !important;
+    }
+ .product-tab-block .list-product-tabs.list-tab__style_2 li .tab-links {
+        font-size: 18px !important;
+    }
+  .product-tab-block .list-product-tabs li .tab-links {
+    width: auto !important;
+}
+  .section-block-template--24289984348479__product_tab_block_McEBgy .list-product-tabs li {
+    margin: 0 10px !important;
+}
+  .section-block-template--24289984348479__product_tab_block_McEBgy .list-product-tabs li.separation {
+    min-width: 2px !important;
+}
+  .card-action .button {
+    font-size: 16px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+  .card-title {
+    font-size: 15px !important;
+    font-weight: 400 !important;
+}
+ .list-product-tabs {
+        margin-bottom: 25px !important;
+    }
+  .product-card-layout-02.quick_shop_option_2 .card-information {
+    padding: 12px 0 0 !important;
+}
+.section-block-template--24289984348479__brand_slider_96Gzy3 .halo-block-header .rte {
+    margin-top: -2px !important;
+    font-size: 14px !important;
+}
+      .product-tab-block .list-product-tabs li .tab-links {
+        width: 100% !important;
+    }
+  .as_arow {
+  
+    border-bottom: unset !important;
+}
+   .list-product-tabs .tab-links {
+    border-bottom: 1px solid lightgray !important;
+}
+  #shopify-section-template--24289984348479__product_tab_block_j6QDhP h3, #shopify-section-template--24289984348479__product_tab_block_j6QDhP .h3 {
+    font-size: 24px !important;
+}
+  .section-block-template--24289984348479__product_tab_block_j6QDhP, .section-block-template--24289984348479__product_tab_block_j6QDhP .halo-block-header .title .text {
+    background: #fff !important;
+}
+#shopify-section-sections--24289984807231__footer_01_TAFmip .footer-block__details .rte .content-piece p {
+    font-size: 15px;
+    line-height: 1.5 !important; 
+}
+  .footer-block__details .rte {
+    gap: 8px !important;
+}
+      .footer-block__details .rte {
+        margin-top: 20px !important;
+    }
+      .halo-row {
+        gap: 0px !important;
+    }
+      .rte>p:first-child {
+        margin-top: -10px !important;
+        font-size: 14px !important;
+    }
+  .accordion button .accordion-title {
+    font-size: 16px !important;
+}
+.footer-block__column .footer-block__heading, .footer-block__newsletter .footer-block__heading, .footer-block__newsletter .footer-block__subheading .text-store {
+    
+    font-size: 20px !important;
+}
+  .footer-block__details .rte .content-piece {
+    display: flex;
+    align-items: center;
+}
+    .footer-block__text:not(.block__text_first) {
+        margin-top: 10px !important;
+    }
+  }
+.copyright__content p {
+    font-size: 13px;
+    line-height: 1.5 !important;
+}
+.footer__content-bottom {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+.card-action .button {
+    padding-top: 13px !important;
+    padding-bottom: 13px !important;
+    border-radius: 10px !important;
+}
+    .card-action .button:hover {
+        background: #3c3487 !important;
+    }
+.halo-text-format p {
+    margin-bottom: 0;
+    font-size: 14px ;
+}
+.product-full-width .productView {
+    padding-top: 0;
+    padding-bottom: 0px !important;
+}
+
+}
+.section-block-template--24289984512319__brand_slider_7GXDpQ .halo-item .text {
+    line-height: 1.2 !important;
+}
+
+
+/* POLICY PAGE CSS */
+
+.shopify-policy__container{
+  max-width: 100ch;
+}
+.shopify-policy__body .rte h3{
+  font-size: 25px;
+}
+
+
+/* Footer */
+
+.footsideimage{
+  display: none !important;
+}
+
+@media only screen and (min-width: 1024px){
+.footsideimage {
+        display: block !important;
+        position: absolute;
+        bottom: 40px;
+        right: 20px;
+        width: 390px;
+        height: 280px;
+}
+.footsideimage{
+  object-fit: cover;
+}
+}
+s.price-item.price-item--regular{
+      opacity: 0.7;
+}
+
+/* Default Collection page padding to match homepage (80px desktop, 15px mobile) */
+.template-collection #MainContent .collection-default > [class*="container"],
+.template-collection #MainContent > .shopify-section > [class*="container"]:not(.slick-list):not(.slick-track) {
+    max-width: 100% !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    box-sizing: border-box;
+}
+
+@media screen and (min-width: 1025px) {
+    .template-collection #MainContent .collection-default > [class*="container"],
+    .template-collection #MainContent > .shopify-section > [class*="container"]:not(.slick-list):not(.slick-track) {
+        padding-left: 80px !important;
+        padding-right: 80px !important;
+    }
+}
+
+/* Fix CLS layout shift for Box Builder app */
+#box-builder-page-content {
+    min-height: 85vh;
+}
+
+/* ==========================================================================
+   Fix: Instagram Reel / Shoppable Video Popup Modal Layering
+   Ensures the Instagram popup modal and its backdrop render completely above
+   the theme's header and announcement bar without the header cutting through.
+   ========================================================================== */
+.ins-shoppable-videos [class*="modal"],
+.ins-shoppable-videos [class*="popup"],
+.ins-shoppable-videos [class*="overlay"],
+[class*="ins-shoppable-video"][class*="modal"],
+[class*="ins-shoppable-video"][class*="popup"],
+[class*="shoppable-video"][class*="modal"],
+[class*="shoppable-video"][class*="popup"],
+[class*="video-pops"][class*="modal"],
+[class*="video-pops"][class*="popup"],
+[class*="reel-modal"],
+[class*="reel-popup"],
+div[class*="ins-modal"],
+div[class*="ins-overlay"],
+div[class*="ins-video-modal"],
+div[class*="ins-video-popup"],
+div[class*="ins-shoppable-modal"] {
+    z-index: 2147483647 !important;
+}
+
+/* Ensure header container and sticky header layer behind the popup when active */
+body:has([class*="ins-modal"]:not([style*="display: none"]), [class*="ins-video-modal"]:not([style*="display: none"]), [class*="reel-modal"]:not([style*="display: none"]), [class*="shoppable-video-modal"]:not([style*="display: none"]), [class*="popup"]:has(video)) .shopify-section-group-header-group,
+body:has([class*="ins-modal"]:not([style*="display: none"]), [class*="ins-video-modal"]:not([style*="display: none"]), [class*="reel-modal"]:not([style*="display: none"]), [class*="shoppable-video-modal"]:not([style*="display: none"]), [class*="popup"]:has(video)) .section-header-navigation,
+body:has([class*="ins-modal"]:not([style*="display: none"]), [class*="ins-video-modal"]:not([style*="display: none"]), [class*="reel-modal"]:not([style*="display: none"]), [class*="shoppable-video-modal"]:not([style*="display: none"]), [class*="popup"]:has(video)) .header-compact-wrapper,
+body:has([class*="ins-modal"]:not([style*="display: none"]), [class*="ins-video-modal"]:not([style*="display: none"]), [class*="reel-modal"]:not([style*="display: none"]), [class*="shoppable-video-modal"]:not([style*="display: none"]), [class*="popup"]:has(video)) .header-navigation-wrapper {
+    z-index: 1 !important;
+}

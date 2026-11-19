@@ -1,0 +1,32 @@
+.tabs-contents .product_tab_main{
+  margin-top:20px;
+}
+.tabs-contents .product_tab_main .productdetails_title{
+  display: flex;
+    column-gap: 24px;
+}
+.tabs-contents .product_tab_main .pdp_tab_container_title{
+  font-size: var(--subtab-title-size, 13px) !important;
+  font-weight: 600;
+  padding-bottom: 6px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  color: #5a7aad;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.tabs-contents .product_tab_main .pdp_tab_container_title.active-card,
+.tabs-contents .product_tab_main .pdp_tab_container_title:hover{
+  color: #1b3a6e;
+  border-bottom-color: #1b3a6e;
+}
+@media (max-width: 767px) {
+  .tabs-contents .product_tab_main .pdp_tab_container_title{
+    font-size: var(--subtab-title-size-mb, 12px) !important;
+  }
+}
+.tabs-contents .pdp_tab_detils_cover{
+      margin-top: 20px;
+}
+.pdp_tab_detils:not(.active_tabify){
+  display:none;
+}

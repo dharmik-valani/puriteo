@@ -1,0 +1,464 @@
+{% doc %}
+  Renders a compact sales-and-stock row.
+  - Sales message: product.metafields.custom.sales_message
+  - Remaining stock: selected variant's tracked inventory when between 1 and threshold
+  @param {product} product
+  @param {variant} [current_variant]
+  @param {block} [block]
+{% enddoc %}
+
+{%- liquid
+  assign variant = current_variant | default: product.selected_or_first_available_variant
+  assign threshold = block.settings.low_stock_threshold | default: 20 | plus: 0
+  assign raw_sales_msg = product.metafields.custom.sales_message.value | default: product.metafields.custom.sales_message
+  assign clean_msg = raw_sales_msg | strip_html | strip
+  
+  # Strip any stray trailing '|'
+  for i in (1..3)
+    assign clean_msg = clean_msg | strip
+    assign last_char = clean_msg | slice: -1
+    if last_char == '|'
+      assign msg_len = clean_msg | size | minus: 1
+      assign clean_msg = clean_msg | slice: 0, msg_len | strip
+    endif
+  endfor
+
+  # Strip any stray leading '|'
+  for i in (1..3)
+    assign clean_msg = clean_msg | strip
+    assign first_char = clean_msg | slice: 0, 1
+    if first_char == '|'
+      assign clean_msg = clean_msg | remove_first: '|' | strip
+    endif
+  endfor
+
+  # Split into sales message and stock message if user included '|' in the metafield
+  assign sales_part = clean_msg
+  assign stock_part = ''
+  assign has_explicit_stock_metafield = false
+  if clean_msg contains '|'
+    assign parts = clean_msg | split: '|'
+    assign sales_part = parts[0] | strip
+    assign stock_part = parts[1] | strip
+    # Remove any stray trailing '|' from stock_part
+    for i in (1..3)
+      assign stock_part = stock_part | strip
+      assign stock_last_char = stock_part | slice: -1
+      if stock_last_char == '|'
+        assign stock_len = stock_part | size | minus: 1
+        assign stock_part = stock_part | slice: 0, stock_len | strip
+      endif
+    endfor
+    if stock_part != blank and stock_part != ''
+      assign has_explicit_stock_metafield = true
+    endif
+  endif
+
+  # If no stock part was written in metafield, check tracked variant inventory
+  if stock_part == blank or stock_part == ''
+    if variant.inventory_management != blank and variant.inventory_management != nil
+      if variant.inventory_policy != 'continue'
+        assign qty = variant.inventory_quantity | default: 0
+        if qty > 0 and qty <= threshold
+          if qty == 1
+            assign stock_part = 'Only 1 Unit Left'
+          else
+            assign stock_part = 'Only ' | append: qty | append: ' Units Left'
+          endif
+        endif
+      endif
+    endif
+  endif
+
+  assign has_sales = false
+  if sales_part != blank and sales_part != ''
+    assign has_sales = true
+  endif
+
+  assign has_stock = false
+  if stock_part != blank and stock_part != ''
+    assign has_stock = true
+  endif
+
+  assign is_visible = false
+  if has_sales or has_stock
+    assign is_visible = true
+  endif
+
+  assign sp_top = block.settings.spacing_top | default: 1
+  assign sp_bottom = block.settings.spacing_bottom | default: 3
+  assign sp_top_mb = block.settings.spacing_top_mb | default: 1
+  assign sp_bottom_mb = block.settings.spacing_bottom_mb | default: 3
+  assign fs = block.settings.font_size | default: 14
+  assign fs_mb = block.settings.font_size_mb | default: 13
+  assign sales_color = block.settings.sales_text_color | default: '#444444'
+  assign stock_color = block.settings.stock_text_color | default: '#d32f2f'
+  assign divider_color = block.settings.divider_color | default: '#dcdcdc'
+  assign offset_y = block.settings.offset_y | default: 2
+  assign offset_y_mb = block.settings.offset_y_mb | default: 2
+-%}
+
+<style>
+  .npp-reviews-sales-row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: auto !important;
+    max-width: 100% !important;
+    margin: var(--sales-stock-sp-top, 2px) 0 var(--sales-stock-sp-bottom, 3px) 0 !important;
+    padding: 0 !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .npp-reviews-sales-row::-webkit-scrollbar {
+    display: none !important;
+  }
+  @media (max-width: 767px) {
+    .npp-reviews-sales-row {
+      margin: var(--sales-stock-sp-top-mb, 1px) 0 var(--sales-stock-sp-bottom-mb, 4px) 0 !important;
+      order: 4 !important;
+    }
+  }
+
+  sales-stock-row,
+  .npp-sales-stock-wrapper,
+  .product-new-products .npp-block--sales-stock {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+  .npp-reviews-sales-row .npp-sales-stock-wrapper,
+  .npp-reviews-sales-row sales-stock-row {
+    margin-left: 8px !important;
+    flex-shrink: 0 !important;
+  }
+  @media (max-width: 767px) {
+    sales-stock-row,
+    .npp-sales-stock-wrapper,
+    .product-new-products .npp-block--sales-stock {
+      height: 20px !important;
+      min-height: 20px !important;
+    }
+    .npp-reviews-sales-row .npp-sales-stock-wrapper,
+    .npp-reviews-sales-row sales-stock-row {
+      margin-left: 6px !important;
+    }
+  }
+
+  sales-stock-row .npp-sales-stock-row,
+  .npp-sales-stock-wrapper .npp-sales-stock-row,
+  .npp-sales-stock-row {
+    display: inline-flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    gap: 0 4px !important;
+    font-family: var(--font-body-family), inherit !important;
+    font-size: var(--sales-stock-fs, 13px) !important;
+    font-weight: 500 !important;
+    letter-spacing: normal !important;
+    transform: translateY(var(--sales-stock-offset-y, 2px)) !important;
+  }
+  @media (max-width: 767px) {
+    sales-stock-row .npp-sales-stock-row,
+    .npp-sales-stock-wrapper .npp-sales-stock-row,
+    .npp-sales-stock-row {
+      font-size: var(--sales-stock-fs-mb, 12px) !important;
+      gap: 0 3px !important;
+      transform: translateY(var(--sales-stock-offset-y-mb, 2px)) !important;
+    }
+  }
+  sales-stock-row .npp-sales-message,
+  sales-stock-row .npp-sales-stock-divider,
+  sales-stock-row .npp-stock-message,
+  .npp-sales-message,
+  .npp-sales-stock-divider,
+  .npp-stock-message {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+    line-height: 1 !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: var(--font-body-family), inherit !important;
+    font-size: var(--sales-stock-fs, 13px) !important;
+    font-weight: 500 !important;
+    letter-spacing: normal !important;
+    white-space: nowrap !important;
+  }
+  @media (max-width: 767px) {
+    sales-stock-row .npp-sales-message,
+    sales-stock-row .npp-sales-stock-divider,
+    sales-stock-row .npp-stock-message,
+    .npp-sales-message,
+    .npp-sales-stock-divider,
+    .npp-stock-message {
+      font-size: var(--sales-stock-fs-mb, 12px) !important;
+    }
+  }
+</style>
+
+<sales-stock-row
+  class="npp-sales-stock-wrapper npp-block npp-block--sales-stock{% unless is_visible %} is-hidden{% endunless %}"
+  data-product-id="{{ product.id }}"
+  data-threshold="{{ threshold }}"
+  data-has-metafield-stock="{% if has_explicit_stock_metafield %}true{% else %}false{% endif %}"
+  data-initial-stock="{% if has_explicit_stock_metafield %}{{ stock_part | escape }}{% endif %}"
+  style="--sales-stock-sp-top: {{ sp_top }}px;
+         --sales-stock-sp-bottom: {{ sp_bottom }}px;
+         --sales-stock-sp-top-mb: {{ sp_top_mb }}px;
+         --sales-stock-sp-bottom-mb: {{ sp_bottom_mb }}px;
+         --sales-stock-fs: {{ fs }}px;
+         --sales-stock-fs-mb: {{ fs_mb }}px;
+         --sales-text-color: {{ sales_color }};
+         --stock-text-color: {{ stock_color }};
+         --sales-stock-divider: {{ divider_color }};
+         --sales-stock-offset-y: {{ offset_y }}px;
+         --sales-stock-offset-y-mb: {{ offset_y_mb }}px;
+         {% unless is_visible %}display: none;{% endunless %}"
+  {% if block != blank %}{{ block.shopify_attributes }}{% endif %}
+>
+  <div class="npp-sales-stock-row">
+    <span
+      class="npp-sales-message{% unless has_sales %} is-hidden{% endunless %}"
+      data-sales-message
+      {% unless has_sales %}style="display: none;"{% endunless %}
+    >{{ sales_part | strip | escape }}</span>
+    <span
+      class="npp-sales-stock-divider{% unless has_sales and has_stock %} is-hidden{% endunless %}"
+      data-stock-divider
+      {% unless has_sales and has_stock %}style="display: none;"{% endunless %}
+      aria-hidden="true"
+    >|</span>
+    <span
+      class="npp-stock-message{% unless has_stock %} is-hidden{% endunless %}"
+      data-stock-message
+      {% unless has_stock %}style="display: none;"{% endunless %}
+    >{{ stock_part | strip | escape }}</span>
+  </div>
+
+  <script type="application/json" data-variants-inventory>
+    {
+      {%- for v in product.variants -%}
+        "{{ v.id }}": {
+          "id": {{ v.id }},
+          "available": {{ v.available | json }},
+          "tracked": {%- if v.inventory_management != blank and v.inventory_management != nil -%}true{%- else -%}false{%- endif -%},
+          "policy": {{ v.inventory_policy | json }},
+          "qty": {{ v.inventory_quantity | default: 0 }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    }
+  </script>
+</sales-stock-row>
+
+<script>
+  if (!customElements.get('sales-stock-row')) {
+    class SalesStockRow extends HTMLElement {
+      connectedCallback() {
+        this.threshold = parseInt(this.dataset.threshold || '20', 10);
+        this.hasMetafieldStock = this.dataset.hasMetafieldStock === 'true';
+        this.metafieldStockText = this.dataset.initialStock || '';
+
+        const dataScript = this.querySelector('[data-variants-inventory]');
+        if (dataScript) {
+          try {
+            this.variantsData = JSON.parse(dataScript.textContent);
+          } catch (e) {
+            this.variantsData = {};
+          }
+        } else {
+          this.variantsData = {};
+        }
+
+        this.salesEl = this.querySelector('[data-sales-message]');
+        this.stockEl = this.querySelector('[data-stock-message]');
+        this.dividerEl = this.querySelector('[data-stock-divider]');
+
+        if (!this.metafieldStockText && this.hasMetafieldStock && this.stockEl) {
+          this.metafieldStockText = this.stockEl.textContent.trim();
+        }
+
+        this.container = this.closest('.product-details') || this.closest('[data-section-id]') || this.closest('section') || document;
+
+        this.boundVariantChange = this.onVariantChange.bind(this);
+        this.container.addEventListener('change', this.boundVariantChange);
+        this.container.addEventListener('input', this.boundVariantChange);
+
+        // Also catch swatch click
+        this.container.addEventListener('click', (e) => {
+          const swatch = e.target.closest('.product-form__swatch, .swatch-element, [data-variant-id], .product-form__radio');
+          if (swatch) {
+            setTimeout(() => {
+              const currentIdInput = this.container.querySelector('input[name="id"], select[name="id"]');
+              if (currentIdInput && currentIdInput.value) {
+                this.updateVariantStock(currentIdInput.value);
+              }
+            }, 30);
+          }
+        });
+
+        document.addEventListener('variant:change', (e) => {
+          if (e.detail && e.detail.variant) {
+            this.updateVariantStock(e.detail.variant.id);
+          }
+        });
+
+        const idInputs = this.container.querySelectorAll('input[name="id"], select[name="id"]');
+        idInputs.forEach((idInput) => {
+          const observer = new MutationObserver(() => {
+            this.updateVariantStock(idInput.value);
+          });
+          observer.observe(idInput, { attributes: true, attributeFilter: ['value'] });
+        });
+
+        window.addEventListener('popstate', () => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const variantFromUrl = urlParams.get('variant');
+          if (variantFromUrl) {
+            this.updateVariantStock(variantFromUrl);
+          }
+        });
+      }
+
+      disconnectedCallback() {
+        if (this.container && this.boundVariantChange) {
+          this.container.removeEventListener('change', this.boundVariantChange);
+          this.container.removeEventListener('input', this.boundVariantChange);
+        }
+      }
+
+      onVariantChange(e) {
+        let variantId = null;
+        if (e && e.target && (e.target.name === 'id' || e.target.name === 'pack_selection' || e.target.getAttribute('data-variant-id'))) {
+          variantId = e.target.getAttribute('data-variant-id') || e.target.value;
+          this.updateVariantStock(variantId);
+        } else {
+          setTimeout(() => {
+            const idInput = this.container.querySelector('input[name="id"], select[name="id"]');
+            if (idInput && idInput.value) {
+              this.updateVariantStock(idInput.value);
+            }
+          }, 30);
+        }
+      }
+
+      updateVariantStock(variantId) {
+        if (!variantId || !this.variantsData) return;
+        const v = this.variantsData[String(variantId)];
+        if (!v) return;
+
+        const isTracked = v.tracked === true;
+        const allowsOversell = v.policy === 'continue';
+        const qty = parseInt(v.qty, 10);
+
+        let showStock = false;
+        let stockText = '';
+
+        if (!v.available) {
+          showStock = true;
+          stockText = 'Out of Stock';
+        } else if (isTracked && !allowsOversell && qty > 0 && (this.threshold <= 0 || qty <= this.threshold)) {
+          showStock = true;
+          stockText = (qty === 1) ? 'Only 1 Unit Left' : `Only ${qty} Units Left`;
+        } else if (this.hasMetafieldStock && this.metafieldStockText) {
+          // Preserve static metafield stock text (e.g. "Last 1,170 Units Left") across all variants
+          showStock = true;
+          stockText = this.metafieldStockText;
+        }
+
+        if (this.stockEl) {
+          if (showStock && stockText) {
+            this.stockEl.textContent = stockText;
+            this.stockEl.classList.remove('is-hidden');
+            this.stockEl.style.display = '';
+          } else {
+            this.stockEl.textContent = '';
+            this.stockEl.classList.add('is-hidden');
+            this.stockEl.style.display = 'none';
+          }
+        }
+
+        const hasSales = Boolean(this.salesEl && this.salesEl.textContent.trim().length > 0 && !this.salesEl.classList.contains('is-hidden'));
+
+        if (this.dividerEl) {
+          if (hasSales && showStock && stockText) {
+            this.dividerEl.classList.remove('is-hidden');
+            this.dividerEl.style.display = '';
+          } else {
+            this.dividerEl.classList.add('is-hidden');
+            this.dividerEl.style.display = 'none';
+          }
+        }
+
+        if (hasSales || (showStock && stockText)) {
+          this.classList.remove('is-hidden');
+          this.style.display = '';
+        } else {
+          this.classList.add('is-hidden');
+          this.style.display = 'none';
+        }
+      }
+    }
+    customElements.define('sales-stock-row', SalesStockRow);
+  }
+
+  (function() {
+    function initReviewsSalesRow() {
+      var sections = document.querySelectorAll('.product-new-products');
+      sections.forEach(function(section) {
+        var reviews = section.querySelector('.npp-block--reviews');
+        var sales = section.querySelector('.npp-block--sales-stock, sales-stock-row');
+        if (reviews && sales && reviews.parentNode) {
+          if (!reviews.closest('.npp-reviews-sales-row')) {
+            var row = document.createElement('div');
+            row.className = 'npp-reviews-sales-row';
+            var spBottomMb = sales.style.getPropertyValue('--sales-stock-sp-bottom-mb');
+            if (spBottomMb) {
+              row.style.setProperty('--sales-stock-sp-bottom-mb', spBottomMb);
+            }
+            var spTopMb = sales.style.getPropertyValue('--sales-stock-sp-top-mb');
+            if (spTopMb) {
+              row.style.setProperty('--sales-stock-sp-top-mb', spTopMb);
+            }
+            reviews.parentNode.insertBefore(row, reviews);
+            row.appendChild(reviews);
+            row.appendChild(sales);
+          }
+        }
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initReviewsSalesRow);
+    } else {
+      initReviewsSalesRow();
+    }
+    document.addEventListener('shopify:section:load', initReviewsSalesRow);
+    document.addEventListener('shopify:block:select', initReviewsSalesRow);
+    document.addEventListener('shopify:section:select', initReviewsSalesRow);
+    document.addEventListener('jdgm.doneSetup', initReviewsSalesRow);
+  })();
+</script>

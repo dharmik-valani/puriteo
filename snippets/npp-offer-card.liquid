@@ -1,0 +1,99 @@
+{% doc %}
+  Renders one Available Offers card.
+  @param {string} title - Offer title
+  @param {string} [description] - Offer terms
+  @param {string} [code] - Discount code. A copy button is shown only when this is present.
+  @param {string} [code_prefix] - Text shown before the code
+  @param {string} [copy_label] - Copy button label
+  @param {string} [no_code_text] - Footer text when the offer has no code
+{% enddoc %}
+
+<article class="npp-offer-card">
+  {%- if title != blank or description != blank -%}
+    <div class="npp-offer-card__body">
+      {%- if title != blank -%}
+        <p class="npp-offer-card__title">{{ title | escape }}</p>
+      {%- endif -%}
+      {%- if description != blank -%}
+        <p class="npp-offer-card__desc">{{ description | escape }}</p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+  <div class="npp-offer-card__footer">
+    {%- if code != blank -%}
+      <p class="npp-offer-card__code">
+        {%- if code_prefix != blank -%}
+          <span class="npp-offer-card__code-prefix">{{ code_prefix | strip | escape }}</span>
+        {%- endif -%}
+        <strong class="npp-offer-card__code-value">{{ code | escape }}</strong>
+      </p>
+      <button
+        type="button"
+        class="npp-offer-card__copy"
+        data-offer-copy="{{ code | escape }}"
+        aria-label="Copy discount code {{ code | escape }}"
+      >
+        {{ copy_label | default: 'Copy' | escape }}
+      </button>
+    {%- elsif no_code_text != blank -%}
+      <p class="npp-offer-card__nocode">{{ no_code_text | escape }}</p>
+    {%- endif -%}
+  </div>
+</article>
+
+{% javascript %}
+  if (!customElements.get('npp-offers')) {
+    class NppOffers extends HTMLElement {
+      connectedCallback() {
+        if (this.dataset.bound === 'true') return;
+        this.dataset.bound = 'true';
+        this.addEventListener('click', this.onClick);
+      }
+
+      onClick = (event) => {
+        const button = event.target.closest('.npp-offer-card__copy');
+        if (!button || !this.contains(button)) return;
+        const code = button.getAttribute('data-offer-copy');
+        if (!code) return;
+
+        const copyLabel = this.dataset.copyLabel || 'Copy';
+        const copiedLabel = this.dataset.copiedLabel || 'Copied!';
+        this.copyText(code).then((copied) => {
+          window.clearTimeout(button.copyTimer);
+          button.textContent = copied ? copiedLabel : "Couldn't copy";
+          button.copyTimer = window.setTimeout(() => {
+            button.textContent = copyLabel;
+          }, 1600);
+        });
+      };
+
+      copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(text).then(() => true).catch(() => this.copyFallback(text));
+        }
+        return Promise.resolve(this.copyFallback(text));
+      }
+
+      copyFallback(text) {
+        const area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.top = '0';
+        area.style.left = '-9999px';
+        document.body.appendChild(area);
+        area.select();
+        let copied = false;
+        try {
+          copied = document.execCommand('copy');
+        } catch (error) {
+          copied = false;
+        }
+        area.remove();
+        return copied;
+      }
+    }
+
+    customElements.define('npp-offers', NppOffers);
+  }
+{% endjavascript %}

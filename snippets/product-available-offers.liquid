@@ -1,0 +1,292 @@
+{% doc %}
+  Renders Available Offers from the current product metafield.
+  Offer copy is not stored in the section. It comes from custom.available_offers,
+  a list of metaobjects with offer_title, offer_description, and discount_code.
+  @param {block} [block] - Theme editor block. Omitted on templates that render this snippet directly.
+{% enddoc %}
+
+{{ 'component-product-new-products.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign offers_mf = product.metafields.custom.available_offers
+  assign offers_is_metaobject = false
+  if offers_mf.type contains 'metaobject_reference'
+    assign offers_is_metaobject = true
+  endif
+  if offers_is_metaobject == false and offers_mf.value == blank
+    assign offers_mf = product.metafields.custom.product_offers
+    assign offers_is_metaobject = false
+    if offers_mf.type contains 'metaobject_reference'
+      assign offers_is_metaobject = true
+    endif
+  endif
+  if offers_is_metaobject == false and offers_mf.value == blank
+    assign offers_mf = product.metafields.custom.offers
+    assign offers_is_metaobject = false
+    if offers_mf.type contains 'metaobject_reference'
+      assign offers_is_metaobject = true
+    endif
+  endif
+
+  assign offers_source = 'none'
+  assign mf_offers = offers_mf.value
+  if offers_is_metaobject
+    assign offers_source = 'metaobject'
+  elsif offers_mf.type == 'list.single_line_text_field' or offers_mf.type == 'list.multi_line_text_field'
+    assign offers_source = 'list'
+  elsif offers_mf.value != blank
+    assign offers_source = 'text'
+    assign mf_offers = offers_mf.value | newline_to_br | split: '<br />'
+  endif
+
+  assign has_custom_offers = false
+  if mf_offers != blank
+    if offers_source == 'metaobject'
+      for offer_probe in mf_offers
+        if offer_probe != blank
+          assign probe_h = offer_probe.offer_title | metafield_text | strip
+          if probe_h == blank
+            assign probe_h = offer_probe.offer_title.value | strip
+          endif
+          assign probe_t = offer_probe.offer_description | metafield_text | strip
+          if probe_t == blank
+            assign probe_t = offer_probe.offer_description.value | strip
+          endif
+          assign probe_c = offer_probe.discount_code | metafield_text | strip
+          if probe_c == blank
+            assign probe_c = offer_probe.discount_code.value | strip
+          endif
+          if probe_h == blank and offer_probe.system.display_name != blank
+            assign probe_h = offer_probe.system.display_name | strip
+          endif
+          if probe_h != blank or probe_t != blank or probe_c != blank
+            assign has_custom_offers = true
+            break
+          endif
+        endif
+      endfor
+    else
+      for offer_probe in mf_offers
+        assign probe_str = offer_probe | strip
+        if probe_str != blank
+          assign has_custom_offers = true
+          break
+        endif
+      endfor
+    endif
+  endif
+
+  assign has_offers = has_custom_offers
+
+  assign code_prefix = 'Use code:'
+  assign no_code_text = 'No code required'
+  assign copy_label = 'Copy'
+  assign copied_label = 'Copied!'
+  assign card_color = '#ffffff'
+  assign copy_bg = '#232323'
+  assign copy_text = '#ffffff'
+  assign copy_radius = 8
+  assign border_width = 2
+  assign shadow_y = 4
+  assign shadow_blur = 0
+  assign shadow_opacity = 100
+  assign shadow_base = '#1b3a6e'
+  assign footer_color = '#232323'
+  assign description_color = '#232323'
+  assign description_italic = true
+  assign spacing_top = 16
+  assign spacing_bottom = 16
+  assign spacing_top_mb = 12
+  assign spacing_bottom_mb = 10
+  assign padding_box = 16
+  assign padding_box_mb = 12
+  assign item_spacing = 10
+  assign bg_color = '#ffffff'
+  assign border_color = '#1b3a6e'
+  assign border_radius = 18
+  assign border_style = 'solid'
+  assign badge_text = 'AVAILABLE OFFERS'
+  assign badge_color = '#1b3a6e'
+  assign badge_bg_color = 'transparent'
+  assign badge_border_color = 'transparent'
+  assign badge_font_size = 18
+  assign badge_font_size_mb = 16
+  assign badge_font_weight = '700'
+  assign text_color = '#333333'
+  assign highlight_color = '#e58a00'
+  assign font_size = 14
+  assign font_size_mb = 12
+  assign font_weight = '400'
+  assign highlight_font_weight = '700'
+  assign icon_color = '#333333'
+  assign icon_size = 20
+  assign icon_size_mb = 18
+
+  if block != blank
+    assign code_prefix = block.settings.code_prefix | default: code_prefix
+    assign no_code_text = block.settings.no_code_text | default: no_code_text
+    assign copy_label = block.settings.copy_label | default: copy_label
+    assign copied_label = block.settings.copied_label | default: copied_label
+    assign card_color = block.settings.card_color | default: card_color
+    assign copy_bg = block.settings.copy_bg | default: copy_bg
+    assign copy_text = block.settings.copy_text | default: copy_text
+    assign copy_radius = block.settings.copy_radius | default: copy_radius
+    assign border_width = block.settings.border_width | default: border_width
+    assign shadow_y = block.settings.shadow_y | default: shadow_y
+    assign shadow_blur = block.settings.shadow_blur | default: shadow_blur
+    assign shadow_opacity = block.settings.shadow_opacity | default: shadow_opacity
+    assign shadow_base = block.settings.shadow_color | default: shadow_base
+    assign footer_color = block.settings.footer_color | default: footer_color
+    assign description_color = block.settings.description_color | default: block.settings.text_color | default: description_color
+    assign description_italic = block.settings.description_italic
+    assign spacing_top = block.settings.spacing_top | default: spacing_top
+    assign spacing_bottom = block.settings.spacing_bottom | default: spacing_bottom
+    assign spacing_top_mb = block.settings.spacing_top_mb | default: spacing_top_mb
+    assign spacing_bottom_mb = block.settings.spacing_bottom_mb | default: spacing_bottom_mb
+    assign padding_box = block.settings.padding_box | default: padding_box
+    assign padding_box_mb = block.settings.padding_box_mb | default: padding_box_mb
+    assign item_spacing = block.settings.item_spacing | default: item_spacing
+    assign bg_color = block.settings.bg_color | default: bg_color
+    assign border_color = block.settings.border_color | default: border_color
+    assign border_radius = block.settings.border_radius | default: border_radius
+    assign border_style = block.settings.border_style | default: border_style
+    assign badge_text = block.settings.badge_text | default: badge_text
+    assign badge_color = block.settings.badge_color | default: badge_color
+    assign badge_bg_color = block.settings.badge_bg_color | default: badge_bg_color
+    assign badge_border_color = block.settings.badge_border_color | default: badge_border_color
+    assign badge_font_size = block.settings.badge_font_size | default: badge_font_size
+    assign badge_font_size_mb = block.settings.badge_font_size_mb | default: badge_font_size_mb
+    assign badge_font_weight = block.settings.badge_font_weight | default: badge_font_weight
+    assign text_color = block.settings.text_color | default: text_color
+    assign highlight_color = block.settings.highlight_color | default: highlight_color
+    assign font_size = block.settings.font_size | default: font_size
+    assign font_size_mb = block.settings.font_size_mb | default: font_size_mb
+    assign font_weight = block.settings.font_weight | default: font_weight
+    assign highlight_font_weight = block.settings.highlight_font_weight | default: highlight_font_weight
+    assign icon_color = block.settings.icon_color | default: icon_color
+    assign icon_size = block.settings.icon_size | default: icon_size
+    assign icon_size_mb = block.settings.icon_size_mb | default: icon_size_mb
+  endif
+
+  assign shadow_color = border_color | default: '#1b3a6e'
+  if shadow_base != blank and shadow_base != 'transparent' and shadow_base != 'rgba(0,0,0,0)'
+    if shadow_opacity > 0 and shadow_opacity < 100
+      assign shadow_alpha = shadow_opacity | divided_by: 100.0
+      assign shadow_color = shadow_base | color_modify: 'alpha', shadow_alpha
+    else
+      assign shadow_color = shadow_base
+    endif
+  endif
+
+  assign has_badge_style = false
+  if badge_bg_color != blank and badge_bg_color != 'transparent' and badge_bg_color != 'rgba(0,0,0,0)'
+    assign has_badge_style = true
+  endif
+  if badge_border_color != blank and badge_border_color != 'transparent' and badge_border_color != 'rgba(0,0,0,0)'
+    assign has_badge_style = true
+  endif
+
+  if has_badge_style
+    assign badge_pad_x = 10
+    assign badge_pad_y = 5
+  else
+    assign badge_pad_x = 0
+    assign badge_pad_y = 0
+  endif
+
+  assign body_bg_tint = bg_color
+  if body_bg_tint == blank or body_bg_tint == '#ffffff' or body_bg_tint == '#fff' or body_bg_tint == 'transparent' or body_bg_tint == 'rgba(0,0,0,0)'
+    assign body_bg_tint = '#f0f5fc'
+  endif
+-%}
+
+{%- if has_offers -%}
+  <div
+    class="productView-moreItem npp-block npp-block--offers{% if settings.banner_animation == 'effect_fade_up' %} scroll-trigger animate--slide-in{% endif %}"
+    style="--spacing-top: {{ spacing_top }}px; --spacing-bottom: {{ spacing_bottom }}px; --spacing-top-mb: {{ spacing_top_mb }}px; --spacing-bottom-mb: {{ spacing_bottom_mb }}px; --offers-padding: {{ padding_box }}px; --offers-padding-mb: {{ padding_box_mb }}px; --offers-item-spacing: {{ item_spacing }}px; --offers-bg: {{ bg_color }}; --offers-body-bg: linear-gradient(90deg, {{ body_bg_tint }} 0%, #ffffff 50%, {{ body_bg_tint }} 100%); --offers-card-footer-bg: {{ card_color }}; --offers-card-bg: {{ card_color }}; --offers-border-color: {{ border_color }}; --offers-border-radius: {{ border_radius }}px; --offers-border-width: {{ border_width }}px; --offers-border-style: {{ border_style }}; --offers-shadow: {{ shadow_color | default: '#1b3a6e' }}; --offers-shadow-x: 0px; --offers-shadow-y: {{ shadow_y | default: 5 }}px; --offers-shadow-blur: {{ shadow_blur | default: 0 }}px; --offers-desc-color: {{ description_color }}; --offers-footer-color: {{ footer_color }}; --offers-badge-text: {{ badge_color }}; --offers-badge-bg: {{ badge_bg_color }}; --offers-badge-border: {{ badge_border_color }}; --offers-badge-pad-x: {{ badge_pad_x }}px; --offers-badge-pad-y: {{ badge_pad_y }}px; --offers-badge-size: {{ badge_font_size }}px; --offers-badge-size-mb: {{ badge_font_size_mb }}px; --offers-badge-weight: {{ badge_font_weight }}; --offers-text-color: {{ text_color }}; --offers-highlight-color: {{ highlight_color }}; --offers-font-size: {{ font_size }}px; --offers-font-size-mb: {{ font_size_mb }}px; --offers-font-weight: {{ font_weight }}; --offers-highlight-weight: {{ highlight_font_weight }}; --offers-icon-color: {{ icon_color }}; --offers-icon-size: {{ icon_size }}px; --offers-icon-size-mb: {{ icon_size_mb }}px; --offers-copy-bg: {{ copy_bg }}; --offers-copy-text: {{ copy_text }}; --offers-copy-radius: {{ copy_radius }}px;"
+    {% if block != blank %}{{ block.shopify_attributes }}{% endif %}
+  >
+    <npp-offers
+      class="npp-offers{% if description_italic %} npp-offers--italic{% endif %}"
+      data-copy-label="{{ copy_label | escape }}"
+      data-copied-label="{{ copied_label | escape }}"
+    >
+      {%- if badge_text != blank -%}
+        <div class="npp-offers-head">
+          <span class="npp-offer-icon" aria-hidden="true">
+            {% render 'icon-offer-rosette' %}
+          </span>
+          <h3 class="npp-offers-heading">{{ badge_text | escape }}</h3>
+        </div>
+      {%- endif -%}
+      <div class="npp-offer-cards">
+        {%- if has_custom_offers -%}
+          {%- if offers_source == 'metaobject' -%}
+            {%- for offer_item in mf_offers -%}
+              {%- if offer_item != blank -%}
+                {%- liquid
+                  assign item_h = offer_item.offer_title | metafield_text | strip
+                  if item_h == blank
+                    assign item_h = offer_item.offer_title.value | strip
+                  endif
+                  assign item_t = offer_item.offer_description | metafield_text | strip
+                  if item_t == blank
+                    assign item_t = offer_item.offer_description.value | strip
+                  endif
+                  assign item_c = offer_item.discount_code | metafield_text | strip
+                  if item_c == blank
+                    assign item_c = offer_item.discount_code.value | strip
+                  endif
+                  if item_h == blank and offer_item.system.display_name != blank
+                    assign item_h = offer_item.system.display_name | strip
+                  endif
+                -%}
+                {%- if item_h != blank or item_t != blank or item_c != blank -%}
+                  {% render 'npp-offer-card',
+                    title: item_h,
+                    description: item_t,
+                    code: item_c,
+                    code_prefix: code_prefix,
+                    copy_label: copy_label,
+                    no_code_text: no_code_text
+                  %}
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- else -%}
+            {%- for offer_item in mf_offers -%}
+              {%- assign offer_line = offer_item | strip -%}
+              {%- if offer_line != blank -%}
+                {%- liquid
+                  assign item_h = ''
+                  assign item_t = ''
+                  assign item_c = ''
+                  if offer_line contains '|'
+                    assign split_parts = offer_line | split: '|'
+                    assign item_h = split_parts[0] | strip
+                    assign item_t = split_parts[1] | strip
+                    assign item_c = split_parts[2] | strip
+                  elsif offer_line contains '**'
+                    assign split_parts = offer_line | split: '**'
+                    assign item_h = split_parts[1] | strip
+                    assign item_t = split_parts[2] | strip
+                  else
+                    assign item_h = offer_line
+                  endif
+                -%}
+                {% render 'npp-offer-card',
+                  title: item_h,
+                  description: item_t,
+                  code: item_c,
+                  code_prefix: code_prefix,
+                  copy_label: copy_label,
+                  no_code_text: no_code_text
+                %}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    </npp-offers>
+  </div>
+{%- endif -%}

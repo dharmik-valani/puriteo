@@ -1,0 +1,64 @@
+{%- liquid 
+    assign fontsize_text = block.settings.fontsize_text
+    assign fontsize_text_mb = block.settings.fontsize_text_mb | default: 18
+    assign color_title = block.settings.color_title
+    assign line_height_text = block.settings.line_height_text
+    assign line_height_text_mb = block.settings.line_height_text_mb
+    assign font_weight_title = block.settings.font_weight_title | default: '700'
+    assign font_weight_title_mb = block.settings.font_weight_title_mb | default: font_weight_title
+    assign title_alignment = block.settings.title_alignment | default: 'left'
+    assign title_alignment_mb = block.settings.title_alignment_mb | default: 'left'
+    assign title_style = '--color-title: ' | append: color_title | append: ';--fontsize-text: ' | append: fontsize_text | append: 'px;--fontsize-mb-text: ' | append: fontsize_text_mb | append: 'px;--fontsize-text-mb: ' | append: fontsize_text_mb | append: 'px;--font-weight-title: ' | append: font_weight_title | append: ';--font-weight-title-mb: ' | append: font_weight_title_mb | append: ';--title-align: ' | append: title_alignment | append: ';--title-align-mb: ' | append: title_alignment_mb | append: ';'
+    if line_height_text > 0
+        assign title_style = title_style | append: '--line-height-text: ' | append: line_height_text | append: '%;'
+    endif
+    if line_height_text_mb > 0
+        assign title_style = title_style | append: '--line-height-mb-text: ' | append: line_height_text_mb | append: '%;--line-height-text-mb: ' | append: line_height_text_mb | append: '%;'
+    endif
+
+    assign section_has_badges_block = false
+    if section.blocks != blank
+        for b in section.blocks
+            if b.type == 'badges' or b.type == 'product_badges'
+                assign section_has_badges_block = true
+                break
+            endif
+        endfor
+    endif
+
+    assign show_badges = true
+    if block.settings.show_badges == false or section_has_badges_block
+        assign show_badges = false
+    endif
+    assign badge_position = block.settings.badge_position | default: 'above'
+-%}
+{%- if show_badges and badge_position == 'above' -%}
+    <div class="product-title-badges-desktop">
+        {% render 'product-metafield-badges',
+            product: product,
+            alignment: title_alignment,
+            alignment_mb: title_alignment_mb,
+            position: 'above',
+            block: block
+        %}
+    </div>
+{%- endif -%}
+{%- if check_show_share == '3' -%}
+    <div class="halo-share-3">
+        <h1 class="productView-title" style="{{ title_style }}"><span>{{ product.title | escape }}</span></h1>
+        {% render 'halo-share', product: product, share_layout: check_show_share %}
+    </div>
+{%- else -%}
+    <h1 class="productView-title" style="{{ title_style }}"><span>{{ product.title | escape }}</span></h1>
+{%- endif -%}
+{%- if show_badges and badge_position == 'below' -%}
+    <div class="product-title-badges-desktop">
+        {% render 'product-metafield-badges',
+            product: product,
+            alignment: title_alignment,
+            alignment_mb: title_alignment_mb,
+            position: 'below',
+            block: block
+        %}
+    </div>
+{%- endif -%}

@@ -1,0 +1,1424 @@
+<link rel="stylesheet" href="{{ 'section-shop-by-health-need.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'section-shop-by-health-need.css' | asset_url | stylesheet_tag }}</noscript>
+<script src="{{ 'as-shop-health-slider.js' | asset_url }}" defer></script>
+
+{%- liquid
+  assign heading = section.settings.heading
+  assign subheading = section.settings.subheading
+  assign show_subheading_mobile = section.settings.show_subheading_mobile
+  assign show_view_all = section.settings.show_view_all
+  assign view_all_label = section.settings.view_all_label
+  assign view_all_label_mobile = section.settings.view_all_label_mobile
+  if view_all_label_mobile == blank
+    assign view_all_label_mobile = view_all_label
+  endif
+  assign view_all_link = section.settings.view_all_link
+  if view_all_link == blank
+    assign view_all_link = routes.collections_url
+  endif
+  assign show_view_all_arrow = section.settings.show_view_all_arrow
+
+  assign container_class = 'container'
+  if section.settings.container == 'fullwidth'
+    assign container_class = 'container-full'
+  elsif section.settings.container == '1170'
+    assign container_class = 'container-1170'
+  elsif section.settings.container == '1770'
+    assign container_class = 'container-1770'
+  endif
+
+  assign default_columns_desktop = section.settings.columns_desktop | default: 3
+  assign default_columns_tablet = section.settings.columns_tablet | default: 3
+  assign default_columns_mobile = section.settings.columns_mobile | default: 2
+  assign default_products = section.settings.products_to_show | default: 8
+  assign image_ratio = section.settings.image_ratio
+  if image_ratio == blank
+    assign image_ratio = settings.product_block_image_ratio
+  endif
+  assign banner_media_style = section.settings.banner_media_style | default: 'full'
+  assign show_arrows = section.settings.show_arrows
+  assign show_arrows_mobile = section.settings.show_arrows_mobile
+  assign show_dots = section.settings.show_dots
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} .shop-health {
+    --sh-heading-color: {{ section.settings.heading_color }};
+    --sh-subheading-color: {{ section.settings.subheading_color }};
+    --sh-view-all-color: {{ section.settings.view_all_color }};
+    --sh-view-all-hover-color: {{ section.settings.view_all_hover_color }};
+    --sh-heading-size: {{ section.settings.heading_font_size }}px;
+    --sh-heading-weight: {{ section.settings.heading_font_weight }};
+    --sh-subheading-size: {{ section.settings.subheading_font_size }}px;
+    --sh-view-all-size: {{ section.settings.view_all_font_size }}px;
+    --sh-header-mb: {{ section.settings.header_margin_bottom }}px;
+    --sh-row-gap: {{ section.settings.row_gap }}px;
+    --sh-row-gap-mobile: {{ section.settings.row_gap_mobile }}px;
+    --sh-banner-width: {{ section.settings.banner_width_desktop }}%;
+    --sh-banner-width-mobile: {{ section.settings.banner_width_mobile }}%;
+    --sh-banner-radius: {{ section.settings.banner_radius }}px;
+    --sh-banner-height: {{ section.settings.banner_min_height }}px;
+    --sh-banner-height-mobile: {{ section.settings.banner_min_height_mobile }}px;
+    --sh-banner-padding: {{ section.settings.banner_padding }}px;
+    --sh-banner-title-size: {{ section.settings.banner_title_size }}px;
+    --sh-banner-title-size-mobile: {{ section.settings.banner_title_size_mobile }}px;
+    --sh-banner-title-weight: {{ section.settings.banner_title_weight }};
+    --sh-banner-media-width: {{ section.settings.banner_media_width }}%;
+    --sh-banner-media-width-mobile: {{ section.settings.banner_media_width_mobile }}%;
+    --sh-banner-media-inset: {{ section.settings.banner_media_inset }}px;
+    --sh-product-gap: {{ section.settings.product_gap }}px;
+    --sh-product-gap-mobile: {{ section.settings.product_gap_mobile }}px;
+    --sh-columns-desktop: {{ default_columns_desktop }};
+    --sh-columns-tablet: {{ default_columns_tablet }};
+    --sh-columns-mobile: {{ default_columns_mobile }};
+    --sh-shop-all-bg: {{ section.settings.shop_all_bg }};
+    --sh-shop-all-color: {{ section.settings.shop_all_color }};
+    --sh-shop-all-radius: {{ section.settings.shop_all_radius }}px;
+    --sh-shop-all-size: {{ section.settings.shop_all_font_size }}px;
+    --sh-shop-all-size-mobile: {{ section.settings.shop_all_font_size_mobile | default: 12 }}px;
+    --sh-shop-all-padding-x-mobile: {{ section.settings.shop_all_padding_x_mobile | default: 18 }}px;
+    --sh-shop-all-padding-y-mobile: {{ section.settings.shop_all_padding_y_mobile | default: 8 }}px;
+    --sh-shop-all-min-height-mobile: {{ section.settings.shop_all_min_height_mobile | default: 36 }}px;
+    --sh-shop-all-align-mobile: {{ section.settings.shop_all_alignment_mobile | default: 'flex-start' }};
+    --sh-arrow-color: {{ section.settings.arrow_color }};
+    --sh-arrow-bg: {{ section.settings.arrow_background }};
+    --sh-arrow-border: {{ section.settings.arrow_border_color }};
+    --sh-arrow-color-hover: {% if section.settings.arrow_color_hover != blank %}{{ section.settings.arrow_color_hover }}{% else %}{{ section.settings.arrow_color }}{% endif %};
+    --sh-arrow-bg-hover: {% if section.settings.arrow_background_hover != blank %}{{ section.settings.arrow_background_hover }}{% else %}{{ section.settings.arrow_background }}{% endif %};
+    --sh-arrow-border-hover: {% if section.settings.arrow_border_color_hover != blank %}{{ section.settings.arrow_border_color_hover }}{% else %}{{ section.settings.arrow_border_color }}{% endif %};
+    --sh-arrow-size: {{ section.settings.arrow_size | default: 40 }}px;
+    --sh-dots-color: {{ section.settings.dots_color }};
+    --sh-dots-active: {{ section.settings.dots_active_color }};
+    background: {% if section.settings.background_gradient != blank %}{{ section.settings.background_gradient }}{% else %}{{ section.settings.background_color }}{% endif %};
+    padding-top: {{ section.settings.padding_top_mobile }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .shop-health .{{ container_class }} {
+    padding-left: {{ section.settings.container_padding_left_mobile }}px !important;
+    padding-right: {{ section.settings.container_padding_right_mobile }}px !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .shop-health__banner--full-media .shop-health__shop-all,
+    #shopify-section-{{ section.id }} .shop-health__shop-all {
+      align-self: var(--sh-shop-all-align-mobile);
+      box-sizing: border-box;
+      max-width: 100%;
+      min-height: var(--sh-shop-all-min-height-mobile);
+      padding: var(--sh-shop-all-padding-y-mobile) var(--sh-shop-all-padding-x-mobile);
+      font-size: var(--sh-shop-all-size-mobile);
+      line-height: 1.2;
+      white-space: nowrap;
+      margin-inline: 0;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .shop-health .{{ container_class }} {
+      padding-left: {{ section.settings.container_padding_left }}px !important;
+      padding-right: {{ section.settings.container_padding_right }}px !important;
+    }
+    #shopify-section-{{ section.id }} .shop-health {
+      padding-top: {{ section.settings.padding_top_tablet }}px;
+      padding-bottom: {{ section.settings.padding_bottom_tablet }}px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    #shopify-section-{{ section.id }} .shop-health {
+      padding-top: {{ section.settings.padding_top_desktop }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .shop-health {
+      --sh-heading-size: {{ section.settings.heading_font_size_mobile }}px;
+      --sh-subheading-size: {{ section.settings.subheading_font_size_mobile }}px;
+      --sh-header-mb: {{ section.settings.header_margin_bottom_mobile }}px;
+    }
+  }
+{% endstyle %}
+
+<div
+  class="shop-health section-block-{{ section.id }}{% if banner_media_style == 'full' %} shop-health--banner-full{% endif %}{% if settings.banner_animation == 'effect_fade_up' %} scroll-trigger animate--slide-in{% endif %}"
+  id="shop-health-{{ section.id }}"
+>
+  <div class="{{ container_class }}">
+    <div class="shop-health__inner">
+      {%- if heading != blank or subheading != blank or show_view_all -%}
+        <div class="shop-health__header">
+          <div class="shop-health__heading-group">
+            {%- if heading != blank -%}
+              <h2 class="shop-health__heading">{{ heading }}</h2>
+            {%- endif -%}
+            {%- if subheading != blank -%}
+              <p class="shop-health__subheading{% unless show_subheading_mobile %} shop-health__subheading--hide-mobile{% endunless %}">
+                {{ subheading }}
+              </p>
+            {%- endif -%}
+          </div>
+          {%- if show_view_all and view_all_label != blank -%}
+            <a class="shop-health__view-all" href="{{ view_all_link }}">
+              <span class="shop-health__view-all-label shop-health__view-all-label--desktop">{{ view_all_label }}</span>
+              <span class="shop-health__view-all-label shop-health__view-all-label--mobile">{{ view_all_label_mobile }}</span>
+              {%- if show_view_all_arrow -%}
+                <span class="icon-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                    <path d="M2 8h10M8.5 3.5L13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              {%- endif -%}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <ul class="shop-health__rows" role="list">
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign collection = block.settings.collection
+              assign card_title = block.settings.title
+              if card_title == blank and collection != blank
+                assign card_title = collection.title
+              endif
+              if card_title == blank
+                assign card_title = 'Collection'
+              endif
+
+              assign shop_all_label = block.settings.shop_all_label
+              if shop_all_label == blank
+                assign shop_all_label = section.settings.shop_all_label | default: 'Shop all'
+              endif
+
+              assign shop_all_link = block.settings.link
+              if shop_all_link == blank and collection != blank
+                assign shop_all_link = collection.url
+              endif
+
+              assign banner_image = block.settings.image
+              if banner_image == blank and collection != blank and collection.featured_image
+                assign banner_image = collection.featured_image
+              endif
+
+              assign banner_bg = block.settings.background_color
+              if banner_bg == blank
+                assign banner_bg = section.settings.banner_bg_fallback
+              endif
+              assign banner_accent = block.settings.accent_color
+              if banner_accent == blank
+                assign banner_accent = section.settings.banner_accent_fallback
+              endif
+              assign title_color = block.settings.title_color
+              if title_color == blank
+                assign title_color = section.settings.banner_title_color
+              endif
+
+              assign layout_desktop = block.settings.layout_desktop
+              if layout_desktop == blank or layout_desktop == 'default'
+                assign layout_desktop = section.settings.default_layout_desktop | default: 'carousel'
+              endif
+              assign layout_mobile = block.settings.layout_mobile
+              if layout_mobile == blank or layout_mobile == 'default'
+                assign layout_mobile = section.settings.default_layout_mobile | default: 'carousel'
+              endif
+
+              assign products_limit = block.settings.products_to_show | plus: 0
+              if products_limit == 0
+                assign products_limit = default_products | plus: 0
+              endif
+              if products_limit < 1
+                assign products_limit = 8
+              endif
+
+              assign cols_desktop = block.settings.columns_desktop | plus: 0
+              assign cols_tablet = block.settings.columns_tablet | plus: 0
+              assign cols_mobile = block.settings.columns_mobile | plus: 0
+              if cols_desktop == 0
+                assign cols_desktop = default_columns_desktop | plus: 0
+              endif
+              if cols_tablet == 0
+                assign cols_tablet = default_columns_tablet | plus: 0
+              endif
+              if cols_mobile == 0
+                assign cols_mobile = default_columns_mobile | plus: 0
+              endif
+
+              assign row_banner_width = section.settings.banner_width_desktop | default: 32 | plus: 0
+              assign row_banner_width_mobile = section.settings.banner_width_mobile | default: 100 | plus: 0
+              assign row_banner_height = section.settings.banner_min_height | default: 480 | plus: 0
+              assign row_banner_height_mobile = section.settings.banner_min_height_mobile | default: 220 | plus: 0
+              if row_banner_width == 0
+                assign row_banner_width = 32
+              endif
+              if row_banner_width_mobile == 0
+                assign row_banner_width_mobile = 100
+              endif
+              if row_banner_height == 0
+                assign row_banner_height = 480
+              endif
+              if row_banner_height_mobile == 0
+                assign row_banner_height_mobile = 220
+              endif
+
+              assign block_banner_width = block.settings.banner_width | plus: 0
+              assign block_banner_width_mobile = block.settings.banner_width_mobile | plus: 0
+              assign block_banner_height = block.settings.banner_min_height | plus: 0
+              assign block_banner_height_mobile = block.settings.banner_min_height_mobile | plus: 0
+
+              if block_banner_width > 0
+                assign row_banner_width = block_banner_width
+              endif
+              if block_banner_width_mobile > 0
+                assign row_banner_width_mobile = block_banner_width_mobile
+              endif
+              if block_banner_height > 0
+                assign row_banner_height = block_banner_height
+              endif
+              if block_banner_height_mobile > 0
+                assign row_banner_height_mobile = block_banner_height_mobile
+              endif
+            -%}
+            <li
+              id="shop-health-block-{{ block.id }}"
+              class="shop-health__row shop-health__row--desktop-{{ layout_desktop }} shop-health__row--mobile-{{ layout_mobile }}"
+              style="
+                --sh-banner-bg: {{ banner_bg }};
+                --sh-banner-accent: {{ banner_accent }};
+                --sh-banner-title-color: {{ title_color }};
+                --sh-banner-width: {{ row_banner_width }}%;
+                --sh-banner-width-mobile: {{ row_banner_width_mobile }}%;
+                --sh-banner-height: {{ row_banner_height }}px;
+                --sh-banner-height-mobile: {{ row_banner_height_mobile }}px;
+                --sh-columns-desktop: {{ cols_desktop }};
+                --sh-columns-tablet: {{ cols_tablet }};
+                --sh-columns-mobile: {{ cols_mobile }};
+              "
+              {{ block.shopify_attributes }}
+            >
+              <a
+                class="shop-health__banner{% if banner_media_style == 'full' %} shop-health__banner--full-media{% else %} shop-health__banner--inset-media{% endif %}"
+                {% if shop_all_link != blank %}href="{{ shop_all_link }}"{% else %}role="link" aria-disabled="true"{% endif %}
+                aria-label="{{ card_title | escape }} — {{ shop_all_label | escape }}"
+              >
+                <div class="shop-health__banner-media">
+                  {%- if banner_image != blank -%}
+                    {{
+                      banner_image
+                      | image_url: width: 1200
+                      | image_tag:
+                        loading: 'lazy',
+                        widths: '320, 480, 640, 800, 1000, 1200',
+                        sizes: '(max-width: 989px) 100vw, 35vw',
+                        alt: card_title
+                    }}
+                  {%- else -%}
+                    {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {%- endif -%}
+                </div>
+                <h3 class="shop-health__banner-title" style="color: {{ title_color }};">{{ card_title }}</h3>
+                <span class="shop-health__shop-all">{{ shop_all_label }}</span>
+              </a>
+
+              <div class="shop-health__products">
+                {%- comment -%} Desktop carousel / Mobile carousel {%- endcomment -%}
+                {%- if layout_desktop == 'carousel' or layout_mobile == 'carousel' -%}
+                  <shop-health-slider
+                    class="shop-health__slider-wrap shop-health__display--carousel{% if layout_desktop == 'grid' %} shop-health__display--desktop-hide{% endif %}{% if layout_mobile == 'grid' %} shop-health__display--mobile-hide{% endif %}{% if show_arrows and show_arrows_mobile %} shop-health__slider-wrap--arrows-mobile{% endif %}"
+                    data-columns-desktop="{{ cols_desktop }}"
+                    data-columns-tablet="{{ cols_tablet }}"
+                    data-columns-mobile="{{ cols_mobile }}"
+                  >
+                    <div class="shop-health__track" data-sh-track>
+                      {%- if collection != blank and collection.products.size > 0 -%}
+                        {%- for product in collection.products limit: products_limit -%}
+                          <div class="shop-health__slide" data-sh-slide>
+                            {% render 'product-grid-layout',
+                              product_card_product: product,
+                              portrait_aspect_ratio: '125',
+                              serial: forloop.index,
+                              sectionId: section.id,
+                              media_size: image_ratio,
+                              loading: true
+                            %}
+                          </div>
+                        {%- endfor -%}
+                      {%- else -%}
+                        {%- for i in (1..products_limit) -%}
+                          <div class="shop-health__slide" data-sh-slide>
+                            {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                            {% render 'product-card-placeholder', index: current %}
+                          </div>
+                        {%- endfor -%}
+                      {%- endif -%}
+                    </div>
+
+                    {%- if show_arrows -%}
+                      <button type="button" class="shop-health__arrow shop-health__arrow--prev is-disabled" data-sh-prev aria-label="Previous products" disabled aria-disabled="true">
+                        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                          <path d="M10.5 2.5L5 8l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </button>
+                      <button type="button" class="shop-health__arrow shop-health__arrow--next" data-sh-next aria-label="Next products">
+                        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                          <path d="M5.5 2.5L11 8l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </button>
+                    {%- endif -%}
+
+                    {%- if show_dots -%}
+                      <div class="shop-health__dots" data-sh-dots role="tablist" aria-label="{{ card_title | escape }} products"></div>
+                    {%- endif -%}
+                  </shop-health-slider>
+                {%- endif -%}
+
+                {%- if layout_desktop == 'grid' or layout_mobile == 'grid' -%}
+                  <div
+                    class="shop-health__grid shop-health__display--grid{% if layout_desktop == 'carousel' %} shop-health__display--desktop-hide{% endif %}{% if layout_mobile == 'carousel' %} shop-health__display--mobile-hide{% endif %}"
+                    style="--sh-columns-desktop: {{ cols_desktop }}; --sh-columns-tablet: {{ cols_tablet }}; --sh-columns-mobile: {{ cols_mobile }};"
+                  >
+                    {%- if collection != blank and collection.products.size > 0 -%}
+                      {%- for product in collection.products limit: products_limit -%}
+                        <div class="shop-health__grid-item">
+                          {% render 'product-grid-layout',
+                            product_card_product: product,
+                            portrait_aspect_ratio: '125',
+                            serial: forloop.index,
+                            sectionId: section.id,
+                            media_size: image_ratio,
+                            loading: true
+                          %}
+                        </div>
+                      {%- endfor -%}
+                    {%- else -%}
+                      {%- for i in (1..products_limit) -%}
+                        <div class="shop-health__grid-item">
+                          {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                          {% render 'product-card-placeholder', index: current %}
+                        </div>
+                      {%- endfor -%}
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Show/hide grid vs carousel by breakpoint without duplicating wrong layout */
+  @media screen and (min-width: 990px) {
+    #shopify-section-{{ section.id }} .shop-health__display--desktop-hide {
+      display: none !important;
+    }
+  }
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .shop-health__display--mobile-hide {
+      display: none !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "AS Shop By Health Need",
+  "tag": "section",
+  "class": "section-shop-by-health-need",
+  "max_blocks": 12,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "container",
+      "label": "Container",
+      "default": "container",
+      "options": [
+        { "value": "container", "label": "Default" },
+        { "value": "1170", "label": "1170px" },
+        { "value": "1770", "label": "1770px" },
+        { "value": "fullwidth", "label": "Full width" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_left",
+      "label": "Left padding (desktop)",
+      "default": "50",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "15", "label": "15px" },
+        { "value": "30", "label": "30px" },
+        { "value": "50", "label": "50px" },
+        { "value": "80", "label": "80px" },
+        { "value": "100", "label": "100px" },
+        { "value": "120", "label": "120px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_right",
+      "label": "Right padding (desktop)",
+      "default": "50",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "15", "label": "15px" },
+        { "value": "30", "label": "30px" },
+        { "value": "50", "label": "50px" },
+        { "value": "80", "label": "80px" },
+        { "value": "100", "label": "100px" },
+        { "value": "120", "label": "120px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_left_mobile",
+      "label": "Left padding (mobile)",
+      "default": "15",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "10", "label": "10px" },
+        { "value": "15", "label": "15px" },
+        { "value": "20", "label": "20px" },
+        { "value": "30", "label": "30px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_right_mobile",
+      "label": "Right padding (mobile)",
+      "default": "15",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "10", "label": "10px" },
+        { "value": "15", "label": "15px" },
+        { "value": "20", "label": "20px" },
+        { "value": "30", "label": "30px" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Space between categories (desktop)",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "row_gap_mobile",
+      "label": "Space between categories (mobile)",
+      "min": 12,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "Products — defaults"
+    },
+    {
+      "type": "paragraph",
+      "content": "Defaults for each category. Individual blocks can override layout, columns, and product count."
+    },
+    {
+      "type": "select",
+      "id": "default_layout_desktop",
+      "label": "Default product layout (desktop)",
+      "default": "carousel",
+      "options": [
+        { "value": "carousel", "label": "Carousel" },
+        { "value": "grid", "label": "Grid" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "default_layout_mobile",
+      "label": "Default product layout (mobile)",
+      "default": "carousel",
+      "options": [
+        { "value": "carousel", "label": "Carousel" },
+        { "value": "grid", "label": "Grid" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Default columns (desktop)",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Default columns (tablet)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Default columns (mobile)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Default products to show",
+      "min": 2,
+      "max": 16,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Product image ratio",
+      "default": "portrait",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "square", "label": "Square" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "product_gap",
+      "label": "Product gap (desktop)",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "product_gap_mobile",
+      "label": "Product gap (mobile)",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Banner — defaults"
+    },
+    {
+      "type": "select",
+      "id": "banner_media_style",
+      "label": "Banner image style",
+      "default": "full",
+      "options": [
+        { "value": "full", "label": "Full background image" },
+        { "value": "inset", "label": "Inset image on color block" }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": "All category banners share the same width. Banner stretches to the full height of the product row. Min height is a floor only."
+    },
+    {
+      "type": "range",
+      "id": "banner_width_desktop",
+      "label": "Banner width (desktop)",
+      "min": 24,
+      "max": 45,
+      "step": 1,
+      "unit": "%",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "banner_min_height",
+      "label": "Banner min height (desktop)",
+      "info": "Minimum banner height. Banner still grows to match the product cards row.",
+      "min": 280,
+      "max": 560,
+      "step": 10,
+      "unit": "px",
+      "default": 480
+    },
+    {
+      "type": "range",
+      "id": "banner_width_mobile",
+      "label": "Banner width (mobile)",
+      "min": 70,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "banner_min_height_mobile",
+      "label": "Banner min height (mobile)",
+      "info": "Minimum banner height on mobile.",
+      "min": 160,
+      "max": 360,
+      "step": 10,
+      "unit": "px",
+      "default": 220
+    },
+    {
+      "type": "range",
+      "id": "banner_radius",
+      "label": "Banner corner radius",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "banner_padding",
+      "label": "Banner inner padding",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "banner_media_width",
+      "label": "Banner image width (desktop)",
+      "min": 40,
+      "max": 70,
+      "step": 1,
+      "unit": "%",
+      "default": 58
+    },
+    {
+      "type": "range",
+      "id": "banner_media_width_mobile",
+      "label": "Banner image width (mobile)",
+      "min": 35,
+      "max": 60,
+      "step": 1,
+      "unit": "%",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "banner_media_inset",
+      "label": "Banner image inset",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "banner_bg_fallback",
+      "label": "Default banner background",
+      "default": "#FDE8E8"
+    },
+    {
+      "type": "color",
+      "id": "banner_accent_fallback",
+      "label": "Default banner accent block",
+      "default": "#FB7185"
+    },
+    {
+      "type": "color",
+      "id": "banner_title_color",
+      "label": "Default banner title color",
+      "default": "#E11D48"
+    },
+    {
+      "type": "range",
+      "id": "banner_title_size",
+      "label": "Banner title size (desktop)",
+      "min": 24,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "banner_title_size_mobile",
+      "label": "Banner title size (mobile)",
+      "min": 20,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "banner_title_weight",
+      "label": "Banner title weight",
+      "default": "800",
+      "options": [
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "shop_all_label",
+      "label": "Default Shop all label",
+      "default": "Shop all"
+    },
+    {
+      "type": "color",
+      "id": "shop_all_bg",
+      "label": "Shop all button background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "shop_all_color",
+      "label": "Shop all button text",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "range",
+      "id": "shop_all_radius",
+      "label": "Shop all button radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "shop_all_font_size",
+      "label": "Shop all font size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "shop_all_font_size_mobile",
+      "label": "Shop all font size (mobile)",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "shop_all_padding_x_mobile",
+      "label": "Shop all horizontal padding (mobile)",
+      "min": 10,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "shop_all_padding_y_mobile",
+      "label": "Shop all vertical padding (mobile)",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "shop_all_min_height_mobile",
+      "label": "Shop all minimum height (mobile)",
+      "min": 28,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "shop_all_alignment_mobile",
+      "label": "Shop all button alignment (mobile)",
+      "default": "flex-start",
+      "options": [
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Carousel arrows & dots"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows_mobile",
+      "label": "Show arrows on mobile",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "label": "Arrow button size",
+      "min": 28,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow icon color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "color",
+      "id": "arrow_background",
+      "label": "Arrow background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "arrow_border_color",
+      "label": "Arrow border",
+      "default": "#D5E0F2"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color_hover",
+      "label": "Arrow icon color (hover)",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "arrow_background_hover",
+      "label": "Arrow background (hover)",
+      "default": "#22C55E"
+    },
+    {
+      "type": "color",
+      "id": "arrow_border_color_hover",
+      "label": "Arrow border (hover)",
+      "default": "#22C55E"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Show pagination dots",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "dots_color",
+      "label": "Dots color",
+      "default": "#C9D5EA"
+    },
+    {
+      "type": "color",
+      "id": "dots_active_color",
+      "label": "Active dot color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop By Health Need"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Targeted nutrition for your health goals"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subheading_mobile",
+      "label": "Show subheading on mobile",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#5A7AAD"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size (desktop)",
+      "min": 18,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Heading font size (mobile)",
+      "min": 16,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "heading_font_weight",
+      "label": "Heading font weight",
+      "default": "700",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Subheading font size (desktop)",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size_mobile",
+      "label": "Subheading font size (mobile)",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "header_margin_bottom",
+      "label": "Header bottom spacing (desktop)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "header_margin_bottom_mobile",
+      "label": "Header bottom spacing (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "View all"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show View all",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "View all label (desktop)",
+      "default": "View All"
+    },
+    {
+      "type": "text",
+      "id": "view_all_label_mobile",
+      "label": "View all label (mobile)",
+      "default": "See All"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View all link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all_arrow",
+      "label": "Show arrow icon",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "view_all_color",
+      "label": "View all color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "color",
+      "id": "view_all_hover_color",
+      "label": "View all hover color",
+      "default": "#0F2447"
+    },
+    {
+      "type": "range",
+      "id": "view_all_font_size",
+      "label": "View all font size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Colors & spacing"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Section background gradient"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Top padding (desktop)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Bottom padding (desktop)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_top_tablet",
+      "label": "Top padding (tablet)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_tablet",
+      "label": "Bottom padding (tablet)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top padding (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom padding (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    }
+  ],
+  "blocks": [
+    {
+      "type": "health_card",
+      "name": "Health category",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Category"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection",
+          "info": "Products for this category come from this collection"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "info": "Defaults to the collection title when empty"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title color",
+          "default": "#E11D48"
+        },
+        {
+          "type": "text",
+          "id": "shop_all_label",
+          "label": "Shop all label",
+          "default": "Shop all"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Shop all link",
+          "info": "Defaults to the collection page when empty"
+        },
+        {
+          "type": "header",
+          "content": "Banner"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Banner image",
+          "info": "Overrides the collection image when set"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Banner background",
+          "default": "#FDE8E8"
+        },
+        {
+          "type": "color",
+          "id": "accent_color",
+          "label": "Banner accent block",
+          "default": "#FB7185",
+          "info": "Used when section banner style is Inset"
+        },
+        {
+          "type": "paragraph",
+          "content": "Size overrides apply only to this category. Use 0 to follow the section Banner defaults."
+        },
+        {
+          "type": "range",
+          "id": "banner_width",
+          "label": "Banner width (desktop)",
+          "info": "0 = use section default",
+          "min": 0,
+          "max": 45,
+          "step": 1,
+          "unit": "%",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "banner_min_height",
+          "label": "Banner height (desktop)",
+          "info": "0 = use section default",
+          "min": 0,
+          "max": 560,
+          "step": 10,
+          "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "banner_width_mobile",
+          "label": "Banner width (mobile)",
+          "info": "0 = use section default",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "banner_min_height_mobile",
+          "label": "Banner height (mobile)",
+          "info": "0 = use section default",
+          "min": 0,
+          "max": 360,
+          "step": 10,
+          "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Products"
+        },
+        {
+          "type": "select",
+          "id": "layout_desktop",
+          "label": "Layout (desktop)",
+          "default": "carousel",
+          "options": [
+            { "value": "default", "label": "Same as section default" },
+            { "value": "carousel", "label": "Carousel" },
+            { "value": "grid", "label": "Grid" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "layout_mobile",
+          "label": "Layout (mobile)",
+          "default": "carousel",
+          "options": [
+            { "value": "default", "label": "Same as section default" },
+            { "value": "carousel", "label": "Carousel" },
+            { "value": "grid", "label": "Grid" }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "products_to_show",
+          "label": "Products to show",
+          "info": "0 = use section default",
+          "min": 0,
+          "max": 16,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "columns_desktop",
+          "label": "Columns (desktop)",
+          "info": "0 = use section default",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "columns_tablet",
+          "label": "Columns (tablet)",
+          "info": "0 = use section default",
+          "min": 0,
+          "max": 4,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "columns_mobile",
+          "label": "Columns (mobile)",
+          "info": "0 = use section default",
+          "min": 0,
+          "max": 3,
+          "step": 1,
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AS Shop By Health Need",
+      "blocks": [
+        {
+          "type": "health_card",
+          "settings": {
+            "title": "Weight",
+            "title_color": "#E11D48",
+            "background_color": "#FDE8E8",
+            "accent_color": "#FB7185",
+            "layout_desktop": "carousel",
+            "layout_mobile": "carousel"
+          }
+        },
+        {
+          "type": "health_card",
+          "settings": {
+            "title": "Skin",
+            "title_color": "#DB2777",
+            "background_color": "#FCE7F3",
+            "accent_color": "#F472B6",
+            "layout_desktop": "grid",
+            "layout_mobile": "grid",
+            "columns_desktop": 4,
+            "columns_mobile": 2
+          }
+        },
+        {
+          "type": "health_card",
+          "settings": {
+            "title": "Hair",
+            "title_color": "#7C3AED",
+            "background_color": "#EDE9FE",
+            "accent_color": "#A78BFA",
+            "layout_desktop": "carousel",
+            "layout_mobile": "carousel"
+          }
+        },
+        {
+          "type": "health_card",
+          "settings": {
+            "title": "Performance",
+            "title_color": "#15803D",
+            "background_color": "#FEF9C3",
+            "accent_color": "#4ADE80",
+            "layout_desktop": "carousel",
+            "layout_mobile": "carousel"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

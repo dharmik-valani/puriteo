@@ -1,0 +1,122 @@
+{%- comment -%}
+  Shop by Concern Mega Menu Dropdown
+  Renders the concern categories grid dynamically from the selected Shopify menu,
+  displaying each collection's uploaded icon/image dynamically.
+{%- endcomment -%}
+
+<div class="header-compact__megamenu" role="region" aria-label="{{ heading | default: 'Navigation Menu' }}">
+  <div class="header-compact__megamenu-container">
+    <div class="header-compact__megamenu-inner">
+      
+      <!-- Left Panel: Cards Grid -->
+      <div class="header-compact__concerns">
+        <div class="header-compact__concerns-grid">
+          {%- if items_to_render != blank and items_to_render.size > 0 -%}
+            {%- for sublink in items_to_render -%}
+              {%- liquid
+                assign uploaded_icon = blank
+                assign target_col = blank
+                assign target_prod = blank
+
+                if sublink.type == 'collection_link' and sublink.object != blank
+                  assign target_col = sublink.object
+                elsif sublink.type == 'product_link' and sublink.object != blank
+                  assign target_prod = sublink.object
+                elsif sublink.url contains '/collections/'
+                  assign col_handle = sublink.url | split: '/collections/' | last | split: '?' | first | split: '/' | first
+                  assign target_col = collections[col_handle]
+                elsif sublink.url contains '/products/'
+                  assign prod_handle = sublink.url | split: '/products/' | last | split: '?' | first | split: '/' | first
+                  assign target_prod = all_products[prod_handle]
+                endif
+
+                if target_col != blank
+                  if target_col.metafields.custom.icon != blank
+                    assign uploaded_icon = target_col.metafields.custom.icon
+                  elsif target_col.metafields.custom.collection_icon != blank
+                    assign uploaded_icon = target_col.metafields.custom.collection_icon
+                  elsif target_col.metafields.custom.menu_icon != blank
+                    assign uploaded_icon = target_col.metafields.custom.menu_icon
+                  elsif target_col.metafields.theme.icon != blank
+                    assign uploaded_icon = target_col.metafields.theme.icon
+                  elsif target_col.image != blank
+                    assign uploaded_icon = target_col.image
+                  elsif target_col.featured_image != blank
+                    assign uploaded_icon = target_col.featured_image
+                  endif
+                elsif target_prod != blank
+                  if target_prod.featured_image != blank
+                    assign uploaded_icon = target_prod.featured_image
+                  elsif target_prod.images.first != blank
+                    assign uploaded_icon = target_prod.images.first
+                  endif
+                elsif sublink.object.image != blank
+                  assign uploaded_icon = sublink.object.image
+                elsif sublink.object.featured_image != blank
+                  assign uploaded_icon = sublink.object.featured_image
+                endif
+              -%}
+
+              <a href="{{ sublink.url }}" class="header-compact__concern-card">
+                <div class="header-compact__concern-badge" style="padding: 0 !important; overflow: hidden !important; display: flex !important; align-items: center !important; justify-content: center !important;">
+                  {%- if uploaded_icon != blank -%}
+                    <img
+                      src="{{ uploaded_icon | image_url: width: 120 }}"
+                      srcset="{{ uploaded_icon | image_url: width: 60 }} 1x, {{ uploaded_icon | image_url: width: 120 }} 2x"
+                      width="42"
+                      height="42"
+                      alt="{{ sublink.title | escape }}"
+                      loading="lazy"
+                      class="header-compact__concern-icon-img"
+                      style="width: 100% !important; height: 100% !important; max-width: 100% !important; max-height: 100% !important; object-fit: cover !important; border-radius: inherit !important; display: block !important; margin: 0 !important; padding: 0 !important;"
+                    >
+                  {%- else -%}
+                    {%- render 'header-concern-icon', icon: sublink.title -%}
+                  {%- endif -%}
+                </div>
+                <div class="header-compact__concern-info">
+                  <span class="header-compact__concern-name">{{ sublink.title }}</span>
+                  <span class="header-compact__concern-cta">{{ section.settings.concern_card_cta | default: 'Shop range →' }}</span>
+                </div>
+              </a>
+            {%- endfor -%}
+          {%- elsif request.design_mode -%}
+            <div class="header-compact__empty-menu" style="grid-column: 1 / -1; padding: 24px; background: rgba(0,0,0,0.03); border-radius: 8px; text-align: center;">
+              <p style="margin: 0; font-size: 13px; color: #666;">
+                No menu items found. Please add nested sub-items under this item in your Shopify navigation.
+              </p>
+            </div>
+          {%- endif -%}
+        </div>
+
+        <!-- Quiz link below cards -->
+        {%- if section.settings.show_quiz_link -%}
+          <div class="header-compact__quiz-link-wrap">
+            <a href="{{ section.settings.quiz_url | default: '/pages/quiz' }}" class="header-compact__quiz-link">
+              <span>{{ section.settings.quiz_text | default: 'Not sure what you need? Take the 60-second wellness quiz →' }}</span>
+            </a>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Right Panel: Promotional Card ("Build your wellness box") -->
+      {%- if section.settings.show_promo_card -%}
+        <div class="header-compact__promo-card">
+          <div>
+            {%- if section.settings.promo_badge != blank -%}
+              <div class="header-compact__promo-badge">{{ section.settings.promo_badge }}</div>
+            {%- endif -%}
+            <h4 class="header-compact__promo-title">{{ section.settings.promo_title }}</h4>
+            <p class="header-compact__promo-desc">{{ section.settings.promo_desc }}</p>
+          </div>
+          {%- if section.settings.promo_btn_text != blank -%}
+            <a href="{{ section.settings.promo_btn_url | default: routes.all_products_collection_url }}" class="header-compact__promo-btn">
+              <span>{{ section.settings.promo_btn_text }}</span>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+</div>

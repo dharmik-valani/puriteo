@@ -1,0 +1,216 @@
+{{ 'customer-love-us.css' | asset_url | stylesheet_tag }}
+
+<style>
+  #tagline-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_desktop }}px;
+    padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+  }
+
+  #tagline-{{ section.id }} .container {
+    padding-left: 80px !important;
+    padding-right: 80px !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  @media (max-width: 767px) {
+    #tagline-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_mobile }}px;
+      padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    }
+
+    #tagline-{{ section.id }} .container {
+      padding-left: 15px !important;
+      padding-right: 15px !important;
+    }
+  }
+</style>
+
+<section  id="tagline-{{ section.id }}" class="customer-love">
+    <div class="container">
+    <div class="cutomer_love_title_cover">
+    <h2 class="cutomer_love_title" style="color: {{ section.settings.heading_color }}">
+        {{ section.settings.heading }}
+        {% if section.settings.icon_image != blank %}
+          <img src="{{ section.settings.icon_image | img_url:'580x' }}" alt="icon" class="heading-icon">
+        {% endif %}
+      </h2>
+  </div>
+  <div class="customer-love__container">
+    <div class="customer-love__left">
+      <div class="stats">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'stat' %}
+              <div class="stat-block">
+                {% if block.settings.icon != blank %}
+                  <img src="{{ block.settings.icon | img_url:'580x' }}" alt="icon">
+                {% endif %}
+                <div class="stat-text">
+                  <span class="percent" style="color: {{ section.settings.percent_color }}">{{ block.settings.percent }}</span>
+                  <p style="color: {{ section.settings.text_color }}">{{ block.settings.text }}</p>
+                </div>
+              </div>
+              {% if block.settings.show_divider %}
+                <hr class="stat-divider" style="border-color: {{ section.settings.divider_color }}">
+              {% endif %}
+
+            {% when 'tagline' %}
+              <p class="tagline" style="color: {{ section.settings.tagline_color }}">{{ block.settings.tagline_text }}</p>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Right Content -->
+    <div class="customer-love__right">
+      {% if section.settings.before_after_image != blank %}
+        <img src="{{ section.settings.before_after_image | image_url: width: 500 }}" alt="Before After">
+      {% endif %}
+    </div>
+  </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Customer Love Section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Why Our Customer Love Us"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_image",
+      "label": "Heading Icon"
+    },
+    {
+      "type": "image_picker",
+      "id": "before_after_image",
+      "label": "Before/After Image"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding (Desktop)",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding (Desktop)",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding (Mobile)",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding (Mobile)",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#004d25"
+    },
+    {
+      "type": "color",
+      "id": "percent_color",
+      "label": "Percentage Color",
+      "default": "#00a859"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#004d25"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider Line Color",
+      "default": "#dddddd"
+    },
+    {
+      "type": "color",
+      "id": "tagline_color",
+      "label": "Tagline Text Color",
+      "default": "#666666"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "content",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "percent",
+          "label": "Percentage",
+          "default": "87%"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "experienced curbed cravings"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_divider",
+          "label": "Show divider line below this block",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "tagline",
+      "name": "Tagline Block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tagline_text",
+          "label": "Tagline Text",
+          "default": "*Based on Customer perception study results"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Love Section",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

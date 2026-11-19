@@ -1,0 +1,354 @@
+{%- liquid
+  assign valid_faq_count = 0
+  if template.suffix == 'new-product-page'
+    for i in (1..10)
+      assign f_t = 'faq_title_' | append: i
+      assign f_i = 'faq_info_' | append: i
+      assign f_q = 'faq_ques_' | append: i
+      assign f_a = 'faq_ans_' | append: i
+      assign t_val = product.metafields.custom[f_t] | default: product.metafields.custom[f_q] | strip_html | strip
+      assign i_val = product.metafields.custom[f_i] | default: product.metafields.custom[f_a] | strip_html | strip
+      if t_val != blank or i_val != blank
+        assign valid_faq_count = valid_faq_count | plus: 1
+      endif
+    endfor
+    if valid_faq_count == 0
+      for block in section.blocks
+        assign title_clean = block.settings.title | strip_html | strip
+        assign pera_clean = block.settings.peracontent | strip_html | strip
+        if title_clean != blank or pera_clean != blank
+          assign valid_faq_count = valid_faq_count | plus: 1
+        endif
+      endfor
+    endif
+  else
+    for block in section.blocks
+      assign title_clean = block.settings.title | strip_html | strip
+      assign pera_clean = block.settings.peracontent | strip_html | strip
+      if title_clean != blank or pera_clean != blank
+        assign valid_faq_count = valid_faq_count | plus: 1
+      endif
+    endfor
+  endif
+-%}
+
+{%- if template.suffix == 'new-product-page' and valid_faq_count == 0 -%}
+  <style>
+    #shopify-section-{{ section.id }} {
+      display: none !important;
+    }
+  </style>
+{%- else -%}
+{%- liquid
+  assign content_max_width = section.settings.content_max_width | default: 1000
+  assign item_gap = section.settings.item_gap | default: 12
+  assign item_gap_mobile = section.settings.item_gap_mobile | default: 10
+  assign item_padding_y = section.settings.item_padding_y | default: 18
+  assign item_padding_x = section.settings.item_padding_x | default: 22
+  assign item_padding_y_mobile = section.settings.item_padding_y_mobile | default: 14
+  assign item_padding_x_mobile = section.settings.item_padding_x_mobile | default: 16
+  assign item_radius = section.settings.item_radius | default: 12
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} .product-faq {
+    --faq-heading: {{ section.settings.heading_color | default: '#111111' }};
+    --faq-subtitle: {{ section.settings.subtitle_color | default: '#555555' }};
+    --faq-question: {{ section.settings.question_color | default: '#111111' }};
+    --faq-answer: {{ section.settings.answer_color | default: '#333333' }};
+    --faq-item-bg: {{ section.settings.item_background | default: '#ffffff' }};
+    --faq-border: {{ section.settings.border_color | default: '#e5e5e5' }};
+    --faq-icon: {{ section.settings.icon_color | default: '#111111' }};
+    --faq-shadow-opacity: {{ section.settings.shadow_opacity | default: 8 | divided_by: 100.0 }};
+    --faq-radius: {{ item_radius }}px;
+    --faq-gap: {{ item_gap }}px;
+    --faq-pad-y: {{ item_padding_y }}px;
+    --faq-pad-x: {{ item_padding_x }}px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: {{ section.settings.padding_top | default: 40 }}px {{ section.settings.padding_right | default: 80 }}px {{ section.settings.padding_bottom | default: 48 }}px {{ section.settings.padding_left | default: 80 }}px;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__inner {
+    width: 100%;
+    max-width: {% if content_max_width > 0 %}{{ content_max_width }}px{% else %}100%{% endif %};
+    margin: 0 auto;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__header {
+    text-align: {{ section.settings.heading_alignment | default: 'center' }};
+    margin-bottom: {{ section.settings.header_spacing | default: 24 }}px;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__heading {
+    margin: 0;
+    color: var(--faq-heading);
+    font-size: {{ section.settings.heading_size | default: 32 }}px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__subtitle {
+    margin: 10px 0 0;
+    color: var(--faq-subtitle);
+    font-size: {{ section.settings.subtitle_size | default: 18 }}px;
+    line-height: 1.5;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--faq-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__item {
+    background: var(--faq-item-bg);
+    border: 1px solid var(--faq-border);
+    border-radius: var(--faq-radius);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, var(--faq-shadow-opacity));
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    margin: 0;
+    padding: var(--faq-pad-y) var(--faq-pad-x);
+    border: 0;
+    background: transparent;
+    color: var(--faq-question);
+    text-align: left;
+    cursor: pointer;
+    appearance: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__question {
+    display: flex;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+    color: inherit;
+    font-size: {{ section.settings.question_size | default: 18 }}px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__question p {
+    display: inline;
+    margin: 0;
+    font: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    color: var(--faq-icon);
+    transition: transform 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__trigger[aria-expanded='true'] .product-faq__icon {
+    transform: rotate(180deg);
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__panel {
+    display: none;
+    padding: 0 var(--faq-pad-x) var(--faq-pad-y);
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__trigger[aria-expanded='true'] + .product-faq__panel {
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__answer {
+    padding-top: 4px;
+    color: var(--faq-answer);
+    font-size: {{ section.settings.answer_size | default: 16 }}px;
+    line-height: 1.6;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__answer p {
+    margin: 0 0 0.75em;
+  }
+
+  #shopify-section-{{ section.id }} .product-faq__answer p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .product-faq {
+      --faq-gap: {{ section.settings.item_gap_mobile | default: 10 }}px;
+      --faq-pad-y: {{ item_padding_y_mobile }}px;
+      --faq-pad-x: {{ item_padding_x_mobile }}px;
+      padding: {{ section.settings.padding_top_mobile | default: 28 }}px {{ section.settings.padding_right_mobile | default: 15 }}px {{ section.settings.padding_bottom_mobile | default: 36 }}px {{ section.settings.padding_left_mobile | default: 15 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .product-faq__heading {
+      font-size: {{ section.settings.heading_size_mobile | default: 24 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .product-faq__question {
+      font-size: {{ section.settings.question_size_mobile | default: 16 }}px;
+    }
+  }
+{% endstyle %}
+
+<section class="product-faq" id="ProductFaq-{{ section.id }}">
+  <div class="product-faq__inner">
+    {%- if section.settings.heading != blank or section.settings.subtitle != blank -%}
+      <div class="product-faq__header">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="product-faq__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subtitle != blank -%}
+          <p class="product-faq__subtitle">{{ section.settings.subtitle }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <ul class="product-faq__list" role="list">
+      {%- if template.suffix == 'new-product-page' -%}
+        {%- assign item_index = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- assign title_clean = block.settings.title | strip_html | strip -%}
+          {%- assign pera_clean = block.settings.peracontent | strip_html | strip -%}
+          {%- if title_clean != blank or pera_clean != blank -%}
+            {%- assign item_index = item_index | plus: 1 -%}
+            <li class="product-faq__item" {{ block.shopify_attributes }}>
+              <button
+                type="button"
+                class="product-faq__trigger"
+                aria-expanded="false"
+                aria-controls="ProductFaq-{{ section.id }}-panel-{{ item_index }}"
+              >
+                <span class="product-faq__question">
+                  {%- if section.settings.show_numbers -%}
+                    <span>{{ item_index }}.</span>
+                  {%- endif -%}
+                  <span>{{ block.settings.title }}</span>
+                </span>
+                <svg class="product-faq__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="product-faq__panel" id="ProductFaq-{{ section.id }}-panel-{{ item_index }}" role="region">
+                <div class="product-faq__answer">{{ block.settings.peracontent }}</div>
+              </div>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for block in section.blocks -%}
+          <li class="product-faq__item" {{ block.shopify_attributes }}>
+            <button
+              type="button"
+              class="product-faq__trigger"
+              aria-expanded="false"
+              aria-controls="ProductFaq-{{ section.id }}-panel-{{ forloop.index }}"
+            >
+              <span class="product-faq__question">
+                {%- if section.settings.show_numbers -%}
+                  <span>{{ forloop.index }}.</span>
+                {%- endif -%}
+                <span>{{ block.settings.title }}</span>
+              </span>
+              <svg class="product-faq__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="product-faq__panel" id="ProductFaq-{{ section.id }}-panel-{{ forloop.index }}" role="region">
+              <div class="product-faq__answer">{{ block.settings.peracontent }}</div>
+            </div>
+          </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.getElementById('ProductFaq-{{ section.id }}');
+    if (!root) return;
+    var triggers = root.querySelectorAll('.product-faq__trigger');
+    var allowMultiple = {{ section.settings.allow_multiple | default: false | json }};
+
+    triggers.forEach(function (trigger) {
+      trigger.addEventListener('click', function () {
+        var isOpen = trigger.getAttribute('aria-expanded') === 'true';
+        if (!allowMultiple) {
+          triggers.forEach(function (other) {
+            if (other !== trigger) other.setAttribute('aria-expanded', 'false');
+          });
+        }
+        trigger.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      });
+    });
+  })();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "asFAQ",
+  "tag": "section",
+  "class": "section-product-faq",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading title" },
+    { "type": "text", "id": "subtitle", "label": "Sub title" },
+    { "type": "select", "id": "heading_alignment", "label": "Heading alignment", "default": "center", "options": [
+      { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }
+    ] },
+    { "type": "checkbox", "id": "show_numbers", "label": "Show question numbers", "default": true },
+    { "type": "checkbox", "id": "allow_multiple", "label": "Allow multiple items open", "default": false },
+    { "type": "range", "id": "content_max_width", "min": 0, "max": 1400, "step": 20, "unit": "px", "label": "Content max width", "default": 1000 },
+    { "type": "range", "id": "item_gap", "min": 0, "max": 40, "step": 1, "unit": "px", "label": "Gap between items", "default": 12 },
+    { "type": "range", "id": "item_gap_mobile", "min": 0, "max": 30, "step": 1, "unit": "px", "label": "Gap between items (mobile)", "default": 10 },
+    { "type": "range", "id": "item_padding_y", "min": 8, "max": 40, "step": 1, "unit": "px", "label": "Item padding top/bottom", "default": 18 },
+    { "type": "range", "id": "item_padding_x", "min": 8, "max": 48, "step": 1, "unit": "px", "label": "Item padding left/right", "default": 22 },
+    { "type": "range", "id": "item_padding_y_mobile", "min": 8, "max": 32, "step": 1, "unit": "px", "label": "Item padding top/bottom (mobile)", "default": 14 },
+    { "type": "range", "id": "item_padding_x_mobile", "min": 8, "max": 32, "step": 1, "unit": "px", "label": "Item padding left/right (mobile)", "default": 16 },
+    { "type": "range", "id": "item_radius", "min": 0, "max": 24, "step": 1, "unit": "px", "label": "Item corner radius", "default": 12 },
+    { "type": "range", "id": "header_spacing", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Space below heading", "default": 24 },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 2, "unit": "px", "label": "Padding top", "default": 40 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 2, "unit": "px", "label": "Padding bottom", "default": 48 },
+    { "type": "range", "id": "padding_left", "min": 0, "max": 300, "step": 4, "unit": "px", "label": "Padding left", "default": 80 },
+    { "type": "range", "id": "padding_right", "min": 0, "max": 300, "step": 4, "unit": "px", "label": "Padding right", "default": 80 },
+    { "type": "range", "id": "padding_top_mobile", "min": 0, "max": 80, "step": 2, "unit": "px", "label": "Padding top (mobile)", "default": 28 },
+    { "type": "range", "id": "padding_bottom_mobile", "min": 0, "max": 80, "step": 2, "unit": "px", "label": "Padding bottom (mobile)", "default": 36 },
+    { "type": "range", "id": "padding_left_mobile", "min": 0, "max": 60, "step": 1, "unit": "px", "label": "Padding left (mobile)", "default": 15 },
+    { "type": "range", "id": "padding_right_mobile", "min": 0, "max": 60, "step": 1, "unit": "px", "label": "Padding right (mobile)", "default": 15 },
+    { "type": "range", "id": "heading_size", "min": 16, "max": 60, "step": 1, "unit": "px", "label": "Heading size", "default": 32 },
+    { "type": "range", "id": "heading_size_mobile", "min": 16, "max": 40, "step": 1, "unit": "px", "label": "Heading size (mobile)", "default": 24 },
+    { "type": "range", "id": "question_size", "min": 12, "max": 32, "step": 1, "unit": "px", "label": "Question size", "default": 18 },
+    { "type": "range", "id": "question_size_mobile", "min": 12, "max": 28, "step": 1, "unit": "px", "label": "Question size (mobile)", "default": 16 },
+    { "type": "range", "id": "subtitle_size", "min": 12, "max": 28, "step": 1, "unit": "px", "label": "Subtitle size", "default": 18 },
+    { "type": "range", "id": "answer_size", "min": 12, "max": 24, "step": 1, "unit": "px", "label": "Answer size", "default": 16 },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#111111" },
+    { "type": "color", "id": "subtitle_color", "label": "Subtitle color", "default": "#555555" },
+    { "type": "color", "id": "question_color", "label": "Question color", "default": "#111111" },
+    { "type": "color", "id": "answer_color", "label": "Answer color", "default": "#333333" },
+    { "type": "color", "id": "item_background", "label": "Item background", "default": "#ffffff" },
+    { "type": "color", "id": "border_color", "label": "Border color", "default": "#e5e5e5" },
+    { "type": "color", "id": "icon_color", "label": "Icon color", "default": "#111111" },
+    { "type": "range", "id": "shadow_opacity", "min": 0, "max": 30, "step": 1, "unit": "%", "label": "Shadow opacity", "default": 8 }
+  ],
+  "blocks": [
+    {
+      "type": "Add-FAQ",
+      "name": "Add-FAQ",
+      "settings": [
+        { "type": "richtext", "id": "title", "label": "accordion Title" },
+        { "type": "richtext", "id": "peracontent", "label": "accordion Content" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "asFAQ", "settings": {} }]
+}
+{% endschema %}

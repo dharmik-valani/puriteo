@@ -1,0 +1,489 @@
+.shop-health {
+  --sh-heading-color: #1b3a6e;
+  --sh-subheading-color: #5a7aad;
+  --sh-view-all-color: #1b3a6e;
+  --sh-view-all-hover-color: #0f2447;
+  --sh-heading-size: 36px;
+  --sh-subheading-size: 16px;
+  --sh-view-all-size: 15px;
+  --sh-header-mb: 28px;
+  --sh-row-gap: 40px;
+  --sh-row-gap-mobile: 28px;
+  --sh-banner-width: 32%;
+  --sh-banner-width-mobile: 100%;
+  --sh-banner-radius: 20px;
+  --sh-banner-height: 480px;
+  --sh-banner-height-mobile: 220px;
+  --sh-product-gap: 16px;
+  --sh-product-gap-mobile: 12px;
+  --sh-columns-desktop: 3;
+  --sh-columns-tablet: 3;
+  --sh-columns-mobile: 2;
+  --sh-arrow-color: #1b3a6e;
+  --sh-arrow-bg: #ffffff;
+  --sh-arrow-border: #d5e0f2;
+  --sh-arrow-color-hover: #ffffff;
+  --sh-arrow-bg-hover: #22c55e;
+  --sh-arrow-border-hover: #22c55e;
+  --sh-arrow-size: 40px;
+  --sh-dots-color: #c9d5ea;
+  --sh-dots-active: #1b3a6e;
+  --sh-shop-all-bg: #ffffff;
+  --sh-shop-all-color: #1b3a6e;
+  --sh-shop-all-radius: 40px;
+}
+
+.shop-health__inner {
+  width: 100%;
+}
+
+.shop-health__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-bottom: var(--sh-header-mb);
+}
+
+.shop-health__heading-group {
+  min-width: 0;
+  flex: 1;
+}
+
+.shop-health__heading {
+  margin: 0;
+  color: var(--sh-heading-color);
+  font-size: var(--sh-heading-size);
+  font-weight: var(--sh-heading-weight, 700);
+  line-height: 1.2;
+}
+
+.shop-health__subheading {
+  margin: 8px 0 0;
+  color: var(--sh-subheading-color);
+  font-size: var(--sh-subheading-size);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.shop-health__subheading--hide-mobile {
+  display: block;
+}
+
+.shop-health__view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-top: 6px;
+  color: var(--sh-view-all-color);
+  font-size: var(--sh-view-all-size);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.shop-health__view-all:hover {
+  color: var(--sh-view-all-hover-color);
+}
+
+.shop-health__view-all .icon-arrow {
+  display: inline-flex;
+  width: 1em;
+  height: 1em;
+}
+
+.shop-health__view-all .icon-arrow svg {
+  width: 100%;
+  height: 100%;
+}
+
+.shop-health__view-all-label--mobile {
+  display: none;
+}
+
+.shop-health__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sh-row-gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.shop-health__row {
+  display: grid;
+  grid-template-columns: var(--sh-banner-width) minmax(0, 1fr);
+  gap: var(--sh-product-gap);
+  align-items: stretch;
+}
+
+.shop-health__banner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--sh-banner-height);
+  height: auto;
+  max-height: none;
+  padding: var(--sh-banner-padding, 24px);
+  border-radius: var(--sh-banner-radius);
+  background: var(--sh-banner-bg, #fde8e8);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.shop-health__banner-title {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  max-width: 70%;
+  color: var(--sh-banner-title-color, #e11d48);
+  font-size: var(--sh-banner-title-size, 42px);
+  font-weight: var(--sh-banner-title-weight, 800);
+  font-style: italic;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.shop-health__banner-media {
+  position: absolute;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.shop-health__banner-media img,
+.shop-health__banner-media .placeholder-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Full-bleed banner image (reference style) */
+.shop-health__banner--full-media .shop-health__banner-media {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--sh-banner-bg, #fde8e8);
+}
+
+.shop-health__banner--full-media .shop-health__shop-all {
+  align-self: flex-end;
+}
+
+/* Inset image on color block */
+.shop-health__banner--inset-media .shop-health__banner-media {
+  right: var(--sh-banner-media-inset, 18px);
+  bottom: var(--sh-banner-media-inset, 18px);
+  width: var(--sh-banner-media-width, 58%);
+  aspect-ratio: var(--sh-banner-media-ratio, 0.85);
+  border-radius: calc(var(--sh-banner-radius) - 6px);
+  background: var(--sh-banner-accent, #fb7185);
+}
+
+.shop-health__shop-all {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  min-height: 40px;
+  padding: 10px 22px;
+  border-radius: var(--sh-shop-all-radius);
+  background: var(--sh-shop-all-bg);
+  color: var(--sh-shop-all-color);
+  font-size: var(--sh-shop-all-size, 13px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(15, 36, 71, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.shop-health__shop-all:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15, 36, 71, 0.12);
+}
+
+.shop-health__products {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shop-health__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--sh-columns-desktop), minmax(0, 1fr));
+  gap: var(--sh-product-gap);
+}
+
+.shop-health__slider-wrap {
+  position: relative;
+  display: block;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.shop-health__track {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: var(--sh-product-gap);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.shop-health__track::-webkit-scrollbar {
+  display: none;
+}
+
+.shop-health__slide {
+  flex: 0 0 calc((100% - (var(--sh-product-gap) * (var(--sh-columns-desktop) - 1))) / var(--sh-columns-desktop));
+  max-width: calc((100% - (var(--sh-product-gap) * (var(--sh-columns-desktop) - 1))) / var(--sh-columns-desktop));
+  scroll-snap-align: start;
+  min-width: 0;
+}
+
+.shop-health__slide,
+.shop-health__grid-item {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.shop-health__slide .product,
+.shop-health__grid-item .product,
+.shop-health__slide .product-item,
+.shop-health__grid-item .product-item {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.shop-health__slide .product-item .card,
+.shop-health__grid-item .product-item .card {
+  flex: 1 1 auto;
+  height: 100%;
+}
+
+.shop-health__slide .product-item .card-action,
+.shop-health__grid-item .product-item .card-action {
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+.shop-health__arrow {
+  position: absolute;
+  top: 42%;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sh-arrow-size);
+  height: var(--sh-arrow-size);
+  padding: 0;
+  border: 1px solid var(--sh-arrow-border);
+  border-radius: 50%;
+  background: var(--sh-arrow-bg);
+  color: var(--sh-arrow-color);
+  box-shadow: 0 4px 12px rgba(27, 58, 110, 0.08);
+  cursor: pointer;
+  pointer-events: auto !important;
+  transform: translateY(-50%);
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.shop-health__arrow svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.shop-health__arrow--prev {
+  left: 8px;
+}
+
+.shop-health__arrow--next {
+  right: 8px;
+}
+
+.shop-health__arrow:hover:not(:disabled) {
+  color: var(--sh-arrow-color-hover);
+  background: var(--sh-arrow-bg-hover);
+  border-color: var(--sh-arrow-border-hover);
+}
+
+.shop-health__arrow:disabled,
+.shop-health__arrow.is-disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none !important;
+}
+
+.shop-health__dots {
+  /* Out of flow so left banner height matches product cards, not cards + dots */
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: 12px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 16px;
+  pointer-events: auto;
+}
+
+.shop-health__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sh-dots-color);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.shop-health__dot.is-active {
+  background: var(--sh-dots-active);
+}
+
+@media screen and (min-width: 750px) and (max-width: 989px) {
+  .shop-health__row {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-health__banner {
+    width: var(--sh-banner-width-mobile, 100%);
+    max-width: 100%;
+    height: auto;
+    min-height: var(--sh-banner-height-mobile);
+    max-height: none;
+  }
+
+  .shop-health__banner-title {
+    font-size: var(--sh-banner-title-size-mobile, 32px);
+    max-width: 55%;
+  }
+
+  .shop-health__banner--inset-media .shop-health__banner-media {
+    width: var(--sh-banner-media-width-mobile, 48%);
+  }
+
+  .shop-health__banner--full-media .shop-health__shop-all,
+  .shop-health__shop-all {
+    align-self: flex-end;
+  }
+
+  .shop-health__grid {
+    grid-template-columns: repeat(var(--sh-columns-tablet), minmax(0, 1fr));
+  }
+
+  .shop-health__slide {
+    flex-basis: calc((100% - (var(--sh-product-gap) * (var(--sh-columns-tablet) - 1))) / var(--sh-columns-tablet));
+    max-width: calc((100% - (var(--sh-product-gap) * (var(--sh-columns-tablet) - 1))) / var(--sh-columns-tablet));
+  }
+
+  .shop-health__arrow--prev {
+    left: 4px;
+  }
+
+  .shop-health__arrow--next {
+    right: 4px;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .shop-health__rows {
+    gap: var(--sh-row-gap-mobile);
+  }
+
+  .shop-health__row {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-health__banner {
+    width: var(--sh-banner-width-mobile, 100%);
+    max-width: 100%;
+    height: auto;
+    min-height: var(--sh-banner-height-mobile);
+    max-height: none;
+  }
+
+  .shop-health__banner-title {
+    font-size: var(--sh-banner-title-size-mobile, 32px);
+    max-width: 55%;
+  }
+
+  .shop-health__banner--inset-media .shop-health__banner-media {
+    width: var(--sh-banner-media-width-mobile, 48%);
+  }
+
+  .shop-health__banner--full-media .shop-health__shop-all,
+  .shop-health__shop-all {
+    align-self: flex-end;
+  }
+
+  .shop-health__grid {
+    grid-template-columns: repeat(var(--sh-columns-mobile), minmax(0, 1fr));
+    gap: var(--sh-product-gap-mobile);
+  }
+
+  .shop-health__track {
+    gap: var(--sh-product-gap-mobile);
+  }
+
+  .shop-health__slide {
+    flex-basis: calc((100% - (var(--sh-product-gap-mobile) * (var(--sh-columns-mobile) - 1))) / var(--sh-columns-mobile));
+    max-width: calc((100% - (var(--sh-product-gap-mobile) * (var(--sh-columns-mobile) - 1))) / var(--sh-columns-mobile));
+  }
+
+  .shop-health__subheading--hide-mobile {
+    display: none;
+  }
+
+  .shop-health__view-all-label--desktop {
+    display: none;
+  }
+
+  .shop-health__view-all-label--mobile {
+    display: inline;
+  }
+
+  .shop-health__arrow--prev {
+    left: 4px;
+  }
+
+  .shop-health__arrow--next {
+    right: 4px;
+  }
+
+  .shop-health__dots {
+    margin-top: 4px;
+    min-height: 20px;
+  }
+}

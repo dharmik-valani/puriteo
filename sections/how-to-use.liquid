@@ -1,0 +1,1685 @@
+{%- liquid
+  assign steps_key = blank
+  assign step_count = 0
+
+  if product != blank
+    if product.metafields.custom.how_to_use_reference.type contains 'metaobject_reference' or product.metafields.custom.how_to_use_reference.value != blank
+      assign steps_key = 'how_to_use_reference'
+    elsif product.metafields.custom.how_to_use.type contains 'metaobject_reference'
+      assign steps_key = 'how_to_use'
+    elsif product.metafields.custom.how_to_use_steps.type contains 'metaobject_reference'
+      assign steps_key = 'how_to_use_steps'
+    elsif product.metafields.custom.how_to_use_step.type contains 'metaobject_reference'
+      assign steps_key = 'how_to_use_step'
+    else
+      for mf in product.metafields.custom
+        if mf.last.type contains 'metaobject_reference'
+          assign k = mf.first
+          if k contains 'how_to_use' or k contains 'step'
+            assign steps_key = k
+            break
+          endif
+        endif
+      endfor
+    endif
+
+    if steps_key != blank
+      for step in product.metafields.custom[steps_key].value
+        assign step_count = forloop.length
+      endfor
+    endif
+
+    if step_count == 0
+      for step in product.metafields.custom.how_to_use_reference.value
+        if step.system.handle != blank or step.system.type != blank or step.step_title.value != blank or step.system.display_name != blank
+          assign steps_key = 'how_to_use_reference'
+          assign step_count = forloop.length
+          break
+        endif
+      endfor
+    endif
+
+    if step_count == 0
+      for step in product.metafields.custom.how_to_use.value
+        if step.system.handle != blank or step.system.type != blank or step.step_title.value != blank or step.system.display_name != blank
+          assign steps_key = 'how_to_use'
+          assign step_count = forloop.length
+          break
+        endif
+      endfor
+    endif
+
+    if step_count == 0
+      for step in product.metafields.custom.how_to_use_steps.value
+        if step.system.handle != blank or step.system.type != blank or step.step_title.value != blank or step.system.display_name != blank
+          assign steps_key = 'how_to_use_steps'
+          assign step_count = forloop.length
+          break
+        endif
+      endfor
+    endif
+
+    assign htu_banner_desktop = blank
+    assign htu_banner_mobile = blank
+
+    if product.metafields.custom.how_to_use_image.value != blank
+      assign htu_banner_desktop = product.metafields.custom.how_to_use_image.value
+    elsif product.metafields.custom.how_to_use_image != blank
+      assign htu_banner_desktop = product.metafields.custom.how_to_use_image
+    endif
+
+    if product.metafields.custom.how_to_use_mobile_image.value != blank
+      assign htu_banner_mobile = product.metafields.custom.how_to_use_mobile_image.value
+    elsif product.metafields.custom.how_to_use_mobile_image != blank
+      assign htu_banner_mobile = product.metafields.custom.how_to_use_mobile_image
+    elsif product.metafields.custom.how_to_use_image_mobile.value != blank
+      assign htu_banner_mobile = product.metafields.custom.how_to_use_image_mobile.value
+    elsif product.metafields.custom.how_to_use_image_mobile != blank
+      assign htu_banner_mobile = product.metafields.custom.how_to_use_image_mobile
+    endif
+
+    if htu_banner_desktop == blank and htu_banner_mobile != blank
+      assign htu_banner_desktop = htu_banner_mobile
+    elsif htu_banner_mobile == blank and htu_banner_desktop != blank
+      assign htu_banner_mobile = htu_banner_desktop
+    endif
+  endif
+
+  assign has_banner = false
+  if htu_banner_desktop != blank or htu_banner_mobile != blank
+    assign has_banner = true
+  endif
+
+  assign show_section = true
+  if section.settings.hide_if_empty and step_count == 0 and has_banner == false
+    assign show_section = false
+  endif
+
+  assign show_banner_heading = section.settings.show_banner_heading
+  if show_banner_heading == nil
+    assign show_banner_heading = false
+  endif
+
+  assign show_heading = false
+  if section.settings.show_heading and section.settings.heading != blank
+    if step_count > 0
+      assign show_heading = true
+    elsif has_banner and show_banner_heading
+      assign show_heading = true
+    endif
+  endif
+
+  assign heading_id = 'HowToUseHeading-' | append: section.id
+  assign media_class = 'how-to-use__media'
+  if section.settings.image_ratio == 'auto'
+    assign media_class = media_class | append: ' how-to-use__media--natural'
+  endif
+
+  assign single_row_desktop = section.settings.single_row_desktop
+  if single_row_desktop == nil
+    assign single_row_desktop = true
+  endif
+
+  assign single_row_mobile = section.settings.single_row_mobile
+  if single_row_mobile == nil
+    assign single_row_mobile = true
+  endif
+
+  assign dynamic_cols = section.settings.columns_desktop
+  assign dynamic_max_width = section.settings.max_width
+  assign dynamic_gap = section.settings.card_gap
+  assign dynamic_card_pad = section.settings.card_padding
+  assign dynamic_title_size = section.settings.title_size
+  assign dynamic_text_size = section.settings.instruction_size
+
+  if single_row_desktop
+    assign dynamic_cols = step_count | at_most: 6 | at_least: 1
+    case dynamic_cols
+      when 1
+        assign dynamic_max_width = 460
+        assign dynamic_gap = 16
+        assign dynamic_card_pad = 16
+        assign dynamic_title_size = 17
+        assign dynamic_text_size = 14
+      when 2
+        assign dynamic_max_width = 720
+        assign dynamic_gap = 20
+        assign dynamic_card_pad = 16
+        assign dynamic_title_size = 16
+        assign dynamic_text_size = 13.5
+      when 3
+        assign dynamic_max_width = 1040
+        assign dynamic_gap = 18
+        assign dynamic_card_pad = 16
+        assign dynamic_title_size = 15.5
+        assign dynamic_text_size = 13
+      when 4
+        assign dynamic_max_width = 1260
+        assign dynamic_gap = 16
+        assign dynamic_card_pad = 15
+        assign dynamic_title_size = 15
+        assign dynamic_text_size = 12.5
+      when 5
+        assign dynamic_max_width = 1440
+        assign dynamic_gap = 14
+        assign dynamic_card_pad = 14
+        assign dynamic_title_size = 14.5
+        assign dynamic_text_size = 12
+      else
+        assign dynamic_max_width = 1500
+        assign dynamic_gap = 12
+        assign dynamic_card_pad = 12
+        assign dynamic_title_size = 13.5
+        assign dynamic_text_size = 11.5
+    endcase
+  endif
+-%}
+
+{%- if show_section -%}
+  {% style %}
+    #shopify-section-{{ section.id }} .how-to-use {
+      --htu-bg: {{ section.settings.background_color }};
+      --htu-card-bg: {{ section.settings.card_color }};
+      --htu-image-bg: {{ section.settings.image_background }};
+      --htu-placeholder-bg: {{ section.settings.placeholder_color }};
+      --htu-heading: {{ section.settings.heading_color }};
+      --htu-title: {{ section.settings.title_color }};
+      --htu-text: {{ section.settings.instruction_color }};
+      --htu-badge-bg: {{ section.settings.badge_background }};
+      --htu-badge-text: {{ section.settings.badge_color }};
+      --htu-border: {{ section.settings.border_color }};
+      --htu-border-width: {{ section.settings.border_width }}px;
+      --htu-max-width: {{ dynamic_max_width }}px;
+      --htu-cols: {{ dynamic_cols }};
+      --htu-cols-tablet: {{ section.settings.columns_tablet }};
+      --htu-cols-mobile: {{ section.settings.columns_mobile }};
+      --htu-gap: {{ dynamic_gap }}px;
+      --htu-gap-mobile: {{ section.settings.card_gap_mobile }}px;
+      --htu-card-pad: {{ dynamic_card_pad }}px;
+      --htu-card-pad-mobile: {{ section.settings.card_padding_mobile }}px;
+      --htu-card-radius: {{ section.settings.card_radius }}px;
+      --htu-image-radius: {{ section.settings.image_radius }}px;
+      --htu-image-width: {{ section.settings.image_width }}%;
+      --htu-fit: {{ section.settings.image_fit }};
+      --htu-ratio: {{ section.settings.image_ratio }};
+      --htu-heading-align: {{ section.settings.heading_alignment }};
+      --htu-heading-size: {{ section.settings.heading_size }}px;
+      --htu-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+      --htu-title-size: {{ dynamic_title_size }}px;
+      --htu-title-size-mobile: {{ section.settings.title_size_mobile }}px;
+      --htu-text-size: {{ dynamic_text_size }}px;
+      --htu-text-size-mobile: {{ section.settings.instruction_size_mobile }}px;
+      --htu-heading-weight: {{ section.settings.heading_weight }};
+      --htu-title-weight: {{ section.settings.title_weight }};
+      --htu-text-lh: {{ section.settings.instruction_line_height }};
+      --htu-pt: {{ section.settings.padding_top }}px;
+      --htu-pr: {{ section.settings.padding_right }}px;
+      --htu-pb: {{ section.settings.padding_bottom }}px;
+      --htu-pl: {{ section.settings.padding_left }}px;
+      --htu-pt-mobile: {{ section.settings.padding_top_mobile }}px;
+      --htu-pr-mobile: {{ section.settings.padding_right_mobile }}px;
+      --htu-pb-mobile: {{ section.settings.padding_bottom_mobile }}px;
+      --htu-pl-mobile: {{ section.settings.padding_left_mobile }}px;
+      --htu-heading-gap: {{ section.settings.heading_gap }}px;
+      --htu-heading-gap-mobile: {{ section.settings.heading_gap_mobile }}px;
+      --htu-image-gap: {{ section.settings.image_gap }}px;
+      --htu-image-gap-mobile: {{ section.settings.image_gap_mobile }}px;
+      --htu-text-gap: {{ section.settings.text_gap }}px;
+      --htu-banner-radius: {{ section.settings.banner_radius | default: 16 }}px;
+    }
+  {% endstyle %}
+
+  {%- if step_count == 0 and has_banner -%}
+    {%- liquid
+      assign banner_pt = section.settings.banner_padding_top | default: 0
+      assign banner_pb = section.settings.banner_padding_bottom | default: 0
+      assign banner_pt_mb = section.settings.banner_padding_top_mobile | default: 0
+      assign banner_pb_mb = section.settings.banner_padding_bottom_mobile | default: 0
+    -%}
+    {%- style -%}
+      #shopify-section-{{ section.id }} .how-to-use-banner-slideshow,
+      .section-block-{{ section.id }}.how-to-use-banner-slideshow {
+        padding-top: {{ banner_pt }}px !important;
+        padding-bottom: {{ banner_pb }}px !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+      .section-block-{{ section.id }} .slideshow .adaptive_height,
+      .section-block-{{ section.id }} .slideshow .adaptive_height img {
+        border-radius: {{ section.settings.banner_radius | default: 0 }}px !important;
+        overflow: hidden;
+      }
+      .how-to-use-banner-slideshow .slideshow,
+      .how-to-use-banner-slideshow .item,
+      .how-to-use-banner-slideshow .lookbook-image-item {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      @media (min-width: 1025px) {
+        {%- if section.settings.banner_fullwidth -%}
+          .section-block-{{ section.id }} .container-full {
+            padding-left: 0px !important;
+            padding-right: 0px !important;
+          }
+        {%- endif -%}
+      }
+      @media (max-width: 767px) {
+        #shopify-section-{{ section.id }} .how-to-use-banner-slideshow,
+        .section-block-{{ section.id }}.how-to-use-banner-slideshow {
+          padding-top: {{ banner_pt_mb }}px !important;
+          padding-bottom: {{ banner_pb_mb }}px !important;
+        }
+        {%- if section.settings.banner_fullwidth -%}
+          .section-block-{{ section.id }} .container-full {
+            padding-left: 0px !important;
+            padding-right: 0px !important;
+          }
+        {%- endif -%}
+      }
+    {%- endstyle -%}
+
+    <div class="slideshow-wrapper section-block-{{ section.id }} how-to-use-banner-slideshow" id="slideshow-wrapper-{{ section.id }}" allow-transparent-header>
+      {%- if show_heading -%}
+        <div class="container" style="text-align: {{ section.settings.heading_alignment }}; margin-bottom: 20px;">
+          <h2 id="{{ heading_id }}" class="how-to-use__heading" style="font-size: {{ section.settings.heading_size }}px; font-weight: {{ section.settings.heading_weight }}; color: {{ section.settings.heading_color }};">{{ section.settings.heading | escape }}</h2>
+        </div>
+      {%- endif -%}
+      <div class="{% if section.settings.banner_fullwidth %}container-full{% else %}container{% endif %}">
+        <div class="slideshow">
+          <div class="item">
+            <div class="images-contain lookbook-image-item">
+              {%- if htu_banner_mobile != blank -%}
+                <div class="adaptive_height image slide-mobile" style="padding-top: {% unless htu_banner_mobile.presentation.focal_point == '50.0% 50.0%' %}{{ 1 | divided_by: htu_banner_mobile.aspect_ratio | times: 120 }}%{% else %}{{ 1 | divided_by: htu_banner_mobile.aspect_ratio | times: 100 }}%{% endunless %};">
+                  <a role="link" aria-disabled="true" title="{{ htu_banner_mobile.alt | default: shop.name | escape }}" class="slide-image">
+                    <img srcset="{%- if htu_banner_mobile.width < 320 -%}{{ htu_banner_mobile | image_url: width: htu_banner_mobile.width }} 320w,{%- endif -%}
+                        {%- if htu_banner_mobile.width >= 320 -%}{{ htu_banner_mobile | image_url: width: 375 }} 375w,{%- endif -%}
+                        {%- if htu_banner_mobile.width >= 750 -%}{{ htu_banner_mobile | image_url: width: 750 }} 750w,{%- endif -%}
+                        {%- if htu_banner_mobile.width >= 1100 -%}{{ htu_banner_mobile | image_url: width: 1100 }} 1100w,{%- endif -%}
+                        {%- if htu_banner_mobile.width >= 1370 -%}{{ htu_banner_mobile | image_url: width: 1370 }} 1370w,{%- endif -%}
+                        {%- if htu_banner_mobile.width >= 1500 -%}{{ htu_banner_mobile | image_url: width: 1500 }} 1500w,{%- endif -%}
+                        {%- if htu_banner_mobile.width >= 1780 -%}{{ htu_banner_mobile | image_url: width: 1780 }} 1780w,{%- endif -%}
+                        {%- if htu_banner_mobile.width >= 2000 -%}{{ htu_banner_mobile | image_url: width: 2000 }} 2000w,{%- endif -%}
+                        {%- if htu_banner_mobile.width >= 2800 -%}{{ htu_banner_mobile | image_url: width: 2800 }} 2800w{%- endif -%}"
+                        sizes="100vw"
+                        src="{{ htu_banner_mobile | image_url: width: 750 }}"
+                        alt="{{ htu_banner_mobile.alt | default: shop.name | escape }}"
+                        width="{{ htu_banner_mobile.width }}"
+                        height="{{ htu_banner_mobile.width | divided_by: htu_banner_mobile.aspect_ratio | round }}"
+                        loading="lazy"
+                        {% unless htu_banner_mobile.presentation.focal_point == '50.0% 50.0%' %}style="object-position: {{ htu_banner_mobile.presentation.focal_point }}"{% endunless %}
+                    >
+                  </a>
+                </div>
+              {%- endif -%}
+
+              {%- if htu_banner_desktop != blank -%}
+                <div class="adaptive_height image{% if htu_banner_mobile != blank %} slide-pc{% endif %}" style="padding-top: {% unless htu_banner_desktop.presentation.focal_point == '50.0% 50.0%' %}{{ 1 | divided_by: htu_banner_desktop.aspect_ratio | times: 110 }}%; --padding-top-fpmb: {{ 1 | divided_by: htu_banner_desktop.aspect_ratio | times: 200 }}%{% else %}{{ 1 | divided_by: htu_banner_desktop.aspect_ratio | times: 100 }}%{% endunless %};">
+                  <a role="link" aria-disabled="true" title="{{ htu_banner_desktop.alt | default: shop.name | escape }}" class="slide-image">
+                    <img srcset="{%- if htu_banner_desktop.width < 320 -%}{{ htu_banner_desktop | image_url: width: htu_banner_desktop.width }} 320w,{%- endif -%}
+                        {%- if htu_banner_desktop.width >= 320 -%}{{ htu_banner_desktop | image_url: width: 375 }} 375w,{%- endif -%}
+                        {%- if htu_banner_desktop.width >= 740 -%}{{ htu_banner_desktop | image_url: width: 740 }} 740w,{%- endif -%} 
+                        {%- if htu_banner_desktop.width >= 750 -%}{{ htu_banner_desktop | image_url: width: 750 }} 750w,{%- endif -%}
+                        {%- if htu_banner_desktop.width >= 1100 -%}{{ htu_banner_desktop | image_url: width: 1100 }} 1100w,{%- endif -%}
+                        {%- if htu_banner_desktop.width >= 1370 -%}{{ htu_banner_desktop | image_url: width: 1370 }} 1370w,{%- endif -%}
+                        {%- if htu_banner_desktop.width >= 1500 -%}{{ htu_banner_desktop | image_url: width: 1500 }} 1500w,{%- endif -%}
+                        {%- if htu_banner_desktop.width >= 1770 -%}{{ htu_banner_desktop | image_url: width: 1770 }} 1770w,{%- endif -%}
+                        {%- if htu_banner_desktop.width >= 1780 -%}{{ htu_banner_desktop | image_url: width: 1780 }} 1780w,{%- endif -%}
+                        {%- if htu_banner_desktop.width >= 1880 -%}{{ htu_banner_desktop | image_url: width: 1880 }} 1880w,{%- endif -%}
+                        {%- if htu_banner_desktop.width >= 2000 -%}{{ htu_banner_desktop | image_url: width: 2000 }} 2000w,{%- endif -%}
+                        {%- if htu_banner_desktop.width >= 2800 -%}{{ htu_banner_desktop | image_url: width: 2800 }} 2800w{%- endif -%}"
+                        sizes="100vw"
+                        src="{{ htu_banner_desktop | image_url: width: 1500 }}"
+                        alt="{{ htu_banner_desktop.alt | default: shop.name | escape }}"
+                        width="{{ htu_banner_desktop.width }}"
+                        height="{{ htu_banner_desktop.width | divided_by: htu_banner_desktop.aspect_ratio | round }}"
+                        loading="lazy"
+                        {% unless htu_banner_desktop.presentation.focal_point == '50.0% 50.0%' %}style="object-position: {{ htu_banner_desktop.presentation.focal_point }}"{% endunless %}
+                    >
+                  </a>
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- else -%}
+    <section
+      id="HowToUse-{{ section.id }}"
+      class="how-to-use how-to-use--{{ section.settings.container }} how-to-use--cards-{{ section.settings.card_alignment }}{% if single_row_desktop %} how-to-use--single-row-desktop{% endif %}{% if single_row_mobile %} how-to-use--single-row-mobile{% endif %}"
+      {% if show_heading %}
+        aria-labelledby="{{ heading_id }}"
+      {% elsif section.settings.heading != blank %}
+        aria-label="{{ section.settings.heading | escape }}"
+      {% endif %}
+    >
+      <div class="how-to-use__inner">
+        {%- if show_heading -%}
+          <h2 id="{{ heading_id }}" class="how-to-use__heading">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+
+        <div class="how-to-use__slider-wrap" data-htu-slider>
+          {%- if section.settings.show_arrows != false -%}
+            <button
+              type="button"
+              class="how-to-use__arrow how-to-use__arrow--prev"
+              data-htu-prev
+              aria-label="Previous step"
+              disabled
+            >
+              {% render 'icon-chevron-left' %}
+            </button>
+          {%- endif -%}
+          <ol class="how-to-use__grid" role="list">
+          {%- assign step_number = 0 -%}
+          {%- for step in product.metafields.custom[steps_key].value -%}
+            {%- liquid
+              assign step_number = step_number | plus: 1
+              assign step_title = step.step_title.value | strip
+              if step_title == blank
+                assign step_title = step.step_title | metafield_text | strip
+              endif
+              if step_title == blank
+                assign step_title = step.system.display_name | strip
+              endif
+              assign step_instruction = step.step_instruction.value | strip
+              if step_instruction == blank
+                assign step_instruction = step.step_instruction | metafield_text | strip
+              endif
+              assign step_file = step.step_image.value | default: step.step_image
+              assign step_image = blank
+              if step_file.media_type == 'image'
+                assign step_image = step_file
+              elsif step_file.preview_image != blank
+                assign step_image = step_file.preview_image
+              elsif step_file.media_type == blank and step_file.width != blank
+                assign step_image = step_file
+              endif
+              assign has_image = false
+              if step_image != blank
+                assign has_image = true
+              endif
+              assign show_media = false
+              if has_image
+                assign show_media = true
+              elsif section.settings.show_placeholder
+                assign show_media = true
+              endif
+              assign show_title = false
+              if section.settings.show_titles and step_title != blank
+                assign show_title = true
+              endif
+              assign show_instruction = false
+              if section.settings.show_instructions and step_instruction != blank
+                assign show_instruction = true
+              endif
+            -%}
+            <li class="how-to-use__card">
+              {%- if show_media -%}
+                <div class="{{ media_class }}{% unless has_image %} how-to-use__media--empty{% endunless %}">
+                  {%- if has_image -%}
+                    {%- assign image_alt = step_image.alt | strip -%}
+                    {%- if image_alt == blank -%}
+                      {%- if step_title != blank -%}
+                        {%- assign image_alt = step_title -%}
+                      {%- else -%}
+                        {%- assign image_alt = 'Step ' | append: step_number -%}
+                      {%- endif -%}
+                    {%- endif -%}
+                    {{ step_image | image_url: width: 1200 | image_tag: widths: '300, 450, 600, 900, 1200', sizes: '(min-width: 990px) 30vw, (min-width: 750px) 45vw, 90vw', alt: image_alt, loading: 'lazy', class: 'how-to-use__img' }}
+                  {%- elsif section.settings.placeholder_text != blank -%}
+                    <p class="how-to-use__placeholder">{{ section.settings.placeholder_text | escape | replace: '[step]', step_number }}</p>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+              {%- if section.settings.show_numbers or show_title or show_instruction -%}
+                <div class="how-to-use__body">
+                  {%- if section.settings.show_numbers or show_title -%}
+                    <div class="how-to-use__title-row">
+                      {%- if section.settings.show_numbers -%}
+                        <span class="how-to-use__badge"{% if show_title %} aria-hidden="true"{% else %} aria-label="Step {{ step_number }}"{% endif %}>{{ step_number }}</span>
+                      {%- endif -%}
+                      {%- if show_title -%}
+                        <h3 class="how-to-use__title">
+                          <span class="how-to-use__sr">Step {{ step_number }}. </span>
+                          {{ step_title | escape }}
+                        </h3>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                  {%- if show_instruction -%}
+                    <p class="how-to-use__text">{{ step_instruction | escape | newline_to_br }}</p>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ol>
+          {%- if section.settings.show_arrows != false -%}
+            <button
+              type="button"
+              class="how-to-use__arrow how-to-use__arrow--next"
+              data-htu-next
+              aria-label="Next step"
+            >
+              {% render 'icon-chevron-right' %}
+            </button>
+          {%- endif -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+
+  <script>
+    (function () {
+      function initHowToUseSlider() {
+        var wraps = document.querySelectorAll('#shopify-section-{{ section.id }} [data-htu-slider]');
+        wraps.forEach(function (wrap) {
+          var grid = wrap.querySelector('.how-to-use__grid');
+          var prevBtn = wrap.querySelector('[data-htu-prev]');
+          var nextBtn = wrap.querySelector('[data-htu-next]');
+          if (!grid) return;
+
+          function equalizeCardHeights() {
+            var cards = grid.querySelectorAll('.how-to-use__card');
+            if (!cards || cards.length === 0) return;
+            cards.forEach(function (card) { card.style.minHeight = ''; });
+            var maxH = 0;
+            cards.forEach(function (card) {
+              var h = card.offsetHeight;
+              if (h > maxH) maxH = h;
+            });
+            if (maxH > 0) {
+              cards.forEach(function (card) {
+                card.style.minHeight = maxH + 'px';
+              });
+            }
+          }
+
+          function updateArrows() {
+            if (!prevBtn || !nextBtn) return;
+            var maxScroll = grid.scrollWidth - grid.clientWidth;
+            var isScrollable = maxScroll > 4;
+
+            if (!isScrollable) {
+              prevBtn.style.display = 'none';
+              nextBtn.style.display = 'none';
+              return;
+            }
+
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+
+            var atStart = grid.scrollLeft <= 4;
+            var atEnd = grid.scrollLeft >= maxScroll - 6;
+
+            prevBtn.disabled = atStart;
+            prevBtn.setAttribute('aria-disabled', atStart ? 'true' : 'false');
+            nextBtn.disabled = atEnd;
+            nextBtn.setAttribute('aria-disabled', atEnd ? 'true' : 'false');
+          }
+
+          function updateLayout() {
+            equalizeCardHeights();
+            updateArrows();
+          }
+
+          if (prevBtn) {
+            prevBtn.addEventListener('click', function (e) {
+              e.preventDefault();
+              var card = grid.querySelector('.how-to-use__card');
+              var step = card ? card.offsetWidth + 12 : 260;
+              grid.scrollBy({ left: -step, behavior: 'smooth' });
+            });
+          }
+
+          if (nextBtn) {
+            nextBtn.addEventListener('click', function (e) {
+              e.preventDefault();
+              var card = grid.querySelector('.how-to-use__card');
+              var step = card ? card.offsetWidth + 12 : 260;
+              grid.scrollBy({ left: step, behavior: 'smooth' });
+            });
+          }
+
+          var imgs = grid.querySelectorAll('img');
+          imgs.forEach(function (img) {
+            if (!img.complete) {
+              img.addEventListener('load', updateLayout);
+            }
+          });
+
+          grid.addEventListener('scroll', updateArrows, { passive: true });
+          window.addEventListener('resize', updateLayout);
+          setTimeout(updateLayout, 100);
+          setTimeout(updateLayout, 400);
+          setTimeout(updateLayout, 1000);
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHowToUseSlider);
+      } else {
+        initHowToUseSlider();
+      }
+      document.addEventListener('shopify:section:load', function (e) {
+        if (e.detail && e.detail.sectionId === '{{ section.id }}') {
+          initHowToUseSlider();
+        }
+      });
+    })();
+  </script>
+{%- else -%}
+  {% style %}
+    #shopify-section-{{ section.id }} {
+      display: none;
+    }
+  {% endstyle %}
+{%- endif -%}
+
+{% stylesheet %}
+  .how-to-use,
+  .how-to-use *,
+  .how-to-use *::before,
+  .how-to-use *::after {
+    box-sizing: border-box;
+  }
+
+  .how-to-use {
+    width: 100%;
+    max-width: 100%;
+    background: var(--htu-bg, #ffffff);
+    color: var(--htu-title, #171521);
+    font-family: var(--font-body-family);
+    font-style: var(--font-body-style);
+    color-scheme: light;
+    overflow-x: hidden;
+  }
+
+  .how-to-use--page {
+    width: min(100%, var(--htu-max-width, 1200px));
+    margin-inline: auto;
+  }
+
+  .how-to-use__inner {
+    width: 100%;
+    margin-inline: auto;
+    padding: var(--htu-pt, 48px) var(--htu-pr, 20px) var(--htu-pb, 56px) var(--htu-pl, 20px);
+  }
+
+  .how-to-use--full .how-to-use__inner {
+    max-width: var(--htu-max-width, 1200px);
+  }
+
+  .how-to-use__heading {
+    margin: 0 0 var(--htu-heading-gap, 36px);
+    color: var(--htu-heading, #171521);
+    font-family: var(--font-body-family);
+    font-style: normal;
+    font-size: var(--htu-heading-size, 40px);
+    font-weight: var(--htu-heading-weight, 700);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    text-align: var(--htu-heading-align, center);
+    text-transform: none;
+  }
+
+  .how-to-use__slider-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  .how-to-use__banner-wrap {
+    position: relative;
+    width: 100%;
+    margin-inline: auto;
+    overflow: hidden;
+    border-radius: var(--htu-banner-radius, 0px);
+    line-height: 0;
+  }
+
+  .how-to-use__banner-wrap .adaptive_height {
+    border-radius: var(--htu-banner-radius, 0px);
+    overflow: hidden;
+  }
+
+  .how-to-use__banner-wrap .slide-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .how-to-use--banner-fullwidth {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .how-to-use--banner-fullwidth .how-to-use__inner {
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .how-to-use--banner-mode.how-to-use--no-heading {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .how-to-use__arrow {
+    position: absolute;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15) !important;
+    color: #171521 !important;
+    display: none;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer;
+    z-index: 6;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 0 !important;
+    transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .how-to-use__arrow:hover:not(:disabled) {
+    background: #ffffff !important;
+    transform: translateY(-50%) scale(1.06) !important;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .how-to-use__arrow:active:not(:disabled) {
+    transform: translateY(-50%) scale(0.95) !important;
+  }
+
+  .how-to-use__arrow--prev {
+    left: 8px;
+  }
+
+  .how-to-use__arrow--next {
+    right: 8px;
+  }
+
+  .how-to-use__arrow svg,
+  .how-to-use__arrow .icon {
+    width: 12px !important;
+    height: 12px !important;
+    min-width: 12px !important;
+    min-height: 12px !important;
+    max-width: 12px !important;
+    max-height: 12px !important;
+    fill: currentColor !important;
+    stroke: none !important;
+    display: block !important;
+    margin: 0 auto !important;
+    pointer-events: none !important;
+  }
+
+  .how-to-use__arrow--prev svg,
+  .how-to-use__arrow--prev .icon {
+    transform: translateX(-1px) !important;
+  }
+
+  .how-to-use__arrow--next svg,
+  .how-to-use__arrow--next .icon {
+    transform: translateX(1px) !important;
+  }
+
+  .how-to-use__arrow:disabled,
+  .how-to-use__arrow[aria-disabled="true"] {
+    opacity: 0.25 !important;
+    cursor: default !important;
+    pointer-events: none !important;
+  }
+
+  .how-to-use__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--htu-cols, 3), minmax(0, 1fr));
+    gap: var(--htu-gap, 24px);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .how-to-use__card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    padding: var(--htu-card-pad, 18px);
+    background: var(--htu-card-bg, #f2ecff);
+    border: var(--htu-border-width, 0px) solid var(--htu-border, transparent);
+    border-radius: var(--htu-card-radius, 28px);
+  }
+
+  .how-to-use__media {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--htu-image-width, 100%);
+    max-width: 100%;
+    margin-inline: auto;
+    overflow: hidden;
+    aspect-ratio: var(--htu-ratio, 4 / 3);
+    border-radius: var(--htu-image-radius, 20px);
+    background: var(--htu-image-bg, #ffffff);
+  }
+
+  .how-to-use__media--empty {
+    background: var(--htu-placeholder-bg, #ffffff);
+  }
+
+  .how-to-use__media--natural {
+    aspect-ratio: auto;
+    min-height: 180px;
+  }
+
+  .how-to-use__media .how-to-use__img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: var(--htu-fit, cover);
+    border: 0;
+    border-radius: inherit;
+  }
+
+  .how-to-use__media--natural .how-to-use__img {
+    position: relative;
+    inset: auto;
+    height: auto;
+  }
+
+  .how-to-use__placeholder {
+    max-width: 180px;
+    margin: 0;
+    padding: 16px;
+    color: var(--htu-text, #6e6b78);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .how-to-use__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .how-to-use__media + .how-to-use__body {
+    margin-top: var(--htu-image-gap, 16px);
+  }
+
+  .how-to-use__title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .how-to-use__badge {
+    display: inline-flex;
+    flex: 0 0 26px;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--htu-badge-bg, #171521);
+    color: var(--htu-badge-text, #ffffff);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .how-to-use__title {
+    margin: 0;
+    min-width: 0;
+    color: var(--htu-title, #171521);
+    font-family: var(--font-body-family);
+    font-style: normal;
+    font-size: var(--htu-title-size, 15px);
+    font-weight: var(--htu-title-weight, 700);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    text-transform: none;
+    overflow-wrap: anywhere;
+  }
+
+  .how-to-use__text {
+    margin: var(--htu-text-gap, 6px) 0 0;
+    color: var(--htu-text, #6e6b78);
+    font-size: var(--htu-text-size, 13px);
+    font-weight: 400;
+    line-height: var(--htu-text-lh, 1.45);
+    overflow-wrap: anywhere;
+  }
+
+  .how-to-use--cards-center .how-to-use__card,
+  .how-to-use--cards-center .how-to-use__text {
+    text-align: center;
+  }
+
+  .how-to-use--cards-center .how-to-use__title-row {
+    justify-content: center;
+  }
+
+  .how-to-use--cards-right .how-to-use__card,
+  .how-to-use--cards-right .how-to-use__text {
+    text-align: right;
+  }
+
+  .how-to-use--cards-right .how-to-use__title-row {
+    justify-content: flex-end;
+  }
+
+  .how-to-use__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media screen and (min-width: 1025px) {
+    .how-to-use--single-row-desktop .how-to-use__grid {
+      display: grid !important;
+      grid-template-columns: repeat(var(--htu-cols, 5), minmax(0, 1fr)) !important;
+      gap: var(--htu-gap, 14px) !important;
+      width: 100% !important;
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 1024px) {
+    .how-to-use--single-row-desktop .how-to-use__inner {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .how-to-use--single-row-desktop .how-to-use__heading {
+      padding-inline: 24px;
+    }
+
+    .how-to-use--single-row-desktop .how-to-use__grid {
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      align-items: stretch !important;
+      overflow-x: auto !important;
+      scroll-snap-type: x mandatory !important;
+      -webkit-overflow-scrolling: touch !important;
+      gap: 14px !important;
+      padding: 4px 24px 16px 24px !important;
+      scrollbar-width: thin;
+    }
+
+    .how-to-use--single-row-desktop .how-to-use__card {
+      flex: 0 0 240px !important;
+      height: auto !important;
+      align-self: stretch !important;
+      display: flex !important;
+      flex-direction: column !important;
+      scroll-snap-align: start !important;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .how-to-use:not(.how-to-use--single-row-desktop) .how-to-use__grid {
+      grid-template-columns: repeat(var(--htu-cols-tablet, 2), minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .how-to-use__inner {
+      padding: var(--htu-pt-mobile, 32px) var(--htu-pr-mobile, 16px) var(--htu-pb-mobile, 36px) var(--htu-pl-mobile, 16px) !important;
+    }
+
+    .how-to-use--single-row-mobile .how-to-use__heading {
+      margin-bottom: 20px;
+      font-size: var(--htu-heading-size-mobile, 28px);
+    }
+
+    .how-to-use--single-row-mobile .how-to-use__grid {
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      align-items: stretch !important;
+      overflow-x: auto !important;
+      scroll-snap-type: x mandatory !important;
+      -webkit-overflow-scrolling: touch !important;
+      gap: 12px !important;
+      padding: 4px 0 6px 0 !important;
+      margin: 0 !important;
+      scrollbar-width: none;
+    }
+
+    .how-to-use--single-row-mobile .how-to-use__grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .how-to-use--single-row-mobile .how-to-use__card {
+      flex: 0 0 76% !important;
+      min-width: 240px !important;
+      max-width: 285px !important;
+      height: auto !important;
+      align-self: stretch !important;
+      display: flex !important;
+      flex-direction: column !important;
+      scroll-snap-align: start !important;
+      padding: 12px !important;
+      border-radius: 20px !important;
+    }
+
+    .how-to-use--single-row-mobile .how-to-use__body {
+      display: flex !important;
+      flex-direction: column !important;
+      flex: 1 1 auto !important;
+    }
+
+    .how-to-use--single-row-mobile .how-to-use__media {
+      border-radius: 14px !important;
+    }
+
+    .how-to-use--single-row-mobile .how-to-use__arrow {
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+    }
+
+    .how-to-use--single-row-mobile .how-to-use__arrow--prev {
+      left: 0 !important;
+    }
+
+    .how-to-use--single-row-mobile .how-to-use__arrow--next {
+      right: 0 !important;
+    }
+
+    .how-to-use:not(.how-to-use--single-row-mobile) .how-to-use__heading {
+      margin-bottom: var(--htu-heading-gap-mobile, 24px);
+      font-size: var(--htu-heading-size-mobile, 30px);
+    }
+
+    .how-to-use:not(.how-to-use--single-row-mobile) .how-to-use__grid {
+      grid-template-columns: repeat(var(--htu-cols-mobile, 1), minmax(0, 1fr));
+      gap: var(--htu-gap-mobile, 16px);
+    }
+
+    .how-to-use:not(.how-to-use--single-row-mobile) .how-to-use__card {
+      padding: var(--htu-card-pad-mobile, 14px);
+    }
+
+    .how-to-use__media + .how-to-use__body {
+      margin-top: var(--htu-image-gap-mobile, 12px);
+    }
+
+    .how-to-use__title {
+      font-size: var(--htu-title-size-mobile, 15px);
+    }
+
+    .how-to-use__text,
+    .how-to-use__placeholder {
+      font-size: var(--htu-text-size-mobile, 12px);
+    }
+
+    .how-to-use--banner-fullwidth {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    .how-to-use--banner-fullwidth .how-to-use__inner {
+      max-width: 100% !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "How to use",
+  "tag": "div",
+  "class": "section-how-to-use",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How to use"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "Show heading",
+      "default": true
+    },
+    {
+      "type": "text_alignment",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "default": "center"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_if_empty",
+      "label": "Hide section when product has no steps or banner",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Banner Fallback"
+    },
+    {
+      "type": "paragraph",
+      "content": "Shows banner when steps are empty."
+    },
+    {
+      "type": "checkbox",
+      "id": "banner_fullwidth",
+      "label": "Full width banner (edge-to-edge)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_banner_heading",
+      "label": "Show heading above banner",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "banner_radius",
+      "label": "Banner corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "banner_padding_top",
+      "label": "Banner top spacing (desktop)",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "banner_padding_bottom",
+      "label": "Banner bottom spacing (desktop)",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "banner_padding_top_mobile",
+      "label": "Banner top spacing (mobile)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "banner_padding_bottom_mobile",
+      "label": "Banner bottom spacing (mobile)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "show_numbers",
+      "label": "Show step numbers",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_titles",
+      "label": "Show step titles",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_instructions",
+      "label": "Show step instructions",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_placeholder",
+      "label": "Show image placeholder",
+      "info": "Used when a step has no image.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "placeholder_text",
+      "label": "Image placeholder text",
+      "info": "Use [step] where the step number should appear.",
+      "default": "Step [step] image"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "single_row_desktop",
+      "label": "Show all steps in 1 row on desktop",
+      "info": "Automatically adapts columns and widths for 2, 3, 4, or 5 steps.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "single_row_mobile",
+      "label": "Show all steps in 1 row on mobile (swipeable reel)",
+      "info": "Keeps all cards in one continuous row on mobile with smooth swipe snapping.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows on slider",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "container",
+      "label": "Container",
+      "options": [
+        { "value": "full", "label": "Full width" },
+        { "value": "page", "label": "Page width" }
+      ],
+      "default": "page"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum content width",
+      "min": 960,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Tablet columns",
+      "info": "Screens from 750px to 989px.",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "info": "1 stacks the cards. 2 places two cards side by side.",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "text_alignment",
+      "id": "card_alignment",
+      "label": "Card content alignment",
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "card_padding_mobile",
+      "label": "Mobile card padding",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Card border width",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "1 / 1", "label": "Square (1:1)" },
+        { "value": "4 / 5", "label": "Portrait (4:5)" },
+        { "value": "4 / 3", "label": "Landscape (4:3)" },
+        { "value": "3 / 2", "label": "Landscape (3:2)" },
+        { "value": "16 / 9", "label": "Widescreen (16:9)" },
+        { "value": "auto", "label": "Natural" }
+      ],
+      "default": "4 / 3"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "info": "Cover fills the frame. Contain shows the full image.",
+      "options": [
+        { "value": "cover", "label": "Cover" },
+        { "value": "contain", "label": "Contain" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image corner radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "label": "Image width",
+      "min": 60,
+      "max": 100,
+      "step": 2,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 20,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Mobile heading size",
+      "min": 18,
+      "max": 42,
+      "step": 1,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Step title size",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Mobile step title size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "instruction_size",
+      "label": "Instruction size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "instruction_size_mobile",
+      "label": "Mobile instruction size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "options": [
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Step title weight",
+      "options": [
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "instruction_line_height",
+      "label": "Instruction line height",
+      "options": [
+        { "value": "1.3", "label": "1.3" },
+        { "value": "1.4", "label": "1.4" },
+        { "value": "1.5", "label": "1.5" },
+        { "value": "1.6", "label": "1.6" }
+      ],
+      "default": "1.5"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Card background",
+      "default": "#F2ECFF"
+    },
+    {
+      "type": "color",
+      "id": "image_background",
+      "label": "Image background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color",
+      "label": "Placeholder background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#171521"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Step title",
+      "default": "#171521"
+    },
+    {
+      "type": "color",
+      "id": "instruction_color",
+      "label": "Instruction",
+      "default": "#6E6B78"
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Number background",
+      "default": "#171521"
+    },
+    {
+      "type": "color",
+      "id": "badge_color",
+      "label": "Number text",
+      "default": "#D5FF63"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Card border",
+      "default": "#E4DCF8"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Desktop bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "Desktop left padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "Desktop right padding",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Mobile top padding",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "Mobile left padding",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "Mobile right padding",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_gap",
+      "label": "Heading bottom space",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_gap_mobile",
+      "label": "Mobile heading bottom space",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_gap_mobile",
+      "label": "Mobile gap between cards",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "image_gap",
+      "label": "Image to title space",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "image_gap_mobile",
+      "label": "Mobile image to title space",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "text_gap",
+      "label": "Title to instruction space",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "How to use",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

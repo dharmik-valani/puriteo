@@ -1,0 +1,424 @@
+{%- liquid
+  assign tabs_id = 'ProductDetailsTabs-' | append: section.id
+-%}
+
+{% style %}
+  #{{ tabs_id }} {
+    --pdt-bg: {{ section.settings.background_color }};
+    --pdt-text: {{ section.settings.text_color }};
+    --pdt-heading: {{ section.settings.heading_color }};
+    --pdt-muted: {{ section.settings.muted_color }};
+    --pdt-tab-bg: {{ section.settings.tab_background }};
+    --pdt-tab-active-bg: {{ section.settings.tab_active_background }};
+    --pdt-tab-color: {{ section.settings.tab_color }};
+    --pdt-tab-active-color: {{ section.settings.tab_active_color }};
+    --pdt-tab-border: {{ section.settings.tab_border_color }};
+    --pdt-card-bg: {{ section.settings.card_background }};
+    --pdt-card-border: {{ section.settings.card_border_color }};
+    --pdt-card-radius: {{ section.settings.card_radius }}px;
+    --pdt-card-gap: {{ section.settings.card_gap }}px;
+    --pdt-content-width: {% if section.settings.content_width > 0 %}{{ section.settings.content_width }}px{% else %}100%{% endif %};
+    background: var(--pdt-bg);
+    color: var(--pdt-text);
+    margin-top: {{ section.settings.margin_top }}px;
+    margin-bottom: {{ section.settings.margin_bottom }}px;
+    padding: {{ section.settings.padding_top }}px {{ section.settings.padding_right }}px {{ section.settings.padding_bottom }}px {{ section.settings.padding_left }}px;
+  }
+
+  #{{ tabs_id }} .pdt__inner {
+    width: 100%;
+    max-width: var(--pdt-content-width);
+    margin: 0 auto;
+  }
+
+  #{{ tabs_id }} .pdt__tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    margin-bottom: {{ section.settings.tab_content_spacing }}px;
+    border: 1px solid var(--pdt-tab-border);
+    border-radius: {{ section.settings.tab_radius }}px;
+    overflow: hidden;
+    background: var(--pdt-tab-bg);
+  }
+
+  #{{ tabs_id }} .pdt__tab {
+    min-height: {{ section.settings.tab_height }}px;
+    padding: {{ section.settings.tab_padding_y }}px {{ section.settings.tab_padding_x }}px;
+    border: 0;
+    border-right: 1px solid var(--pdt-tab-border);
+    background: var(--pdt-tab-bg);
+    color: var(--pdt-tab-color);
+    font-size: {{ section.settings.tab_font_size }}px;
+    font-weight: {{ section.settings.tab_font_weight }};
+    line-height: {{ section.settings.tab_line_height }};
+    cursor: pointer;
+    transition: background-color .2s ease, color .2s ease;
+  }
+
+  #{{ tabs_id }} .pdt__tab:last-child { border-right: 0; }
+  #{{ tabs_id }} .pdt__tab[aria-selected="true"] {
+    background: var(--pdt-tab-active-bg);
+    color: var(--pdt-tab-active-color);
+  }
+
+  #{{ tabs_id }} .pdt__panel[hidden] { display: none; }
+  #{{ tabs_id }} .pdt__panel-title {
+    margin: 0 0 {{ section.settings.heading_spacing }}px;
+    color: var(--pdt-heading);
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: {{ section.settings.heading_weight }};
+    line-height: {{ section.settings.heading_line_height }};
+    text-align: {{ section.settings.content_alignment }};
+  }
+
+  #{{ tabs_id }} .pdt__benefits {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.benefit_columns }}, minmax(0, 1fr));
+    gap: var(--pdt-card-gap);
+  }
+
+  #{{ tabs_id }} .pdt__benefit,
+  #{{ tabs_id }} .pdt__ingredient {
+    display: flex;
+    align-items: center;
+    gap: {{ section.settings.card_inner_gap }}px;
+    min-width: 0;
+    padding: {{ section.settings.card_padding }}px;
+    border: {{ section.settings.card_border_width }}px solid var(--pdt-card-border);
+    border-radius: var(--pdt-card-radius);
+    background: var(--pdt-card-bg);
+  }
+
+  #{{ tabs_id }} .pdt__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 {{ section.settings.icon_size }}px;
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: {{ section.settings.icon_background }};
+  }
+
+  #{{ tabs_id }} .pdt__icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: {{ section.settings.icon_fit }};
+  }
+
+  #{{ tabs_id }} .pdt__icon--empty::before {
+    content: "•";
+    color: {{ section.settings.icon_fallback_color }};
+    font-size: 28px;
+  }
+
+  #{{ tabs_id }} .pdt__card-title {
+    margin: 0 0 {{ section.settings.card_title_spacing }}px;
+    color: {{ section.settings.card_title_color }};
+    font-size: {{ section.settings.card_title_size }}px;
+    font-weight: {{ section.settings.card_title_weight }};
+    line-height: {{ section.settings.card_title_line_height }};
+  }
+
+  #{{ tabs_id }} .pdt__card-text {
+    margin: 0;
+    color: {{ section.settings.card_text_color }};
+    font-size: {{ section.settings.card_text_size }}px;
+    font-weight: {{ section.settings.card_text_weight }};
+    line-height: {{ section.settings.card_text_line_height }};
+  }
+
+  #{{ tabs_id }} .pdt__ingredients {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.ingredient_columns }}, minmax(0, 1fr));
+    gap: {{ section.settings.ingredient_gap_vertical }}px {{ section.settings.ingredient_gap_horizontal }}px;
+  }
+
+  #{{ tabs_id }} .pdt__ingredient {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  #{{ tabs_id }} .pdt__ingredient .pdt__icon {
+    flex-basis: {{ section.settings.ingredient_icon_size }}px;
+    width: {{ section.settings.ingredient_icon_size }}px;
+    height: {{ section.settings.ingredient_icon_size }}px;
+  }
+
+  #{{ tabs_id }} .pdt__usage {
+    display: grid;
+    grid-template-columns: {% if product.metafields.custom.how_to_use_image != blank %}minmax(0, {{ section.settings.usage_image_width }}%) minmax(0, 1fr){% else %}1fr{% endif %};
+    gap: {{ section.settings.usage_gap }}px;
+    align-items: center;
+  }
+
+  #{{ tabs_id }} .pdt__usage-image {
+    width: 100%;
+    max-height: {{ section.settings.usage_image_max_height }}px;
+    border-radius: {{ section.settings.usage_image_radius }}px;
+    object-fit: {{ section.settings.usage_image_fit }};
+  }
+
+  #{{ tabs_id }} .pdt__usage-content {
+    color: {{ section.settings.usage_text_color }};
+    font-size: {{ section.settings.usage_text_size }}px;
+    line-height: {{ section.settings.usage_text_line_height }};
+  }
+
+  #{{ tabs_id }} .pdt__usage-content > :first-child { margin-top: 0; }
+  #{{ tabs_id }} .pdt__usage-content > :last-child { margin-bottom: 0; }
+
+  @media (max-width: 749px) {
+    #{{ tabs_id }} {
+      margin-top: {{ section.settings.margin_top_mobile }}px;
+      margin-bottom: {{ section.settings.margin_bottom_mobile }}px;
+      padding: {{ section.settings.padding_top_mobile }}px {{ section.settings.padding_right_mobile }}px {{ section.settings.padding_bottom_mobile }}px {{ section.settings.padding_left_mobile }}px;
+    }
+
+    #{{ tabs_id }} .pdt__tabs {
+      grid-template-columns: 1fr;
+      margin-bottom: {{ section.settings.tab_content_spacing_mobile }}px;
+    }
+
+    #{{ tabs_id }} .pdt__tab {
+      min-height: {{ section.settings.tab_height_mobile }}px;
+      padding: {{ section.settings.tab_padding_y_mobile }}px {{ section.settings.tab_padding_x_mobile }}px;
+      border-right: 0;
+      border-bottom: 1px solid var(--pdt-tab-border);
+      font-size: {{ section.settings.tab_font_size_mobile }}px;
+    }
+
+    #{{ tabs_id }} .pdt__tab:last-child { border-bottom: 0; }
+    #{{ tabs_id }} .pdt__benefits,
+    #{{ tabs_id }} .pdt__ingredients {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.card_gap_mobile }}px;
+    }
+
+    #{{ tabs_id }} .pdt__benefit {
+      padding: {{ section.settings.card_padding_mobile }}px;
+    }
+
+    #{{ tabs_id }} .pdt__panel-title {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+    }
+
+    #{{ tabs_id }} .pdt__usage {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.usage_gap_mobile }}px;
+    }
+
+    #{{ tabs_id }} .pdt__usage-image {
+      max-height: {{ section.settings.usage_image_max_height_mobile }}px;
+    }
+
+    #{{ tabs_id }} .pdt__usage-content {
+      font-size: {{ section.settings.usage_text_size_mobile }}px;
+    }
+  }
+{% endstyle %}
+
+<section id="{{ tabs_id }}" class="pdt" data-product-details-tabs>
+  <div class="pdt__inner">
+    <div class="pdt__tabs" role="tablist" aria-label="{{ section.settings.tab_aria_label | escape }}">
+      <button class="pdt__tab" type="button" role="tab" aria-selected="true" aria-controls="{{ tabs_id }}-why" id="{{ tabs_id }}-why-tab">{{ section.settings.why_tab_label }}</button>
+      <button class="pdt__tab" type="button" role="tab" aria-selected="false" aria-controls="{{ tabs_id }}-ingredients" id="{{ tabs_id }}-ingredients-tab">{{ section.settings.ingredients_tab_label }}</button>
+      <button class="pdt__tab" type="button" role="tab" aria-selected="false" aria-controls="{{ tabs_id }}-usage" id="{{ tabs_id }}-usage-tab">{{ section.settings.usage_tab_label }}</button>
+    </div>
+
+    <div id="{{ tabs_id }}-why" class="pdt__panel" role="tabpanel" aria-labelledby="{{ tabs_id }}-why-tab">
+      <h2 class="pdt__panel-title">{{ product.metafields.custom.title | default: section.settings.why_heading }}</h2>
+      <div class="pdt__benefits">
+        {%- if product.metafields.custom.benefits_banner != blank -%}
+          <div class="pdt__benefit">
+            <div class="pdt__icon"><img src="{{ product.metafields.custom.benefits_banner.value | image_url: width: 240 }}" alt="{{ product.metafields.custom.title | escape }}"></div>
+            <div>
+              <h3 class="pdt__card-title">{{ product.metafields.custom.title | default: section.settings.why_heading }}</h3>
+              <div class="pdt__card-text">{{ product.metafields.custom.pera | metafield_tag }}</div>
+            </div>
+          </div>
+        {%- endif -%}
+        {%- for index in (1..7) -%}
+          {%- assign benefit_key = 'benefits' | append: index -%}
+          {%- assign benefit = product.metafields.custom[benefit_key] -%}
+          {%- if benefit != blank -%}
+            <div class="pdt__benefit">
+              <div class="pdt__icon pdt__icon--empty" aria-hidden="true"></div>
+              <div class="pdt__card-text">{{ benefit | metafield_tag }}</div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div id="{{ tabs_id }}-ingredients" class="pdt__panel" role="tabpanel" aria-labelledby="{{ tabs_id }}-ingredients-tab" hidden>
+      <h2 class="pdt__panel-title">{{ section.settings.ingredients_heading }}</h2>
+      <div class="pdt__ingredients">
+        {%- for index in (1..4) -%}
+          {%- assign ingredient_title_key = 'ingredients_title0' | append: index -%}
+          {%- assign ingredient_image_key = 'ingredients_img_0' | append: index -%}
+          {%- assign ingredient_description_key = 'ingredients_pera0' | append: index -%}
+          {%- assign ingredient_title = product.metafields.custom[ingredient_title_key] -%}
+          {%- assign ingredient_image = product.metafields.custom[ingredient_image_key].value -%}
+          {%- assign ingredient_description = product.metafields.custom[ingredient_description_key] -%}
+          {%- if ingredient_title != blank or ingredient_image != blank or ingredient_description != blank -%}
+            <article class="pdt__ingredient">
+              {%- if ingredient_image != blank -%}
+                <div class="pdt__icon"><img src="{{ ingredient_image | image_url: width: 320 }}" alt="{{ ingredient_title | escape }}"></div>
+              {%- endif -%}
+              <div>
+                {%- if ingredient_title != blank -%}<h3 class="pdt__card-title">{{ ingredient_title }}</h3>{%- endif -%}
+                {%- if ingredient_description != blank -%}<div class="pdt__card-text">{{ ingredient_description | metafield_tag }}</div>{%- endif -%}
+              </div>
+            </article>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div id="{{ tabs_id }}-usage" class="pdt__panel" role="tabpanel" aria-labelledby="{{ tabs_id }}-usage-tab" hidden>
+      <h2 class="pdt__panel-title">{{ section.settings.usage_heading }}</h2>
+      <div class="pdt__usage">
+        {%- if product.metafields.custom.how_to_use_image != blank -%}
+          <picture>
+            {%- if product.metafields.custom.how_to_use_mobile_image != blank -%}
+              <source media="(max-width: 749px)" srcset="{{ product.metafields.custom.how_to_use_mobile_image.value | image_url: width: 900 }}">
+            {%- endif -%}
+            <img class="pdt__usage-image" src="{{ product.metafields.custom.how_to_use_image.value | image_url: width: 1600 }}" alt="{{ section.settings.usage_heading | escape }}">
+          </picture>
+        {%- endif -%}
+        {%- if product.metafields.custom.how_to_use_content != blank -%}
+          <div class="pdt__usage-content">{{ product.metafields.custom.how_to_use_content | metafield_tag }}</div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.getElementById('{{ tabs_id }}');
+    if (!root) return;
+    var tabs = root.querySelectorAll('[role="tab"]');
+    var panels = root.querySelectorAll('[role="tabpanel"]');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        tabs.forEach(function (item) { item.setAttribute('aria-selected', item === tab ? 'true' : 'false'); });
+        panels.forEach(function (panel) { panel.hidden = panel.id !== tab.getAttribute('aria-controls'); });
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product details tabs",
+  "tag": "section",
+  "class": "section-product-details-tabs",
+  "settings": [
+    { "type": "text", "id": "tab_aria_label", "label": "Tab accessibility label", "default": "Product details" },
+    { "type": "text", "id": "why_tab_label", "label": "Why tab label", "default": "Why This Product" },
+    { "type": "text", "id": "ingredients_tab_label", "label": "Ingredients tab label", "default": "What's In It" },
+    { "type": "text", "id": "usage_tab_label", "label": "Usage tab label", "default": "How to Use" },
+    { "type": "text", "id": "why_heading", "label": "Why heading", "default": "Why this product" },
+    { "type": "text", "id": "ingredients_heading", "label": "Ingredients heading", "default": "What's in it" },
+    { "type": "text", "id": "usage_heading", "label": "Usage heading", "default": "How to use" },
+    { "type": "range", "id": "content_width", "label": "Content width", "min": 0, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
+    { "type": "select", "id": "content_alignment", "label": "Content alignment", "default": "left", "options": [
+      { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }
+    ] },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_left", "label": "Padding left", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_right", "label": "Padding right", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Padding top (mobile)", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 28 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Padding bottom (mobile)", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 32 },
+    { "type": "range", "id": "padding_left_mobile", "label": "Padding left (mobile)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "padding_right_mobile", "label": "Padding right (mobile)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "margin_top", "label": "Top spacing", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "margin_bottom", "label": "Bottom spacing", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "margin_top_mobile", "label": "Top spacing (mobile)", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "margin_bottom_mobile", "label": "Bottom spacing (mobile)", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#232323" },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#3c3487" },
+    { "type": "color", "id": "muted_color", "label": "Muted color", "default": "#6b7280" },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 16, "max": 48, "step": 1, "unit": "px", "default": 28 },
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size (mobile)", "min": 14, "max": 34, "step": 1, "unit": "px", "default": 22 },
+    { "type": "select", "id": "heading_weight", "label": "Heading weight", "default": "700", "options": [
+      { "value": "500", "label": "500" }, { "value": "600", "label": "600" }, { "value": "700", "label": "700" }
+    ] },
+    { "type": "range", "id": "heading_line_height", "label": "Heading line height", "min": 1, "max": 2, "step": 0.1, "default": 1.3 },
+    { "type": "range", "id": "heading_spacing", "label": "Heading spacing", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 24 },
+    { "type": "color", "id": "tab_background", "label": "Tab background", "default": "#f5f5f5" },
+    { "type": "color", "id": "tab_active_background", "label": "Active tab background", "default": "#3c3487" },
+    { "type": "color", "id": "tab_color", "label": "Inactive tab text", "default": "#666666" },
+    { "type": "color", "id": "tab_active_color", "label": "Active tab text", "default": "#ffffff" },
+    { "type": "color", "id": "tab_border_color", "label": "Tab border", "default": "#e5e7eb" },
+    { "type": "range", "id": "tab_radius", "label": "Tab radius", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 8 },
+    { "type": "range", "id": "tab_height", "label": "Tab height", "min": 36, "max": 90, "step": 2, "unit": "px", "default": 56 },
+    { "type": "range", "id": "tab_height_mobile", "label": "Tab height (mobile)", "min": 34, "max": 70, "step": 2, "unit": "px", "default": 48 },
+    { "type": "range", "id": "tab_padding_x", "label": "Tab horizontal padding", "min": 8, "max": 48, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "tab_padding_y", "label": "Tab vertical padding", "min": 4, "max": 24, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "tab_padding_x_mobile", "label": "Tab horizontal padding (mobile)", "min": 8, "max": 32, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "tab_padding_y_mobile", "label": "Tab vertical padding (mobile)", "min": 4, "max": 20, "step": 1, "unit": "px", "default": 10 },
+    { "type": "range", "id": "tab_font_size", "label": "Tab font size", "min": 12, "max": 24, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "tab_font_size_mobile", "label": "Tab font size (mobile)", "min": 11, "max": 20, "step": 1, "unit": "px", "default": 14 },
+    { "type": "select", "id": "tab_font_weight", "label": "Tab font weight", "default": "600", "options": [
+      { "value": "500", "label": "500" }, { "value": "600", "label": "600" }, { "value": "700", "label": "700" }
+    ] },
+    { "type": "range", "id": "tab_line_height", "label": "Tab line height", "min": 1, "max": 2, "step": 0.1, "default": 1.3 },
+    { "type": "range", "id": "tab_content_spacing", "label": "Space below tabs", "min": 0, "max": 80, "step": 2, "unit": "px", "default": 36 },
+    { "type": "range", "id": "tab_content_spacing_mobile", "label": "Space below tabs (mobile)", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 24 },
+    { "type": "color", "id": "card_background", "label": "Card background", "default": "#eef5fb" },
+    { "type": "color", "id": "card_border_color", "label": "Card border", "default": "#e5e7eb" },
+    { "type": "range", "id": "card_border_width", "label": "Card border width", "min": 0, "max": 4, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "card_radius", "label": "Card radius", "min": 0, "max": 32, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "card_padding", "label": "Card padding", "min": 8, "max": 48, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "card_padding_mobile", "label": "Card padding (mobile)", "min": 8, "max": 32, "step": 2, "unit": "px", "default": 16 },
+    { "type": "range", "id": "card_gap", "label": "Card gap", "min": 0, "max": 48, "step": 2, "unit": "px", "default": 20 },
+    { "type": "range", "id": "card_gap_mobile", "label": "Card gap (mobile)", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 14 },
+    { "type": "range", "id": "card_inner_gap", "label": "Card inner gap", "min": 4, "max": 32, "step": 2, "unit": "px", "default": 16 },
+    { "type": "range", "id": "benefit_columns", "label": "Benefit columns", "min": 1, "max": 3, "step": 1, "default": 2 },
+    { "type": "range", "id": "ingredient_columns", "label": "Ingredient columns", "min": 1, "max": 4, "step": 1, "default": 4 },
+    { "type": "range", "id": "ingredient_gap_horizontal", "label": "Ingredient horizontal gap", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "ingredient_gap_vertical", "label": "Ingredient vertical gap", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "icon_size", "label": "Benefit icon size", "min": 32, "max": 140, "step": 2, "unit": "px", "default": 72 },
+    { "type": "range", "id": "ingredient_icon_size", "label": "Ingredient icon size", "min": 40, "max": 180, "step": 2, "unit": "px", "default": 96 },
+    { "type": "color", "id": "icon_background", "label": "Icon background", "default": "#dcefe2" },
+    { "type": "color", "id": "icon_fallback_color", "label": "Empty icon color", "default": "#3c3487" },
+    { "type": "select", "id": "icon_fit", "label": "Icon image fit", "default": "contain", "options": [
+      { "value": "contain", "label": "Contain" }, { "value": "cover", "label": "Cover" }
+    ] },
+    { "type": "color", "id": "card_title_color", "label": "Card heading color", "default": "#173f35" },
+    { "type": "range", "id": "card_title_size", "label": "Card heading size", "min": 12, "max": 28, "step": 1, "unit": "px", "default": 17 },
+    { "type": "select", "id": "card_title_weight", "label": "Card heading weight", "default": "700", "options": [
+      { "value": "500", "label": "500" }, { "value": "600", "label": "600" }, { "value": "700", "label": "700" }
+    ] },
+    { "type": "range", "id": "card_title_line_height", "label": "Card heading line height", "min": 1, "max": 2, "step": 0.1, "default": 1.3 },
+    { "type": "range", "id": "card_title_spacing", "label": "Card heading spacing", "min": 0, "max": 24, "step": 1, "unit": "px", "default": 6 },
+    { "type": "color", "id": "card_text_color", "label": "Card description color", "default": "#315b50" },
+    { "type": "range", "id": "card_text_size", "label": "Card description size", "min": 12, "max": 22, "step": 1, "unit": "px", "default": 15 },
+    { "type": "select", "id": "card_text_weight", "label": "Card description weight", "default": "400", "options": [
+      { "value": "400", "label": "400" }, { "value": "500", "label": "500" }
+    ] },
+    { "type": "range", "id": "card_text_line_height", "label": "Card description line height", "min": 1, "max": 2, "step": 0.1, "default": 1.5 },
+    { "type": "range", "id": "usage_image_width", "label": "Usage image width", "min": 30, "max": 70, "step": 1, "unit": "%", "default": 50 },
+    { "type": "range", "id": "usage_gap", "label": "Usage content gap", "min": 0, "max": 80, "step": 2, "unit": "px", "default": 40 },
+    { "type": "range", "id": "usage_gap_mobile", "label": "Usage content gap (mobile)", "min": 0, "max": 48, "step": 2, "unit": "px", "default": 20 },
+    { "type": "range", "id": "usage_image_max_height", "label": "Usage image max height", "min": 100, "max": 1000, "step": 20, "unit": "px", "default": 600 },
+    { "type": "range", "id": "usage_image_max_height_mobile", "label": "Usage image max height (mobile)", "min": 100, "max": 700, "step": 20, "unit": "px", "default": 420 },
+    { "type": "select", "id": "usage_image_fit", "label": "Usage image fit", "default": "cover", "options": [
+      { "value": "contain", "label": "Contain" }, { "value": "cover", "label": "Cover" }
+    ] },
+    { "type": "range", "id": "usage_image_radius", "label": "Usage image radius", "min": 0, "max": 32, "step": 1, "unit": "px", "default": 14 },
+    { "type": "color", "id": "usage_text_color", "label": "Usage text color", "default": "#232323" },
+    { "type": "range", "id": "usage_text_size", "label": "Usage text size", "min": 12, "max": 28, "step": 1, "unit": "px", "default": 17 },
+    { "type": "range", "id": "usage_text_size_mobile", "label": "Usage text size (mobile)", "min": 12, "max": 24, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "usage_text_line_height", "label": "Usage text line height", "min": 1, "max": 2, "step": 0.1, "default": 1.5 }
+  ],
+  "presets": [{ "name": "Product details tabs" }]
+}
+{% endschema %}

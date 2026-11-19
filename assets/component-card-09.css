@@ -1,0 +1,739 @@
+/* AS Product Card (layout 09)
+   Theme settings (--as-card-*) come from :root via variable.liquid.
+   Do not redefine those tokens here — that blocked Theme Editor changes.
+   Use high-specificity + !important where theme custom CSS targets .price-item. */
+.product-card-layout-09 .product-item--as-card .card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--as-card-bg, #ffffff);
+  border: 1px solid var(--as-card-border, #e6eef8);
+  border-radius: var(--as-card-radius, 18px);
+  box-shadow: none;
+  overflow: hidden;
+  transition: transform 0.25s ease;
+}
+
+.product-card-layout-09 .product-item--as-card:hover .card {
+  box-shadow: none;
+}
+
+.product-card-layout-09 .product-item--as-card .card-product__wrapper {
+  position: relative;
+}
+
+.product-card-layout-09 .product-item--as-card .card-media {
+  position: relative;
+  margin: var(--as-card-image-padding, 8px);
+  border-radius: calc(var(--as-card-radius, 18px) - 6px);
+  overflow: hidden;
+  background: transparent;
+}
+
+/* Override global .card-product:hover .card-media img { scale(1.5) } — was clipping tops */
+body.product-card-layout-09 .product-item--as-card .card-product:hover .card-media img,
+body.product-card-layout-09 .product-item--as-card .card-media img {
+  transform: none;
+}
+
+body.product-card-layout-09 .product-item--as-card .card-product:hover .card-media.media--hover-effect > img + img {
+  transform: scale(1.04);
+  transition: opacity 0.45s ease, transform 0.6s ease;
+}
+
+/* Offsets are from .card-media edges (badge is rendered inside the image box) */
+.product-card-layout-09 .product-item--as-card .card-media .card__badge,
+.product-card-layout-09 .product-item--as-card .card-media .halo-productBadges {
+  z-index: 3;
+  top: var(--as-card-badge-offset-top, 10px) !important;
+  margin: 0 !important;
+}
+
+.product-card-layout-09 .product-item--as-card .card-media .halo-productBadges--left {
+  left: var(--as-card-badge-offset-left, 15px) !important;
+  right: auto !important;
+}
+
+.product-card-layout-09 .product-item--as-card .card-media .halo-productBadges--right {
+  right: var(--as-card-badge-offset-left, 15px) !important;
+  left: auto !important;
+}
+
+body.product-card-layout-09 .product-item--as-card .halo-productBadges .badge,
+body.product-card-layout-09 .product-item--as-card .badge.sale-badge,
+body.product-card-layout-09 .product-item--as-card .halo-productBadges .badge.sale-badge,
+body.product-card-layout-09 .product-item--as-card .badge.new-badge,
+body.product-card-layout-09 .product-item--as-card .badge.custom-badge,
+body.product-card-layout-09 .product-item--as-card .badge.sold-out-badge,
+body.product-card-layout-09 .product-item--as-card .badge.bundle-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box;
+  width: var(--as-card-badge-width, auto) !important;
+  /* min-height keeps text centered when a size is set; avoids padding+height clipping */
+  min-height: var(--as-card-badge-height, 0px) !important;
+  height: auto !important;
+  min-width: 0;
+  font-size: var(--as-card-badge-font-size, 12px) !important;
+  font-weight: 700;
+  line-height: 1 !important;
+  letter-spacing: 0.01em;
+  text-align: center !important;
+  padding: var(--as-card-badge-padding-top, 4px) var(--as-card-badge-padding-x, 10px) var(--as-card-badge-padding-bottom, 4px) var(--as-card-badge-padding-x, 10px) !important;
+  border-radius: var(--as-card-badge-radius, 50px) !important;
+}
+
+.product-card-layout-09 .product-item--as-card .as-card-wishlist {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 4;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.product-card-layout-09 .product-item--as-card .as-card-wishlist .wishlist-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--as-card-wishlist-color, #1b3a6e);
+  box-shadow: 0 2px 8px rgba(27, 58, 110, 0.1);
+  overflow: hidden;
+}
+
+.product-card-layout-09 .product-item--as-card .as-card-wishlist .wishlist-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.product-card-layout-09 .product-item--as-card .as-card-wishlist .wishlist-icon .text {
+  display: none;
+}
+
+.product-card-layout-09 .product-item--as-card .as-card-wishlist .wishlist-icon svg,
+.product-card-layout-09 .product-item--as-card .as-card-wishlist .wishlist-icon svg path {
+  fill: none;
+  stroke: currentColor;
+  color: var(--as-card-wishlist-color, #1b3a6e);
+}
+
+.product-card-layout-09 .product-item--as-card .as-card-quickview {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 4;
+}
+
+/* Card content padding — driven by Theme setting as_card_padding (--as-card-padding) */
+body.product-card-layout-09 .product-item--as-card .card-information,
+.product-card-layout-09 .product-item--as-card .card-information {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-top: 4px;
+  padding-right: var(--as-card-padding, 14px);
+  padding-bottom: var(--as-card-padding, 14px);
+  padding-left: var(--as-card-padding, 14px);
+}
+
+.product-card-layout-09 .product-item--as-card .card-information__wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--as-card-gap, 8px);
+  margin-bottom: 12px;
+}
+
+.product-card-layout-09 .product-item--as-card .as-card-rating {
+  margin: 0;
+  line-height: 1;
+}
+
+body.product-card-layout-09 .product-item--as-card .as-card-rating .jdgm-prev-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap;
+  gap: var(--as-card-rating-gap, 6px);
+  line-height: 1;
+  vertical-align: middle;
+}
+
+body.product-card-layout-09 .product-item--as-card .as-card-rating .jdgm-prev-badge__stars {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important; /* light spacing between stars */
+  letter-spacing: 0 !important;
+  line-height: 1;
+  height: var(--as-card-rating-star-size, 12px);
+}
+
+body.product-card-layout-09 .product-item--as-card .as-card-rating .jdgm-star {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  color: var(--as-card-title-color, #1b3a6e) !important;
+  font-size: var(--as-card-rating-star-size, 12px) !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  letter-spacing: 0 !important;
+  vertical-align: middle;
+}
+
+body.product-card-layout-09 .product-item--as-card .as-card-rating .jdgm-star:before {
+  color: inherit !important;
+  font-size: inherit !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  vertical-align: middle;
+}
+
+body.product-card-layout-09 .product-item--as-card .as-card-rating .jdgm-prev-badge__text {
+  display: inline-flex !important;
+  align-items: center !important;
+  color: var(--as-card-title-color, #1b3a6e) !important;
+  font-size: var(--as-card-rating-text-size, 12px) !important;
+  line-height: 1 !important;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Beat Halo .card-title { font-size: var(--product-title-font-size) } */
+body.product-card-layout-09 .product-item--as-card .card-title,
+body.product-card-layout-09 .product-item--as-card a.card-title,
+body.product-card-layout-09 .product-item--as-card .card-title.link-underline,
+body.product-card-layout-09 .product-item--as-card .card-title .text {
+  margin: 0;
+  color: var(--as-card-title-color, #1b3a6e);
+  font-size: var(--as-card-title-size, 16px) !important;
+  font-weight: var(--as-card-title-weight, 700);
+  line-height: 1.3;
+  letter-spacing: normal;
+  text-decoration: none;
+}
+
+body.product-card-layout-09 .product-item--as-card .card-title.card-title-ellipsis {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--product-title-line-text, 2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+body.product-card-layout-09 .product-item--as-card .card-title .text {
+  color: inherit;
+  white-space: normal;
+}
+
+.product-card-layout-09 .product-item--as-card .as-card-summary {
+  display: block;
+  margin: 0;
+  color: var(--as-card-summary-color, #6b84ad);
+  font-size: var(--as-card-summary-size, 13px);
+  font-weight: 400;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Price row: sale + compare on one line, vertically centered */
+body.product-card-layout-09 .product-item--as-card .card-price .price,
+body.product-card-layout-09 .product-item--as-card .card-price .price dl {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+}
+
+body.product-card-layout-09 .product-item--as-card .card-price .price--on-sale .price__sale {
+  display: flex !important;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 4px;
+  width: auto;
+  max-width: 100%;
+}
+
+body.product-card-layout-09 .product-item--as-card .card-price .price dd,
+body.product-card-layout-09 .product-item--as-card .card-price .price__sale dd,
+body.product-card-layout-09 .product-item--as-card .card-price .price__last,
+body.product-card-layout-09 .product-item--as-card .card-price .price__compare {
+  margin: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  line-height: 1;
+}
+
+body.product-card-layout-09 .product-item--as-card .card-price .price-item,
+body.product-card-layout-09 .product-item--as-card .card-price .price-item--sale,
+body.product-card-layout-09 .product-item--as-card .card-price .price-item--regular,
+body.product-card-layout-09 .product-item--as-card .card-price .price-item .money,
+body.product-card-layout-09 .product-item--as-card .card-price .price-item--sale .money,
+body.product-card-layout-09 .product-item--as-card .card-price .price.price--on-sale .price-item--sale .money {
+  color: var(--as-card-price-color, #1b3a6e) !important;
+  font-size: var(--as-card-price-size, 18px) !important;
+  font-weight: 700 !important;
+  letter-spacing: normal !important;
+  line-height: 1.3 !important;
+}
+
+body.product-card-layout-09 .product-item--as-card .card-price .price__compare,
+body.product-card-layout-09 .product-item--as-card .card-price .price__compare .price-item,
+body.product-card-layout-09 .product-item--as-card .card-price s.price-item,
+body.product-card-layout-09 .product-item--as-card .card-price s.price-item.price-item--regular,
+body.product-card-layout-09 .product-item--as-card .card-price .price__compare .price-item .money,
+body.product-card-layout-09 .product-item--as-card .card-price .price-item--regular .money,
+body.product-card-layout-09 .product-item--as-card .card-price .price.price--on-sale .price-item--regular .money {
+  display: inline !important;
+  color: var(--as-card-compare-color, #9aa8c2) !important;
+  font-size: calc(var(--as-card-price-size, 18px) - 3px) !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  text-decoration: line-through;
+  vertical-align: middle;
+}
+
+.product-card-layout-09 .product-item--as-card .as-card-action {
+  position: static;
+  margin-top: auto;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  transform: none;
+  opacity: 1;
+  visibility: visible;
+  flex-shrink: 0;
+  min-height: 44px;
+  width: 100%;
+}
+
+/* Keep ATC button space reserved so sibling cards stay aligned */
+.product-card-layout-09 .product-item--as-card .as-card-action > form {
+  min-height: 44px;
+}
+
+/*
+  Choose Options mobile popup (quick shop option 1/2):
+  Card layout 09 nests .card-action inside .card-information.
+  Global popup CSS hides .card-information, which hid the variants UI.
+*/
+body.product-card-layout-09 #halo-card-mobile-popup.show .card-information {
+  display: flex !important;
+  flex-direction: column;
+  flex: 0 0 auto;
+  padding: 0 !important;
+  height: auto;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .card-information .card-information__wrapper,
+body.product-card-layout-09 #halo-card-mobile-popup .card-information .card-swatch,
+body.product-card-layout-09 #halo-card-mobile-popup .card-product,
+body.product-card-layout-09 #halo-card-mobile-popup .card-media,
+body.product-card-layout-09 #halo-card-mobile-popup .as-card-wishlist,
+body.product-card-layout-09 #halo-card-mobile-popup .as-card-quickview,
+body.product-card-layout-09 #halo-card-mobile-popup .button-ATC {
+  display: none !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .card {
+  border: 0;
+  box-shadow: none;
+  overflow: visible;
+  height: auto;
+  background: transparent;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .halo-popup-wrapper {
+  padding: 0 !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .as-card-action {
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .card-action > form {
+  display: none !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .halo-popup-content {
+  max-height: min(70vh, 480px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .card-action .variants-popup {
+  position: relative !important;
+  inset: auto !important;
+  bottom: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  display: block !important;
+  background: #fff;
+  padding: 12px 16px 16px;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .card-action .variants-popup-content {
+  padding: 8px 0 0;
+  text-align: center;
+  overflow: visible;
+}
+
+/* Let pack options + quantity + actions stack in normal flow (JS max-height clips qty) */
+body.product-card-layout-09 #halo-card-mobile-popup .card-action .variants-popup-content .variants {
+  max-height: none !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .card-action .variants-popup-close {
+  display: none;
+}
+
+/* Quantity label + stepper must stay visible above Cancel/Add */
+body.product-card-layout-09 #halo-card-mobile-popup .label-quantity-2,
+#halo-card-mobile-popup .label-quantity-2 {
+  display: block !important;
+  text-align: center !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #232323 !important;
+  margin: 12px 0 8px !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .quickshop-quantity,
+body.product-card-layout-09 #halo-card-mobile-popup .previewCartItem-qty.quickshop-quantity,
+#halo-card-mobile-popup .quickshop-quantity,
+#halo-card-mobile-popup .previewCartItem-qty.quickshop-quantity,
+.halo-card-mobile-popup .quickshop-quantity {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin: 0 auto 14px auto !important;
+  border: 1px solid #dcdcdc !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  width: 124px !important;
+  max-width: 124px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  background: #ffffff !important;
+  vertical-align: middle;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .quickshop-quantity .btn-quantity,
+#halo-card-mobile-popup .quickshop-quantity .btn-quantity,
+.halo-card-mobile-popup .quickshop-quantity .btn-quantity {
+  position: relative !important;
+  top: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  min-width: 38px !important;
+  max-width: 38px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  color: #232323 !important;
+  flex: 0 0 38px !important;
+  -webkit-appearance: none !important;
+  outline: none !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .quickshop-quantity .btn-quantity::before,
+#halo-card-mobile-popup .quickshop-quantity .btn-quantity::before,
+.halo-card-mobile-popup .quickshop-quantity .btn-quantity::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 12px !important;
+  height: 2px !important;
+  background-color: #232323 !important;
+  display: block !important;
+  pointer-events: none !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .quickshop-quantity .btn-quantity.plus::after,
+#halo-card-mobile-popup .quickshop-quantity .btn-quantity.plus::after,
+.halo-card-mobile-popup .quickshop-quantity .btn-quantity.plus::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 2px !important;
+  height: 12px !important;
+  background-color: #232323 !important;
+  display: block !important;
+  pointer-events: none !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .quickshop-quantity input.quantity,
+body.product-card-layout-09 #halo-card-mobile-popup .quickshop-quantity input.form-input,
+#halo-card-mobile-popup .quickshop-quantity input.quantity,
+#halo-card-mobile-popup .quickshop-quantity input.form-input,
+.halo-card-mobile-popup .quickshop-quantity input.quantity {
+  display: block !important;
+  flex: 1 1 auto !important;
+  width: 48px !important;
+  min-width: 0 !important;
+  max-width: 48px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  text-align: center !important;
+  border: none !important;
+  border-left: 1px solid #f0f0f0 !important;
+  border-right: 1px solid #f0f0f0 !important;
+  border-radius: 0 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #232323 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: textfield !important;
+  appearance: none !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .quickshop-quantity input::-webkit-outer-spin-button,
+body.product-card-layout-09 #halo-card-mobile-popup .quickshop-quantity input::-webkit-inner-spin-button,
+#halo-card-mobile-popup .quickshop-quantity input::-webkit-outer-spin-button,
+#halo-card-mobile-popup .quickshop-quantity input::-webkit-inner-spin-button,
+.halo-card-mobile-popup .quickshop-quantity input::-webkit-outer-spin-button,
+.halo-card-mobile-popup .quickshop-quantity input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+  display: none !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .product-card__button2 {
+  /* Global .product-card__button2 is absolute; that covers the qty stepper here */
+  position: static;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 0 0;
+  background: #fff;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .product-card__button2 .button {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .product-card__button2 .button.cancel-btn {
+  /* Use btn-bg (navy), not btn-color (white text) — otherwise cancel is white-on-white */
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: var(--as-card-btn-bg, #1b3a6e) !important;
+  border-color: var(--as-card-btn-bg, #1b3a6e) !important;
+  color: #ffffff !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .product-card__button2 .button.add-to-cart-btn {
+  background: #111111 !important;
+  border-color: #111111 !important;
+  color: #ffffff !important;
+}
+
+body.product-card-layout-09 #halo-card-mobile-popup .mobile-popup-header {
+  justify-content: space-between;
+  text-align: left;
+  padding: 14px 16px;
+}
+
+/* Ensure popup sits above sliders / sticky UI */
+body.product-card-layout-09 #halo-card-mobile-popup {
+  z-index: 301;
+}
+
+/* Beat .card-action .button (--btn-3-font-size) and .button (--btn-1-font-size) */
+body.product-card-layout-09 .product-item--as-card .card-action.as-card-action .button,
+body.product-card-layout-09 .product-item--as-card .card-action.as-card-action .button.button-ATC,
+body.product-card-layout-09 .product-item--as-card .as-card-action a.button,
+body.product-card-layout-09 .product-item--as-card .as-card-action button.button,
+body.product-card-layout-09 .product-item--as-card .as-card-action .button-ATC {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--as-card-btn-border, #1B3A6E) !important;
+  border-radius: var(--as-card-btn-radius, 999px) !important;
+  background: var(--as-card-btn-bg, #1B3A6E) !important;
+  color: var(--as-card-btn-color, #FFFFFF) !important;
+  font-family: inherit !important;
+  font-size: var(--as-card-btn-size, 13px) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1.2 !important;
+  text-transform: uppercase !important;
+  box-shadow: none !important;
+}
+
+body.product-card-layout-09 .product-item--as-card .card-action.as-card-action .button:hover,
+body.product-card-layout-09 .product-item--as-card .as-card-action .button-ATC:hover {
+  background: #FFFFFF !important;
+  border-color: var(--as-card-btn-bg, #1B3A6E) !important;
+  color: var(--as-card-btn-bg, #1B3A6E) !important;
+}
+
+.product-card-layout-09 .product-item--as-card .card-action > form {
+  width: 100%;
+}
+
+.product-card-layout-09 .productList .product-item--as-card .card-action {
+  display: block;
+}
+
+/* Mobile typography — dedicated Theme settings (do not derive from desktop) */
+@media screen and (max-width: 767px) {
+  /* Keep using --as-card-padding — do not hardcode (that blocked Theme Editor) */
+  body.product-card-layout-09 .product-item--as-card .card-information,
+  .product-card-layout-09 .product-item--as-card .card-information {
+    padding-top: 4px;
+    padding-right: var(--as-card-padding, 14px);
+    padding-bottom: var(--as-card-padding, 14px);
+    padding-left: var(--as-card-padding, 14px);
+  }
+
+  body.product-card-layout-09 .product-item--as-card .card-title,
+  body.product-card-layout-09 .product-item--as-card a.card-title,
+  body.product-card-layout-09 .product-item--as-card .card-title.link-underline,
+  body.product-card-layout-09 .product-item--as-card .card-title .text {
+    font-size: var(--as-card-title-size-mobile, 15px) !important;
+  }
+
+  .product-card-layout-09 .product-item--as-card .as-card-summary {
+    font-size: var(--as-card-summary-size-mobile, var(--as-card-summary-size, 12px));
+  }
+
+  body.product-card-layout-09 .product-item--as-card .as-card-rating .jdgm-star,
+  body.product-card-layout-09 .product-item--as-card .as-card-rating .jdgm-star:before {
+    font-size: var(--as-card-rating-star-size-mobile, 11px) !important;
+  }
+
+  body.product-card-layout-09 .product-item--as-card .as-card-rating .jdgm-prev-badge__text {
+    font-size: var(--as-card-rating-text-size-mobile, 11px) !important;
+  }
+
+  body.product-card-layout-09 .product-item--as-card .card-price .price-item,
+  body.product-card-layout-09 .product-item--as-card .card-price .price-item--sale,
+  body.product-card-layout-09 .product-item--as-card .card-price .price-item .money,
+  body.product-card-layout-09 .product-item--as-card .card-price .price-item--sale .money,
+  body.product-card-layout-09 .product-item--as-card .card-price .price.price--on-sale .price-item--sale .money {
+    font-size: var(--as-card-price-size-mobile, var(--as-card-price-size, 16px)) !important;
+  }
+
+  body.product-card-layout-09 .product-item--as-card .card-price .price__compare .price-item,
+  body.product-card-layout-09 .product-item--as-card .card-price s.price-item,
+  body.product-card-layout-09 .product-item--as-card .card-price .price__compare .price-item .money,
+  body.product-card-layout-09 .product-item--as-card .card-price .price-item--regular .money,
+  body.product-card-layout-09 .product-item--as-card .card-price .price.price--on-sale .price-item--regular .money {
+    font-size: calc(var(--as-card-price-size-mobile, var(--as-card-price-size, 16px)) - 2px) !important;
+  }
+
+  body.product-card-layout-09 .product-item--as-card .card-price .price--on-sale .price__sale {
+    align-items: center;
+    gap: 4px;
+  }
+
+  body.product-card-layout-09 .product-item--as-card .card-action.as-card-action .button,
+  body.product-card-layout-09 .product-item--as-card .card-action.as-card-action .button.button-ATC,
+  body.product-card-layout-09 .product-item--as-card .as-card-action a.button,
+  body.product-card-layout-09 .product-item--as-card .as-card-action button.button,
+  body.product-card-layout-09 .product-item--as-card .as-card-action .button-ATC {
+    min-height: 40px;
+    font-size: var(--as-card-btn-size-mobile, var(--as-card-btn-size, 12px)) !important;
+  }
+
+  /* Mobile badge — Theme Editor (independent from desktop) */
+  body.product-card-layout-09 .product-item--as-card .card-media .card__badge,
+  body.product-card-layout-09 .product-item--as-card .card-media .halo-productBadges {
+    top: var(--as-card-badge-offset-top-mobile, 8px) !important;
+    margin: 0 !important;
+  }
+
+  body.product-card-layout-09 .product-item--as-card .card-media .halo-productBadges--left {
+    left: var(--as-card-badge-offset-left-mobile, 12px) !important;
+    right: auto !important;
+  }
+
+  body.product-card-layout-09 .product-item--as-card .card-media .halo-productBadges--right {
+    right: var(--as-card-badge-offset-left-mobile, 12px) !important;
+    left: auto !important;
+  }
+
+  body.product-card-layout-09 .product-item--as-card .halo-productBadges .badge,
+  body.product-card-layout-09 .product-item--as-card .badge.sale-badge,
+  body.product-card-layout-09 .product-item--as-card .halo-productBadges .badge.sale-badge,
+  body.product-card-layout-09 .product-item--as-card .badge.new-badge,
+  body.product-card-layout-09 .product-item--as-card .badge.custom-badge,
+  body.product-card-layout-09 .product-item--as-card .badge.sold-out-badge,
+  body.product-card-layout-09 .product-item--as-card .badge.bundle-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box;
+    width: var(--as-card-badge-width-mobile, auto) !important;
+    min-height: var(--as-card-badge-height-mobile, 0px) !important;
+    height: auto !important;
+    min-width: 0;
+    font-size: var(--as-card-badge-font-size-mobile, 10px) !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    padding: var(--as-card-badge-padding-top-mobile, 3px) var(--as-card-badge-padding-x-mobile, 8px) var(--as-card-badge-padding-bottom-mobile, 3px) var(--as-card-badge-padding-x-mobile, 8px) !important;
+    border-radius: var(--as-card-badge-radius-mobile, 50px) !important;
+  }
+}

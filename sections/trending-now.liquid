@@ -1,0 +1,844 @@
+<link rel="stylesheet" href="{{ 'section-trending-now.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'section-trending-now.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- liquid
+  assign heading = section.settings.heading
+  assign subheading = section.settings.subheading
+  assign view_all_label = section.settings.view_all_label
+  assign view_all_label_mobile = section.settings.view_all_label_mobile
+  if view_all_label_mobile == blank
+    assign view_all_label_mobile = view_all_label
+  endif
+  assign view_all_link = section.settings.view_all_link
+  if view_all_link == blank
+    assign view_all_link = routes.collections_url
+  endif
+  assign show_view_all = section.settings.show_view_all
+  assign show_view_all_arrow = section.settings.show_view_all_arrow
+  assign header_alignment = section.settings.header_alignment
+  assign mobile_layout = section.settings.mobile_layout
+  assign show_subheading_mobile = section.settings.show_subheading_mobile
+
+  assign container_class = 'container'
+  if section.settings.container == 'fullwidth'
+    assign container_class = 'container-full'
+  elsif section.settings.container == '1170'
+    assign container_class = 'container-1170'
+  elsif section.settings.container == '1770'
+    assign container_class = 'container-1770'
+  endif
+-%}
+
+{%- liquid
+  assign columns_desktop = section.settings.columns_desktop
+  assign columns_tablet = section.settings.columns_tablet
+  assign columns_mobile = section.settings.columns_mobile
+-%}
+{% style %}
+  #shopify-section-{{ section.id }} .trending-now {
+    --tn-heading-color: {{ section.settings.heading_color }};
+    --tn-subheading-color: {{ section.settings.subheading_color }};
+    --tn-label-color: {{ section.settings.label_color }};
+    --tn-view-all-color: {{ section.settings.view_all_color }};
+    --tn-view-all-hover-color: {{ section.settings.view_all_hover_color }};
+    --tn-icon-bg: {{ section.settings.icon_bg_color }};
+    --tn-icon-size: {{ section.settings.icon_size_desktop }}px;
+    --tn-item-gap: {{ section.settings.item_gap_desktop }}px;
+    --tn-label-size: {{ section.settings.label_font_size }}px;
+    --tn-label-weight: {{ section.settings.label_font_weight }};
+    --tn-label-mt: {{ section.settings.label_margin_top }}px;
+    --tn-heading-size: {{ section.settings.heading_font_size }}px;
+    --tn-heading-weight: {{ section.settings.heading_font_weight }};
+    --tn-subheading-size: {{ section.settings.subheading_font_size }}px;
+    --tn-view-all-size: {{ section.settings.view_all_font_size }}px;
+    --tn-header-mb: {{ section.settings.header_margin_bottom }}px;
+    --tn-columns-desktop: {{ columns_desktop }};
+    --tn-columns-tablet: {{ columns_tablet }};
+    --tn-columns-mobile: {{ columns_mobile }};
+    --tn-scroll-item-width: {{ section.settings.scroll_item_width }}px;
+    --tn-pad-t: {{ section.settings.padding_top_mobile }}px;
+    --tn-pad-b: {{ section.settings.padding_bottom_mobile }}px;
+    --tn-container-pad-l: {{ section.settings.container_padding_left_mobile }}px;
+    --tn-container-pad-r: {{ section.settings.container_padding_right_mobile }}px;
+    background: {% if section.settings.background_gradient != blank %}{{ section.settings.background_gradient }}{% else %}{{ section.settings.background_color }}{% endif %};
+    padding-top: var(--tn-pad-t) !important;
+    padding-bottom: var(--tn-pad-b) !important;
+  }
+
+  #shopify-section-{{ section.id }} .trending-now .{{ container_class }} {
+    padding-left: var(--tn-container-pad-l) !important;
+    padding-right: var(--tn-container-pad-r) !important;
+    overflow: visible;
+  }
+
+  /* Tablet: 750px – 1024px (matches Halo theme) */
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .trending-now {
+      --tn-pad-t: {{ section.settings.padding_top_tablet }}px;
+      --tn-pad-b: {{ section.settings.padding_bottom_tablet }}px;
+      --tn-container-pad-l: {{ section.settings.container_padding_left }}px;
+      --tn-container-pad-r: {{ section.settings.container_padding_right }}px;
+    }
+  }
+
+  /* Desktop: 1025px+ */
+  @media screen and (min-width: 1025px) {
+    #shopify-section-{{ section.id }} .trending-now {
+      --tn-pad-t: {{ section.settings.padding_top_desktop }}px;
+      --tn-pad-b: {{ section.settings.padding_bottom_desktop }}px;
+      --tn-heading-size: {{ section.settings.heading_font_size }}px;
+      --tn-subheading-size: {{ section.settings.subheading_font_size }}px;
+      --tn-label-size: {{ section.settings.label_font_size }}px;
+      --tn-view-all-size: {{ section.settings.view_all_font_size }}px;
+      --tn-icon-size: {{ section.settings.icon_size_desktop }}px;
+      --tn-item-gap: {{ section.settings.item_gap_desktop }}px;
+      --tn-header-mb: {{ section.settings.header_margin_bottom }}px;
+    }
+  }
+
+  /* Mobile only: apply mobile typography / icon / gap settings */
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .trending-now {
+      --tn-heading-size: {{ section.settings.heading_font_size_mobile }}px;
+      --tn-subheading-size: {{ section.settings.subheading_font_size_mobile }}px;
+      --tn-label-size: {{ section.settings.label_font_size_mobile }}px;
+      --tn-view-all-size: {{ section.settings.view_all_font_size_mobile }}px;
+      --tn-icon-size: {{ section.settings.icon_size_mobile }}px;
+      --tn-item-gap: {{ section.settings.item_gap_mobile }}px;
+      --tn-header-mb: {{ section.settings.header_margin_bottom_mobile }}px;
+    }
+  }
+
+  /* Icon size — section-scoped so Theme Editor slider always wins */
+  #shopify-section-{{ section.id }} .trending-now__media {
+    width: var(--tn-icon-size);
+    height: var(--tn-icon-size);
+    min-width: var(--tn-icon-size);
+    min-height: var(--tn-icon-size);
+    max-width: var(--tn-icon-size);
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }} .trending-now__item {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .trending-now__list--mobile-scroll .trending-now__item {
+      width: var(--tn-scroll-item-width);
+      min-width: var(--tn-scroll-item-width);
+    }
+  }
+{% endstyle %}
+
+<div
+  class="trending-now section-block-{{ section.id }}{% if settings.banner_animation == 'effect_fade_up' %} scroll-trigger animate--slide-in{% endif %}"
+  id="trending-now-{{ section.id }}"
+>
+  <div class="{{ container_class }}">
+    <div class="trending-now__inner">
+      {%- if heading != blank or subheading != blank or show_view_all -%}
+        <div class="trending-now__header trending-now__header--{{ header_alignment }}">
+          <div class="trending-now__heading-group">
+            {%- if heading != blank -%}
+              <h2 class="trending-now__heading">{{ heading }}</h2>
+            {%- endif -%}
+            {%- if subheading != blank -%}
+              <p class="trending-now__subheading{% unless show_subheading_mobile %} trending-now__subheading--hide-mobile{% endunless %}">
+                {{ subheading }}
+              </p>
+            {%- endif -%}
+          </div>
+
+          {%- if show_view_all and view_all_label != blank -%}
+            <a class="trending-now__view-all" href="{{ view_all_link }}">
+              <span class="trending-now__view-all-label trending-now__view-all-label--desktop">{{ view_all_label }}</span>
+              <span class="trending-now__view-all-label trending-now__view-all-label--mobile">{{ view_all_label_mobile }}</span>
+              {%- if show_view_all_arrow -%}
+                <span class="icon-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                    <path d="M2 8h10M8.5 3.5L13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              {%- endif -%}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="trending-now__row">
+          <ul
+            class="trending-now__list{% if mobile_layout == 'grid' %} trending-now__list--mobile-grid{% else %} trending-now__list--mobile-scroll{% endif %}"
+            role="list"
+          >
+            {%- for block in section.blocks -%}
+              {%- liquid
+                assign collection = block.settings.collection
+                assign item_title = block.settings.title
+                if item_title == blank and collection != blank
+                  assign item_title = collection.title
+                endif
+                if item_title == blank
+                  assign item_title = 'Collection'
+                endif
+
+                assign item_link = block.settings.link
+                if item_link == blank and collection != blank
+                  assign item_link = collection.url
+                endif
+
+                assign item_image = block.settings.image
+                if item_image == blank and collection != blank and collection.featured_image
+                  assign item_image = collection.featured_image
+                endif
+                if item_image == blank and collection != blank and collection.products.first and collection.products.first.featured_media
+                  assign item_image = collection.products.first.featured_media.preview_image
+                endif
+              -%}
+              <li
+                class="trending-now__item{% if settings.banner_animation == 'effect_fade_up' %} scroll-trigger animate--slide-in{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if settings.banner_animation == 'effect_fade_up' %}style="--animation-order: {{ forloop.index }};"{% endif %}
+              >
+                <a
+                  class="trending-now__link"
+                  {% if item_link != blank %}
+                    href="{{ item_link }}"
+                  {% else %}
+                    role="link"
+                    aria-disabled="true"
+                  {% endif %}
+                  {% if item_title != blank %}
+                    aria-label="{{ item_title | escape }}"
+                  {% endif %}
+                >
+                  <div class="trending-now__media">
+                    {%- if item_image != blank -%}
+                      {{
+                        item_image
+                        | image_url: width: 300
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '120, 160, 200, 240, 300',
+                          sizes: '(max-width: 989px) 72px, 110px',
+                          alt: item_title
+                      }}
+                    {%- else -%}
+                      {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                    {%- endif -%}
+                  </div>
+                  {%- if item_title != blank -%}
+                    <span class="trending-now__label">{{ item_title | replace: ' & ', ' &<br>' | newline_to_br }}</span>
+                  {%- endif -%}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "AS Trending Now",
+  "tag": "section",
+  "class": "section-trending-now",
+  "max_blocks": 16,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "container",
+      "label": "Container",
+      "default": "container",
+      "options": [
+        { "value": "container", "label": "Default" },
+        { "value": "1170", "label": "1170px" },
+        { "value": "1770", "label": "1770px" },
+        { "value": "fullwidth", "label": "Full width" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_left",
+      "label": "Left padding (desktop)",
+      "default": "50",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "15", "label": "15px" },
+        { "value": "20", "label": "20px" },
+        { "value": "30", "label": "30px" },
+        { "value": "40", "label": "40px" },
+        { "value": "50", "label": "50px" },
+        { "value": "60", "label": "60px" },
+        { "value": "80", "label": "80px" },
+        { "value": "100", "label": "100px" },
+        { "value": "120", "label": "120px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_right",
+      "label": "Right padding (desktop)",
+      "default": "50",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "15", "label": "15px" },
+        { "value": "20", "label": "20px" },
+        { "value": "30", "label": "30px" },
+        { "value": "40", "label": "40px" },
+        { "value": "50", "label": "50px" },
+        { "value": "60", "label": "60px" },
+        { "value": "80", "label": "80px" },
+        { "value": "100", "label": "100px" },
+        { "value": "120", "label": "120px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_left_mobile",
+      "label": "Left padding (mobile)",
+      "default": "15",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "10", "label": "10px" },
+        { "value": "15", "label": "15px" },
+        { "value": "20", "label": "20px" },
+        { "value": "24", "label": "24px" },
+        { "value": "30", "label": "30px" },
+        { "value": "40", "label": "40px" },
+        { "value": "50", "label": "50px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_padding_right_mobile",
+      "label": "Right padding (mobile)",
+      "default": "15",
+      "options": [
+        { "value": "0", "label": "0px" },
+        { "value": "10", "label": "10px" },
+        { "value": "15", "label": "15px" },
+        { "value": "20", "label": "20px" },
+        { "value": "24", "label": "24px" },
+        { "value": "30", "label": "30px" },
+        { "value": "40", "label": "40px" },
+        { "value": "50", "label": "50px" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Visible columns on desktop",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 8,
+      "info": "Cards stay in one row. Extra cards scroll horizontally."
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Visible columns on tablet",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "default": 5,
+      "info": "Cards stay in one row. Extra cards scroll horizontally."
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "default": "scroll",
+      "options": [
+        { "value": "scroll", "label": "Horizontal scroll" },
+        { "value": "grid", "label": "Grid" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columns on mobile (grid)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "info": "Used when mobile layout is Grid"
+    },
+    {
+      "type": "range",
+      "id": "scroll_item_width",
+      "label": "Mobile scroll item width",
+      "min": 64,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 84,
+      "info": "Used when mobile layout is Horizontal scroll"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Trending Now"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Explore what's popular with our community"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subheading_mobile",
+      "label": "Show subheading on mobile",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#5A7AAD"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size (desktop)",
+      "min": 18,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Heading font size (mobile)",
+      "min": 16,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "heading_font_weight",
+      "label": "Heading font weight",
+      "default": "700",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" },
+        { "value": "900", "label": "900" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Subheading font size (desktop)",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size_mobile",
+      "label": "Subheading font size (mobile)",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "header_margin_bottom",
+      "label": "Header bottom spacing (desktop)",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "header_margin_bottom_mobile",
+      "label": "Header bottom spacing (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "View all"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show View all",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "View all label (desktop)",
+      "default": "View All"
+    },
+    {
+      "type": "text",
+      "id": "view_all_label_mobile",
+      "label": "View all label (mobile)",
+      "default": "See All",
+      "info": "Shown in the header on mobile. Leave blank to use the desktop label."
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View all link",
+      "info": "Defaults to the collections list page if empty"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all_arrow",
+      "label": "Show arrow icon",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "view_all_color",
+      "label": "View all color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "color",
+      "id": "view_all_hover_color",
+      "label": "View all hover color",
+      "default": "#0F2447"
+    },
+    {
+      "type": "range",
+      "id": "view_all_font_size",
+      "label": "View all font size (desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "view_all_font_size_mobile",
+      "label": "View all font size (mobile)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Collection items"
+    },
+    {
+      "type": "range",
+      "id": "icon_size_desktop",
+      "label": "Icon size (desktop)",
+      "min": 70,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "default": 110
+    },
+    {
+      "type": "range",
+      "id": "icon_size_mobile",
+      "label": "Icon size (mobile)",
+      "min": 48,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "item_gap_desktop",
+      "label": "Item gap (desktop)",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "item_gap_mobile",
+      "label": "Item gap (mobile)",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "icon_bg_color",
+      "label": "Icon background",
+      "default": "#EEF3FB"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#1B3A6E"
+    },
+    {
+      "type": "range",
+      "id": "label_font_size",
+      "label": "Label font size (desktop)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "label_font_size_mobile",
+      "label": "Label font size (mobile)",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "label_font_weight",
+      "label": "Label font weight",
+      "default": "500",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "label_margin_top",
+      "label": "Label top spacing",
+      "min": 4,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Colors & spacing"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#F7F9FC"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Top padding (desktop)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56,
+      "info": "Screens 1025px and wider"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Bottom padding (desktop)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56,
+      "info": "Screens 1025px and wider"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_tablet",
+      "label": "Top padding (tablet)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "info": "Screens 750px–1024px (theme editor preview is often this width)"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_tablet",
+      "label": "Bottom padding (tablet)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "info": "Screens 750px–1024px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top padding (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 28,
+      "info": "Screens up to 749px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom padding (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 28,
+      "info": "Screens up to 749px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection_item",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom icon / image",
+          "info": "Overrides the collection image when set"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Label",
+          "info": "Defaults to the collection title when empty"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Custom link",
+          "info": "Defaults to the collection page when empty"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "AS Trending Now",
+      "blocks": [
+        {
+          "type": "collection_item",
+          "settings": {
+            "title": "Energy & Metabolism"
+          }
+        },
+        {
+          "type": "collection_item",
+          "settings": {
+            "title": "Beauty & Glow"
+          }
+        },
+        {
+          "type": "collection_item",
+          "settings": {
+            "title": "Immunity"
+          }
+        },
+        {
+          "type": "collection_item",
+          "settings": {
+            "title": "Weight Management"
+          }
+        },
+        {
+          "type": "collection_item",
+          "settings": {
+            "title": "Sports & Performance"
+          }
+        },
+        {
+          "type": "collection_item",
+          "settings": {
+            "title": "Gym Supplements"
+          }
+        },
+        {
+          "type": "collection_item",
+          "settings": {
+            "title": "Men's Wellness"
+          }
+        },
+        {
+          "type": "collection_item",
+          "settings": {
+            "title": "Women's Wellness"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

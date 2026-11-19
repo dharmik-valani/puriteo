@@ -1,0 +1,36 @@
+{%- comment -%}# we use Shopify as our ecommerce platform{% endcomment %}
+{%- comment -%}
+# Caution! Please read https://help.shopify.com/en/manual/promoting-marketing/seo/editing-robots-txt before proceeding to make changes to this file.
+{% endcomment %}
+{%- comment -%}
+{% for group in robots.default_groups %}
+  {{- group.user_agent -}}
+
+  {% for rule in group.rules %}
+    {{- rule -}}
+  {% endfor %}
+
+  {%- if group.sitemap != blank -%}
+    {{ group.sitemap }}
+  {%- endif -%}
+{% endfor %}
+{% endcomment %}
+User-agent: *
+Disallow: /checkout
+Disallow: /orders
+Disallow: /account
+Disallow: /search
+Disallow: /admin
+Disallow: /cart
+Disallow: /login
+Disallow: /policies
+Disallow: /?*sort_by=
+Disallow: /?*page=
+Disallow: /tag=
+
+Allow: /collections
+Allow: /products
+Allow: /blogs
+Allow: /
+
+Sitemap: https://puriteo.in/sitemap.xml

@@ -1,0 +1,278 @@
+<!-- sections/custom-reviews.liquid -->
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --bg-color: {{ section.settings.background_color }};
+    --text-color: {{ section.settings.text_color }};
+    --star-color: {{ section.settings.star_color }};
+    --name-color: {{ section.settings.name_color }};
+    --title-color: {{ section.settings.title_color }};
+    padding: 4rem 0;
+    background: var(--bg-color);
+    position: relative;
+  }
+
+  .custom-reviews-container {
+    max-width: 1260px;
+    margin: 0 auto;
+    color: var(--text-color);
+    position: relative;
+    text-align: center;
+    padding: 0 2.5rem; /* Extra space for shadows */
+    overflow: visible;
+  }
+
+  .section-heading {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 3rem;
+    color: #000000;
+    text-transform: capitalize;
+  }
+
+  .reviews-wrapper {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 28px;
+    padding: 20px 0;
+    padding-left:15px;
+    padding-right:15px;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow-y: visible;
+  }
+
+  .reviews-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .review-card {
+    scroll-snap-align: center;
+    flex: 0 0 calc(33.33% - 20px);
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    padding: 55px 35px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+
+  .review-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+  }
+
+  .client-image {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--star-color);
+    margin-bottom: 22px;
+  }
+
+  .review-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--title-color);
+    margin-bottom: 18px;
+  }
+
+  .review-text {
+    font-size: 1.25rem;
+    line-height: 1.9;
+    color: var(--text-color);
+    margin-bottom: 25px;
+  }
+
+  .client-name {
+    color: var(--name-color);
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+
+  .review-stars {
+    color: var(--star-color);
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+  }
+
+  @media (max-width: 992px) {
+    .review-card {
+      flex: 0 0 calc(50% - 16px);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .review-card {
+      flex: 0 0 100%;
+      padding: 40px 25px;
+    }
+
+    .section-heading {
+      font-size: 2.2rem;
+    }
+
+    .review-text {
+      font-size: 1.1rem;
+    }
+  }
+{% endstyle %}
+
+<div class="custom-reviews-container">
+  {% if section.settings.section_title != blank %}
+    <h2 class="section-heading">{{ section.settings.section_title }}</h2>
+  {% endif %}
+
+  <div class="reviews-wrapper">
+    {% for block in section.blocks %}
+      <div class="review-card" {{ block.shopify_attributes }}>
+        {% if block.settings.client_image != blank %}
+          <img 
+            src="{{ block.settings.client_image | img_url: '150x150' }}" 
+            alt="{{ block.settings.client_name }}" 
+            class="client-image" 
+            loading="lazy"
+            height="110"
+            width="110"
+          >
+        {% endif %}
+        {% if block.settings.review_title != blank %}
+          <h3 class="review-title">“{{ block.settings.review_title }}”</h3>
+        {% endif %}
+        <p class="review-text">“{{ block.settings.review_text }}”</p>
+        <div class="client-name">{{ block.settings.client_name }}</div>
+        <div class="review-stars">
+          {% for i in (1..block.settings.rating) %}★{% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const wrapper = document.querySelector('.reviews-wrapper');
+    const cards = document.querySelectorAll('.review-card');
+    const cardWidth = cards[0]?.offsetWidth + 28 || 420;
+    const cardsPerSlide = 3;
+    let interval;
+
+    function startAutoPlay() {
+      if (cards.length <= cardsPerSlide) return;
+      stopAutoPlay();
+      interval = setInterval(() => {
+        if (wrapper.scrollLeft + wrapper.clientWidth >= wrapper.scrollWidth - 10) {
+          wrapper.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          wrapper.scrollBy({ left: cardWidth * cardsPerSlide, behavior: 'smooth' });
+        }
+      }, 3500);
+    }
+
+    function stopAutoPlay() {
+      clearInterval(interval);
+    }
+
+    wrapper.addEventListener('mouseenter', stopAutoPlay);
+    wrapper.addEventListener('mouseleave', startAutoPlay);
+
+    startAutoPlay();
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Enhanced Testimonials",
+  "max_blocks": 15,
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Stars Color",
+      "default": "#FFD700"
+    },
+    {
+      "type": "color",
+      "id": "name_color",
+      "label": "Client Name Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#000000"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "text",
+          "id": "review_title",
+          "label": "Review Title",
+          "default": "Outstanding Experience!"
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review Text",
+          "default": "Amazing quality, fast delivery, and excellent customer service. I’ll definitely order again!"
+        },
+        {
+          "type": "text",
+          "id": "client_name",
+          "label": "Client Name",
+          "default": "John Doe"
+        },
+        {
+          "type": "image_picker",
+          "id": "client_image",
+          "label": "Client Image"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Enhanced Testimonial Slider",
+      "category": "Custom Sections"
+    }
+  ]
+}
+{% endschema %}

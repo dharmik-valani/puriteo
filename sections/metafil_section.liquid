@@ -1,0 +1,102 @@
+
+<style>
+  .asmain_div{
+      width: 100%;
+  }
+    .box_01{
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .asborder{
+      /* border: 1px solid #000; */
+    }
+    .img_01{
+      width: 50%;
+    }
+    .img_01 img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .img_02{
+      width: 50%;
+    }
+    .img_02 img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .asheading{
+      text-align: center;
+    }
+    .asheading h3{
+      font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    line-height: 1.2;
+    margin-top: 30px;
+    }
+  </style>
+  
+  <section>
+      <div class="container-1170">
+        <div class="asheading">
+          <h3>Built on a solid foundation with natural <br> ingredients working in synergy</h3>
+        </div>
+          <div class="asmain_div">
+              {% assign image1 = product.metafields.custom.ingredient_image1 %}
+              {% assign image2 = product.metafields.custom.ingredient_image2 %}
+              {% assign image3 = product.metafields.custom.ingredient_image3 %}
+              {% assign image4 = product.metafields.custom.ingredient_image4 %}
+  
+              {% if image1 != blank or image2 != blank %}
+                  <div class="box_01">
+                      {% if image1 != blank %}
+                          <div class="img_01 asborder">
+                              <img src="{{ image1 | img_url: 'master' }}" alt="Image 1">
+                          </div>
+                      {% endif %}
+                      {% if image2 != blank %}
+                          <div class="img_02 asborder">
+                              <img src="{{ image2 | img_url: 'master' }}" alt="Image 2">
+                          </div>
+                      {% endif %}
+                  </div>
+              {% endif %}
+  
+              {% if image3 != blank or image4 != blank %}
+                  <div class="box_01">
+                      {% if image3 != blank %}
+                          <div class="img_01 asborder">
+                              <img src="{{ image3 | img_url: 'master' }}" alt="Image 3">
+                          </div>
+                      {% endif %}
+                      {% if image4 != blank %}
+                          <div class="img_02 asborder">
+                              <img src="{{ image4 | img_url: 'master' }}" alt="Image 4">
+                          </div>
+                      {% endif %}
+                  </div>
+              {% endif %}
+          </div>
+      </div>
+  </section>
+  
+  
+  {% schema %}
+    {
+      "name": "as product_metafil",
+      "tag": "section",
+      "settings": [
+        
+      ],
+      "presets": [
+        {
+          "name": "as product_metafil",
+          "settings": {
+          }
+        }
+      ]
+    }
+  {% endschema %}

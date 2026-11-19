@@ -1,0 +1,63 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "box-builder-pro",
+      "blocks": {
+        "bottom_card_8H6Bgj": {
+          "type": "bottom_card",
+          "disabled": true,
+          "settings": {
+            "overlay_title": "p",
+            "overlay_sub": "p",
+            "title": "p",
+            "price": "123",
+            "link": "https://puriteo.in/apps/box-builder/effervescent-box-1"
+          }
+        },
+        "top_card_xPJUGL": {
+          "type": "top_card",
+          "settings": {
+            "image": "shopify://shop_images/Design-06-GLUTATHION-PINEAPPLE.webp",
+            "overlay_title": "",
+            "overlay_sub": "",
+            "title": "Box of 4 Bestsellers",
+            "price": "100",
+            "link": "https://puriteo.in/apps/box-builder/effervescent-box"
+          }
+        },
+        "top_card_NTwFPp": {
+          "type": "top_card",
+          "settings": {
+            "image": "shopify://shop_images/Design-06-GLUTATHION-PINEAPPLE.webp",
+            "overlay_title": "",
+            "overlay_sub": "",
+            "title": "Box of 5 Bestsellers",
+            "price": "1100",
+            "link": "https://puriteo.in/apps/box-builder/effervescent-box-1"
+          }
+        }
+      },
+      "block_order": [
+        "bottom_card_8H6Bgj",
+        "top_card_xPJUGL",
+        "top_card_NTwFPp"
+      ],
+      "settings": {
+        "heading": "Build your own box with Puriteo",
+        "subheading": "Pick your favorite products and save big!"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
