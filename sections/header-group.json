@@ -92,6 +92,8 @@
         "padding_top": 0,
         "padding_top_mobile": 0,
         "sticky_header_type": "on_scroll",
+        "enable_header_shadow": true,
+        "header_shadow_color": "rgba(0,0,0,0.08)",
         "header_bg": "#ffffff",
         "header_bg_gradient": "",
         "header_border_bottom": "rgba(0,0,0,0)",
