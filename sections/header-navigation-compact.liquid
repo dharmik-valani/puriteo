@@ -13,57 +13,27 @@
 
 <style>
   {% if section.settings.sticky_header_type != 'none' %}
-    /* Sticky Announcement Bar */
-    .is-sticky-announcement,
-    .shopify-section-group-header-group:has(.announcement-bar),
-    [id*="shopify-section-sections--"][id*="announcement_bar"],
-    [id*="shopify-section-announcement-bar"],
-    .shopify-section-announcement-bar {
+    .shopify-section-group-header-group:has(.announcement-bar) {
       position: sticky !important;
       top: 0 !important;
       z-index: 101 !important;
-      width: 100% !important;
     }
-
-    #shopify-section-{{ section.id }}.section-header-navigation,
-    #shopify-section-{{ section.id }},
-    .section-header-navigation:has(#HeaderCompact-{{ section.id }}),
-    #shopify-section-{{ section.id }} sticky-header.header-navigation-wrapper {
+    #shopify-section-{{ section.id }} {
       position: sticky !important;
       top: var(--announcement-bar-height, 35px) !important;
       z-index: 100 !important;
-      display: block !important;
-      width: 100% !important;
     }
-  {% else %}
-    .is-sticky-announcement,
-    .shopify-section-group-header-group:has(.announcement-bar),
-    [id*="shopify-section-sections--"][id*="announcement_bar"],
-    [id*="shopify-section-announcement-bar"],
-    .shopify-section-announcement-bar {
-      position: relative !important;
-      top: auto !important;
-      z-index: auto !important;
-    }
-
-    #shopify-section-{{ section.id }}.section-header-navigation,
-    #shopify-section-{{ section.id }},
-    .section-header-navigation:has(#HeaderCompact-{{ section.id }}),
-    #shopify-section-{{ section.id }} sticky-header.header-navigation-wrapper {
-      position: relative !important;
-      top: auto !important;
-      z-index: 21 !important;
+    body.search-style2-open #shopify-section-{{ section.id }},
+    body.menu_open #shopify-section-{{ section.id }} {
+      z-index: 100000 !important;
     }
   {% endif %}
 
-  #shopify-section-{{ section.id }} .header-compact-wrapper,
-  #shopify-section-{{ section.id }} .header-compact-desktop {
-    {% if section.settings.enable_header_shadow != false %}
-      box-shadow: 0 4px 12px {{ section.settings.header_shadow_color | default: 'rgba(0, 0, 0, 0.09)' }} !important;
-    {% else %}
-      box-shadow: none !important;
-    {% endif %}
-  }
+  {% if section.settings.enable_header_shadow %}
+    #shopify-section-{{ section.id }} .header-compact-wrapper {
+      box-shadow: 0 4px 12px {{ section.settings.header_shadow_color | default: 'rgba(0, 0, 0, 0.08)' }} !important;
+    }
+  {% endif %}
 
   #shopify-section-{{ section.id }} .header-compact-wrapper {
     --hc-bg: {% if section.settings.header_bg_gradient != blank %}{{ section.settings.header_bg_gradient }}{% else %}{{ section.settings.header_bg }}{% endif %};
@@ -1093,43 +1063,13 @@
 {% javascript %}
 if (!customElements.get('sticky-header')) {
   class StickyHeader extends HTMLElement {
-    constructor() {
-      super();
-    }
     connectedCallback() {
-      this.header = this.closest('.section-header-navigation') || document.querySelector('.section-header-navigation') || this;
-      this.headerIsAlwaysSticky = this.getAttribute('data-sticky-type');
-      this.currentScrollTop = 0;
-      this.updateAnnouncementHeight();
-      this.onScrollHandler = this.onScroll.bind(this);
-      this.onResizeHandler = this.updateAnnouncementHeight.bind(this);
-      window.addEventListener('scroll', this.onScrollHandler, { passive: true });
-      window.addEventListener('resize', this.onResizeHandler, { passive: true });
-      this.onScroll();
-    }
-    updateAnnouncementHeight() {
-      const annBar = document.querySelector('.announcement-bar') || document.querySelector('[id*="announcement_bar"]');
-      if (annBar) {
-        const h = annBar.offsetHeight;
-        if (h > 0) {
-          document.documentElement.style.setProperty('--announcement-bar-height', h + 'px');
-        }
-      }
-    }
-    disconnectedCallback() {
-      window.removeEventListener('scroll', this.onScrollHandler);
-      window.removeEventListener('resize', this.onResizeHandler);
-    }
-    onScroll() {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if (this.header) {
-        if (scrollTop > 20) {
-          this.header.classList.add('scrolled-past-header', 'is-sticky');
-        } else {
-          this.header.classList.remove('scrolled-past-header', 'is-sticky');
-        }
-      }
-      this.currentScrollTop = scrollTop;
+      const update = () => {
+        const bar = document.querySelector('.announcement-bar');
+        if (bar) document.documentElement.style.setProperty('--announcement-bar-height', bar.offsetHeight + 'px');
+      };
+      update();
+      window.addEventListener('resize', update, { passive: true });
     }
   }
   customElements.define('sticky-header', StickyHeader);

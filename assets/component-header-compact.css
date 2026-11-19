@@ -6,37 +6,10 @@
 /* --------------------------------------------------------------------------
    Container & Base Variables
    -------------------------------------------------------------------------- */
-/* Sticky Announcement Bar */
-.is-sticky-announcement,
-.shopify-section-group-header-group:has(.announcement-bar),
-[id*="shopify-section-sections--"][id*="announcement_bar"],
-[id*="shopify-section-announcement-bar"],
-.shopify-section-announcement-bar {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 101 !important;
-  width: 100% !important;
-}
-
-sticky-header,
-sticky-header.header-navigation-wrapper {
-  display: block;
-  width: 100%;
-}
-
-.section-header-navigation:has(.header-compact-wrapper),
-.header-navigation:has(.header-compact-wrapper) {
-  position: sticky;
-  top: var(--announcement-bar-height, 35px);
-  z-index: 100;
-  width: 100%;
-}
-
 .header-navigation-wrapper {
   position: relative;
   z-index: 21;
   overflow: visible !important;
-  width: 100%;
 }
 
 .header-compact-wrapper {
@@ -46,7 +19,6 @@ sticky-header.header-navigation-wrapper {
   overflow: visible !important;
   background-color: var(--hc-bg, #fcfaf7);
   border-bottom: var(--hc-border-bottom-width, 0px) solid var(--hc-border-bottom-color, transparent);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09);
   transition: all 0.3s ease;
 }
 
@@ -54,7 +26,7 @@ sticky-header.header-navigation-wrapper {
   box-sizing: border-box;
 }
 
-/* Ensure mobile navigation drawer and backdrop sit above all page elements */
+/* Ensure mobile navigation drawer sits above all page elements */
 body.menu_open .shopify-section-group-header-group,
 body.menu-open .shopify-section-group-header-group,
 body:has(.header-compact-drawer.is-open) .shopify-section-group-header-group,
