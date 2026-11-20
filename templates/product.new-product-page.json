@@ -230,7 +230,7 @@
             "pack_card_padding_y_mb": 8,
             "pack_card_padding_x": 8,
             "pack_card_padding_x_mb": 6,
-            "pack_card_title_font_size": 18,
+            "pack_card_title_font_size": 16,
             "pack_card_title_font_weight": "700",
             "pack_card_title_color": "#1b3a6e",
             "pack_card_subtitle_font_size": 14,
