@@ -428,6 +428,17 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   top: -1px;
 }
 
+.header-compact-mobile__icons .header-compact__icon--account {
+  margin-left: 0;
+}
+
+.header-compact-mobile__icons .header-compact__icon--account .icon {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  top: -1px;
+}
+
 /* Cart & Wishlist Count Bubbles matching Reference Image 3 */
 .header-compact__badge {
   position: absolute;
