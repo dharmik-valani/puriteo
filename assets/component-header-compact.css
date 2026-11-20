@@ -378,17 +378,15 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   color: var(--hc-icons-hover, #1e3b2b) !important;
 }
 
-/* Strict Outline Rules: Remove black fill completely, dark border only */
+/* Outline icons only. Theme SVGs use .header-compact__icon-svg */
 .header-compact__icons .header-compact__icon-svg,
-.header-compact__icons .header-compact__icon-link svg,
-.header-compact-mobile__icons .header-compact__icon-svg,
-.header-compact-mobile__icons .header-compact__icon-link svg {
-  width: 22px !important;
-  height: 22px !important;
+.header-compact-mobile__icons .header-compact__icon-svg {
+  width: var(--hc-icons-size, 22px) !important;
+  height: var(--hc-icons-size, 22px) !important;
   fill: none !important;
-  stroke: #111111 !important;
+  stroke: var(--hc-icons-color, #111111) !important;
   stroke-width: 2 !important;
-  color: #111111 !important;
+  color: var(--hc-icons-color, #111111) !important;
   display: block;
 }
 
@@ -397,23 +395,13 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
 .header-compact__icons .header-compact__icon-svg rect,
 .header-compact__icons .header-compact__icon-svg line,
 .header-compact__icons .header-compact__icon-svg polyline,
-.header-compact__icons .header-compact__icon-link svg path,
-.header-compact__icons .header-compact__icon-link svg circle,
-.header-compact__icons .header-compact__icon-link svg rect,
-.header-compact__icons .header-compact__icon-link svg line,
-.header-compact__icons .header-compact__icon-link svg polyline,
 .header-compact-mobile__icons .header-compact__icon-svg path,
 .header-compact-mobile__icons .header-compact__icon-svg circle,
 .header-compact-mobile__icons .header-compact__icon-svg rect,
 .header-compact-mobile__icons .header-compact__icon-svg line,
-.header-compact-mobile__icons .header-compact__icon-svg polyline,
-.header-compact-mobile__icons .header-compact__icon-link svg path,
-.header-compact-mobile__icons .header-compact__icon-link svg circle,
-.header-compact-mobile__icons .header-compact__icon-link svg rect,
-.header-compact-mobile__icons .header-compact__icon-link svg line,
-.header-compact-mobile__icons .header-compact__icon-link svg polyline {
+.header-compact-mobile__icons .header-compact__icon-svg polyline {
   fill: none !important;
-  stroke: #111111 !important;
+  stroke: var(--hc-icons-color, #111111) !important;
   stroke-width: 2 !important;
 }
 
@@ -498,13 +486,30 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
 }
 
 /* Retain original fills/strokes of KwikPass bolt and logo */
-.header-compact-wrapper #kp-login-button-header-logo svg *,
-.header-compact-wrapper #kp-login-button-header-logo-mobile svg *,
-.header-compact-wrapper #svgkp *,
-.header-compact-wrapper .header--icon svg *,
-.header-compact-wrapper .header--icon--mobile svg * {
-  stroke: unset;
-  fill: unset;
+.header-compact-wrapper #kp-login-button-header-logo svg,
+.header-compact-wrapper #kp-login-button-header-logo-mobile svg,
+.header-compact-wrapper #svgkp {
+  width: var(--hc-icons-size, 22px) !important;
+  height: var(--hc-icons-size, 22px) !important;
+  min-width: var(--hc-icons-size, 22px) !important;
+  min-height: var(--hc-icons-size, 22px) !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+.header-compact-wrapper #kp-login-button-header-logo svg path[fill="#FEA203"],
+.header-compact-wrapper #kp-login-button-header-logo-mobile svg path[fill="#FEA203"],
+.header-compact-wrapper #svgkp path[fill="#FEA203"] {
+  fill: #FEA203 !important;
+  stroke: none !important;
+}
+
+.header-compact-wrapper #kp-login-button-header-logo svg #svgkp-path,
+.header-compact-wrapper #kp-login-button-header-logo-mobile svg #svgkp-path,
+.header-compact-wrapper #svgkp #svgkp-path {
+  fill: var(--hc-icons-color, #111111) !important;
+  stroke: var(--hc-icons-color, #111111) !important;
+  stroke-width: 0.1 !important;
 }
 
 /* Cart & Wishlist Count Bubbles matching Reference Image 3 */
