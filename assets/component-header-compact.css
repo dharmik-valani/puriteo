@@ -378,6 +378,25 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   color: var(--hc-icons-hover, #1e3b2b) !important;
 }
 
+/* Customer account icon from icon-account-2 */
+.header-compact__icons .header__icon--account {
+  color: var(--text-color, var(--hc-icons-color, #111111)) !important;
+}
+
+.header-compact__icons .header__icon--account svg,
+.header-compact__icons .header__icon--account .icon-account {
+  width: var(--hc-icons-size, 22px) !important;
+  height: var(--hc-icons-size, 22px) !important;
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+.header-compact__icons .header__icon--account svg path {
+  fill: currentColor !important;
+  stroke: none !important;
+  stroke-width: 0 !important;
+}
+
 /* Strict Outline Rules: Remove black fill completely, dark border only */
 .header-compact__icons .header-compact__icon-svg,
 .header-compact__icons .header-compact__icon-link svg,
