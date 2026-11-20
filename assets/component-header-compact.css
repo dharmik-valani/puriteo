@@ -378,6 +378,10 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   color: var(--hc-icons-hover, #1e3b2b) !important;
 }
 
+.header-compact__icons .customer-links {
+  margin-left: 0;
+}
+
 .header-compact__icons .customer-links .icon {
   width: 24px;
   height: 24px;
