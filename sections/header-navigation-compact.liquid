@@ -547,8 +547,6 @@
 
         <!-- Mobile Right Icons -->
         <div class="header-compact-mobile__icons">
-          <div id="kp-login-button-header-logo"></div>
-
           {%- if section.settings.show_cart -%}
             <a
               href="{{ routes.cart_url }}"
@@ -1657,7 +1655,7 @@ if (!customElements.get('sticky-header')) {
       "type": "checkbox",
       "id": "show_customer",
       "label": "Show Account Icon",
-      "default": false
+      "default": true
     },
     {
       "type": "color",
