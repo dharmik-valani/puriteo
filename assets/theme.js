@@ -2088,21 +2088,34 @@
                     }
                 }
 
-                const selectedVariant = productJson.variants.find(variant => variant.id === variantId)
+                const selectedVariant = productJson?.variants?.find(
+                    variant => Number(variant.id) === Number(variantId)
+                );
 
-                if (selectedVariant.compare_at_price > selectedVariant.price) {
+                if (!selectedVariant) {
+                    product.find('a:not(.single-action):not(.number-showmore):not(.vendor-text)').attr(
+                        'href',
+                        productHref.split('?variant=')[0]
+                    );
+                } else if (
+                    selectedVariant.compare_at_price &&
+                    selectedVariant.compare_at_price > selectedVariant.price
+                ) {
                     product.find('.price').addClass('price--on-sale');
+                    product.find('.price__regular').addClass('hidden');
+                    product.find('.price__sale').removeClass('hidden');
                     product.find('.price__sale .price-item--regular').html(Shopify.formatMoney(selectedVariant.compare_at_price, window.money_format));
                     product.find('.price__sale .price-item--sale').html(Shopify.formatMoney(selectedVariant.price, window.money_format));
                     const labelSale = `(-${Math.round((selectedVariant.compare_at_price - selectedVariant.price) * 100 / selectedVariant.compare_at_price)}%)`;
                     product.find('.price__label_sale .label_sale').html(labelSale);
                 } else {
+                    product.find('.price').removeClass('price--on-sale');
+                    product.find('.price__regular').removeClass('hidden');
+                    product.find('.price__sale').addClass('hidden');
                     product.find('.price__regular .price-item').html(Shopify.formatMoney(selectedVariant.price, window.money_format));
-
-                    if (selectedVariant.compare_at_price == null) {
-                        product.find('.price').removeClass('price--on-sale');
-                        product.find('.price__sale .price-item--regular').html('');
-                    }
+                    product.find('.price__sale .price-item--regular').html('');
+                    product.find('.price__sale .price-item--sale').html('');
+                    product.find('.price__label_sale .label_sale').html('');
                 }
   
                 product.find('a:not(.single-action):not(.number-showmore):not(.vendor-text)').attr('href', productHref.split('?variant=')[0]+'?variant='+ variantId);

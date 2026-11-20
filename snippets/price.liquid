@@ -11,10 +11,10 @@
     {% render 'price', product: product %}
 {%- endcomment -%}
 {%- liquid
-     if use_variant
-        assign target = product.selected_or_first_available_variant
-    else
+    if use_variant == false
         assign target = product
+    else
+        assign target = product.selected_or_first_available_variant
     endif
 
     assign compare_at_price = target.compare_at_price
