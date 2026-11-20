@@ -417,6 +417,25 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   stroke-width: 2 !important;
 }
 
+.header-compact__icons .customer-links {
+  margin-left: 0;
+}
+
+.header-compact__icons .customer-links .icon {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  top: -1px;
+  fill: var(--text-color, var(--hc-icons-color, #111111));
+  stroke: none;
+}
+
+.header-compact__icons .customer-links .icon path {
+  fill: var(--text-color, var(--hc-icons-color, #111111)) !important;
+  stroke: none !important;
+  stroke-width: 0 !important;
+}
+
 /* Cart & Wishlist Count Bubbles matching Reference Image 3 */
 .header-compact__badge {
   position: absolute;
