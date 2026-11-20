@@ -405,109 +405,17 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   stroke-width: 2 !important;
 }
 
-/* Customer Account / GoKwik KwikPass Integration */
-.header-compact-wrapper .customer-links,
-.header-compact-wrapper .header-compact__account,
-.header-compact-wrapper .header-compact-mobile__account {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  line-height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
+/* Customer Account Link */
+.header-compact-wrapper .customer-links {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.header-compact-wrapper .customer-links a.header__icon--account,
-.header-compact-wrapper .header-compact__account a.header__icon--account,
-.header-compact-wrapper .header-compact-mobile__account a.header__icon--account {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  line-height: 0 !important;
-  text-decoration: none !important;
-  color: var(--hc-icons-color, #111111) !important;
-}
-
-/* Sizing for customer links and injected KwikPass buttons */
-.header-compact-wrapper .customer-links svg,
 .header-compact-wrapper .customer-links .icon,
-.header-compact-wrapper .header__icon--account svg,
-.header-compact-wrapper .header__icon--account .icon,
-.header-compact-wrapper .header-compact__account svg,
-.header-compact-wrapper .header-compact-mobile__account svg,
-.header-compact-wrapper #kp-login-button-header-logo,
-.header-compact-wrapper #kp-login-button-header-logo svg,
-.header-compact-wrapper #kp-login-button-header-logo-mobile,
-.header-compact-wrapper #kp-login-button-header-logo-mobile svg,
-.header-compact-wrapper #svgkp,
-.header-compact-wrapper .header--icon svg,
-.header-compact-wrapper .header--icon--mobile svg {
-  width: var(--hc-icons-size, 22px) !important;
-  height: var(--hc-icons-size, 22px) !important;
-  min-width: var(--hc-icons-size, 22px) !important;
-  min-height: var(--hc-icons-size, 22px) !important;
-  max-width: 25px !important;
-  max-height: 25px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  vertical-align: middle !important;
-}
-
-/* Ensure theme account SVG path inherits icon color and is clearly visible */
-.header-compact-wrapper .customer-links svg:not(#svgkp) path,
-.header-compact-wrapper .header__icon--account svg:not(#svgkp) path {
-  fill: var(--hc-icons-color, #111111) !important;
-}
-
-/* Only hide theme fallback svg if KwikPass svgkp or kp-login button is injected into the same container */
-.header-compact-wrapper .header__icon--account:has(#svgkp) > svg.icon-account,
-.header-compact-wrapper .header__icon--account:has(#kp-login-button-header-logo) > svg.icon-account,
-.header-compact-wrapper .customer-links:has(#kp-login-button-header-logo) > .header__icon--account:not(:has(#kp-login-button-header-logo)) {
-  display: none !important;
-}
-
-.header-compact-wrapper #kp-login-button-header-logo,
-.header-compact-wrapper #kp-login-button-header-logo-mobile,
-.header-compact-wrapper .header--icon,
-.header-compact-wrapper .header--icon--mobile {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  line-height: 0 !important;
-  background: transparent !important;
-  border: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  pointer-events: auto !important;
-}
-
-/* Retain original fills/strokes of KwikPass bolt and logo */
-.header-compact-wrapper #kp-login-button-header-logo svg,
-.header-compact-wrapper #kp-login-button-header-logo-mobile svg,
-.header-compact-wrapper #svgkp {
-  width: var(--hc-icons-size, 22px) !important;
-  height: var(--hc-icons-size, 22px) !important;
-  min-width: var(--hc-icons-size, 22px) !important;
-  min-height: var(--hc-icons-size, 22px) !important;
-  display: inline-block !important;
-  vertical-align: middle !important;
-}
-
-.header-compact-wrapper #kp-login-button-header-logo svg path[fill="#FEA203"],
-.header-compact-wrapper #kp-login-button-header-logo-mobile svg path[fill="#FEA203"],
-.header-compact-wrapper #svgkp path[fill="#FEA203"] {
-  fill: #FEA203 !important;
-  stroke: none !important;
-}
-
-.header-compact-wrapper #kp-login-button-header-logo svg #svgkp-path,
-.header-compact-wrapper #kp-login-button-header-logo-mobile svg #svgkp-path,
-.header-compact-wrapper #svgkp #svgkp-path {
-  fill: var(--hc-icons-color, #111111) !important;
-  stroke: var(--hc-icons-color, #111111) !important;
-  stroke-width: 0.1 !important;
+.header-compact-wrapper .customer-links svg {
+  width: var(--hc-icons-size, 22px);
+  height: var(--hc-icons-size, 22px);
 }
 
 /* Cart & Wishlist Count Bubbles matching Reference Image 3 */
