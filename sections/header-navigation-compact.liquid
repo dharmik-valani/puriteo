@@ -539,21 +539,31 @@
         <!-- Mobile Right Icons -->
         <div class="header-compact-mobile__icons">
           {%- if shop.customer_accounts_enabled and section.settings.show_customer -%}
-            <a
-              href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
-              class="header-compact__icon-link header-compact__icon--account header-compact__account-mobile focus-inset"
-              data-compact-account
-              aria-label="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
-              title="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
-            >
-              <svg class="header-compact__icon-svg header-compact__account-fallback" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="7" r="4"></circle>
-                <path d="M5.5 21a6.5 6.5 0 0 1 13 0h-13z"></path>
-              </svg>
-              <span class="visually-hidden">
-                {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
-              </span>
-            </a>
+            {%- liquid
+              assign is_contained = false
+              if routes.account_login_url contains '/account/login'
+                assign is_contained = true
+              endif
+            -%}
+            <div class="header__icon customer-links header-compact-mobile__account" style="--text-color: {{ section.settings.customer_color }}">
+              <a
+                href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+                class="header__icon header__icon--account header-compact__icon-link link link--text focus-inset"
+                {% if is_contained %}data-open-auth-sidebar{% endif %}
+                data-compact-account
+                aria-label="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
+                title="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
+              >
+                {%- if customer and customer.has_avatar? -%}
+                  <account-icon>{{ customer | avatar }}</account-icon>
+                {%- else -%}
+                  {% render 'icon-account-2' %}
+                {%- endif -%}
+                <span class="visually-hidden">
+                  {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
+                </span>
+              </a>
+            </div>
           {%- endif -%}
           {%- if section.settings.show_cart -%}
             <a
