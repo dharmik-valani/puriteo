@@ -460,6 +460,7 @@
 }
 
 @media (max-width: 767px) {
+
   .product-new-products .productView-moreItem-product-variant .form__label,
   .product-new-products .productView-moreItem-product-variant legend,
   .product-new-products .npp-variant-options .form__label {
@@ -2367,7 +2368,7 @@ npp-offers,
 .product-new-products .npp-variant-input--pack-cards:not(.npp-variant-input--pack-carousel) {
   display: flex !important;
   flex-wrap: wrap !important;
-  gap: var(--pack-card-gap, 8px) !important;
+  gap: 8px !important;
   align-items: stretch !important;
 }
 
@@ -2452,7 +2453,7 @@ npp-offers,
   align-items: center;
   justify-content: center;
   margin-top: 0 !important;
-  margin-bottom: 0 !important;
+  margin-bottom: var(--pack-card-image-gap, 4px) !important;
   flex-shrink: 0;
 }
 
@@ -2481,7 +2482,7 @@ npp-offers,
   color: var(--pack-title-color, #1b3a6e) !important;
   line-height: 1.2;
   margin-top: 0 !important;
-  margin-bottom: 0 !important;
+  margin-bottom: var(--pack-card-title-gap, 3px) !important;
   display: block;
   word-break: break-word;
 }
@@ -2491,7 +2492,7 @@ npp-offers,
   color: var(--pack-subtitle-color, #8a9bb2) !important;
   font-weight: 500;
   line-height: 1.2;
-  margin-bottom: 0;
+  margin-bottom: 3px;
   display: block;
   word-break: break-word;
 }
@@ -2501,9 +2502,9 @@ npp-offers,
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: var(--pack-card-item-gap, 4px) !important;
+  gap: 4px !important;
   padding: 0 !important;
-  margin: 0 auto !important;
+  margin: 0 auto var(--pack-card-price-gap, 4px) auto !important;
   flex-wrap: nowrap !important;
   white-space: nowrap !important;
   line-height: 1 !important;
@@ -2565,7 +2566,7 @@ npp-offers,
   padding: 2px 5px;
   border-radius: 4px;
   line-height: 1.2;
-  margin-bottom: 0 !important;
+  margin-bottom: var(--pack-card-savings-gap, 4px) !important;
   letter-spacing: 0.01em;
   white-space: nowrap;
 }
@@ -2677,7 +2678,7 @@ npp-offers,
   flex-direction: row !important;
   flex-wrap: nowrap !important;
   align-items: stretch !important;
-  gap: var(--pack-card-gap, var(--pill-gap, 8px)) !important;
+  gap: var(--pill-gap, 8px) !important;
   width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
@@ -2712,10 +2713,10 @@ npp-offers,
 
 /* Grid cards sizing */
 .product-new-products .npp-variant-input--pack-cards:not(.npp-variant-input--pack-carousel) .npp-pack-card {
-  flex: 0 0 calc((100% - (var(--pack-columns, 3) - 1) * var(--pack-card-gap, 8px)) / var(--pack-columns, 3)) !important;
-  min-width: calc((100% - (var(--pack-columns, 3) - 1) * var(--pack-card-gap, 8px)) / var(--pack-columns, 3)) !important;
-  max-width: calc((100% - (var(--pack-columns, 3) - 1) * var(--pack-card-gap, 8px)) / var(--pack-columns, 3)) !important;
-  width: calc((100% - (var(--pack-columns, 3) - 1) * var(--pack-card-gap, 8px)) / var(--pack-columns, 3)) !important;
+  flex: 0 0 calc((100% - (var(--pack-columns, 3) - 1) * 8px) / var(--pack-columns, 3)) !important;
+  min-width: calc((100% - (var(--pack-columns, 3) - 1) * 8px) / var(--pack-columns, 3)) !important;
+  max-width: calc((100% - (var(--pack-columns, 3) - 1) * 8px) / var(--pack-columns, 3)) !important;
+  width: calc((100% - (var(--pack-columns, 3) - 1) * 8px) / var(--pack-columns, 3)) !important;
 }
 
 /* Floating side navigation arrows — strictly bounded inside the carousel wrapper */
@@ -2774,16 +2775,9 @@ npp-offers,
   }
 
   .product-new-products .npp-pack-carousel-track {
-    gap: var(--pack-card-gap-mb, var(--pill-gap-mb, 6px)) !important;
+    gap: var(--pill-gap-mb, 6px) !important;
     padding-top: 10px !important;
     padding-bottom: 3px !important;
-  }
-
-  .product-new-products .npp-variant-input--pack-cards:not(.npp-variant-input--pack-carousel) .npp-pack-card {
-    flex-basis: calc((100% - (var(--pack-columns, 3) - 1) * var(--pack-card-gap-mb, 6px)) / var(--pack-columns, 3)) !important;
-    min-width: calc((100% - (var(--pack-columns, 3) - 1) * var(--pack-card-gap-mb, 6px)) / var(--pack-columns, 3)) !important;
-    max-width: calc((100% - (var(--pack-columns, 3) - 1) * var(--pack-card-gap-mb, 6px)) / var(--pack-columns, 3)) !important;
-    width: calc((100% - (var(--pack-columns, 3) - 1) * var(--pack-card-gap-mb, 6px)) / var(--pack-columns, 3)) !important;
   }
 
   .product-new-products .npp-pack-card,
@@ -2832,27 +2826,27 @@ npp-offers,
   .product-new-products .npp-pack-card__image-wrap {
     height: var(--pack-card-image-height-mb, 40px) !important;
     margin-top: 0 !important;
-    margin-bottom: 0 !important;
+    margin-bottom: var(--pack-card-image-gap, 3px) !important;
   }
 
   .product-new-products .npp-pack-card__title {
     font-size: var(--pack-title-font-size-mb, 11px) !important;
     margin-top: 0 !important;
-    margin-bottom: 0 !important;
+    margin-bottom: var(--pack-card-title-gap, 2px) !important;
   }
 
   .product-new-products .npp-pack-card__subtitle {
     font-size: var(--pack-subtitle-font-size-mb, 9px);
-    margin-bottom: 0;
+    margin-bottom: 2px;
   }
 
   .product-new-products .npp-pack-card__prices {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: var(--pack-card-item-gap-mb, 4px) !important;
+    gap: 3px !important;
     padding: 0 !important;
-    margin: 0 auto !important;
+    margin: 0 auto var(--pack-card-price-gap, 3px) auto !important;
     flex-wrap: nowrap !important;
     white-space: nowrap !important;
     line-height: 1 !important;
@@ -2895,7 +2889,7 @@ npp-offers,
     font-size: var(--pack-savings-font-size-mb, 8px);
     padding: 1.5px 4px;
     border-radius: 3px;
-    margin-bottom: 0 !important;
+    margin-bottom: var(--pack-card-savings-gap, 3px) !important;
   }
 
   .product-new-products .npp-pack-card__tax {
@@ -3119,7 +3113,7 @@ sales-stock-row .npp-sales-stock-row,
   padding: 0 !important;
   font-family: var(--font-body-family), inherit !important;
   font-size: var(--sales-stock-fs, 13px) !important;
-  font-weight: var(--sales-stock-fw, 700) !important;
+  font-weight: 500 !important;
   line-height: 1 !important;
   letter-spacing: normal !important;
   transform: translateY(var(--sales-stock-offset-y, 2px)) !important;
@@ -3141,14 +3135,14 @@ sales-stock-row .npp-stock-message,
   padding: 0 !important;
   font-family: var(--font-body-family), inherit !important;
   font-size: var(--sales-stock-fs, 13px) !important;
-  font-weight: var(--sales-stock-fw, 700) !important;
+  font-weight: 500 !important;
   letter-spacing: normal !important;
   white-space: nowrap !important;
 }
 
 .npp-sales-message {
   color: var(--sales-text-color) !important;
-  font-weight: var(--sales-stock-fw, 700) !important;
+  font-weight: 500 !important;
 }
 
 .npp-sales-stock-divider {
@@ -3160,7 +3154,7 @@ sales-stock-row .npp-stock-message,
 
 .npp-stock-message {
   color: var(--stock-text-color) !important;
-  font-weight: var(--sales-stock-fw, 700) !important;
+  font-weight: 700 !important;
 }
 
 .product-new-products .npp-mobile-badges {
@@ -3339,7 +3333,7 @@ sales-stock-row .npp-stock-message,
     padding: 0 !important;
     font-family: var(--font-body-family), inherit !important;
     font-size: var(--sales-stock-fs-mb, 12px) !important;
-    font-weight: var(--sales-stock-fw, 700) !important;
+    font-weight: 500 !important;
     line-height: 1 !important;
     letter-spacing: normal !important;
     transform: translateY(var(--sales-stock-offset-y-mb, 2px)) !important;
@@ -3361,7 +3355,7 @@ sales-stock-row .npp-stock-message,
     padding: 0 !important;
     font-family: var(--font-body-family), inherit !important;
     font-size: var(--sales-stock-fs-mb, 12px) !important;
-    font-weight: var(--sales-stock-fw, 700) !important;
+    font-weight: 500 !important;
     letter-spacing: normal !important;
     white-space: nowrap !important;
   }
