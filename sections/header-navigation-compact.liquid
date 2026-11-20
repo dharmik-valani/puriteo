@@ -538,6 +538,36 @@
 
         <!-- Mobile Right Icons -->
         <div class="header-compact-mobile__icons">
+          {%- if section.settings.show_search -%}
+            {%- if active_search_style == 'style_2' -%}
+              <button
+                type="button"
+                class="header-compact__icon-link header-compact__icon--search focus-inset"
+                data-open-search2="{{ section.id }}"
+                aria-label="{{ 'general.search.search' | t }}"
+                aria-haspopup="dialog"
+              >
+                <svg class="header-compact__icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" fill="none" stroke="#111111" stroke-width="2"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="#111111" stroke-width="2"></line>
+                </svg>
+                <span class="visually-hidden">{{ 'general.search.search' | t }}</span>
+              </button>
+            {%- else -%}
+              <a
+                href="{{ routes.search_url }}"
+                class="header-compact__icon-link header-compact__icon--search focus-inset"
+                aria-label="{{ 'general.search.search' | t }}"
+              >
+                <svg class="header-compact__icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" fill="none" stroke="#111111" stroke-width="2"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="#111111" stroke-width="2"></line>
+                </svg>
+                <span class="visually-hidden">{{ 'general.search.search' | t }}</span>
+              </a>
+            {%- endif -%}
+          {%- endif -%}
+
           {%- if section.settings.show_cart -%}
             <a
               href="{{ routes.cart_url }}"
@@ -590,49 +620,51 @@
             </div>
 
             <!-- Drawer Search Bar: Pill shaped (Image 2) -->
-            {%- if section.settings.show_search -%}
-              <div class="header-compact-drawer__search">
-                {%- if active_search_style == 'style_2' -%}
-                  <div
-                    class="header-compact-drawer__search-pill"
-                    role="button"
-                    tabindex="0"
-                    data-open-search2="{{ section.id }}"
-                    style="cursor: pointer;"
-                  >
-                    <span class="header-compact-drawer__search-icon" aria-hidden="true">
-                      {% render 'icon-search' %}
-                    </span>
-                    <input
-                      type="text"
-                      readonly
-                      placeholder="{{ section.settings.search_placeholder_mobile | default: 'Search products' }}"
-                      class="header-compact-drawer__search-input"
+            {%- comment -%}
+              {%- if section.settings.show_search -%}
+                <div class="header-compact-drawer__search">
+                  {%- if active_search_style == 'style_2' -%}
+                    <div
+                      class="header-compact-drawer__search-pill"
+                      role="button"
+                      tabindex="0"
+                      data-open-search2="{{ section.id }}"
                       style="cursor: pointer;"
-                      tabindex="-1"
                     >
-                  </div>
-                {%- else -%}
-                  <form action="{{ routes.search_url }}" method="get" role="search">
-                    <div class="header-compact-drawer__search-pill">
                       <span class="header-compact-drawer__search-icon" aria-hidden="true">
                         {% render 'icon-search' %}
                       </span>
                       <input
-                        type="search"
-                        name="q"
-                        value="{{ search.terms | escape }}"
+                        type="text"
+                        readonly
                         placeholder="{{ section.settings.search_placeholder_mobile | default: 'Search products' }}"
-                        autocomplete="off"
                         class="header-compact-drawer__search-input"
+                        style="cursor: pointer;"
+                        tabindex="-1"
                       >
-                      <input type="hidden" name="options[prefix]" value="last">
-                      <input type="hidden" name="type" value="product">
                     </div>
-                  </form>
-                {%- endif -%}
-              </div>
-            {%- endif -%}
+                  {%- else -%}
+                    <form action="{{ routes.search_url }}" method="get" role="search">
+                      <div class="header-compact-drawer__search-pill">
+                        <span class="header-compact-drawer__search-icon" aria-hidden="true">
+                          {% render 'icon-search' %}
+                        </span>
+                        <input
+                          type="search"
+                          name="q"
+                          value="{{ search.terms | escape }}"
+                          placeholder="{{ section.settings.search_placeholder_mobile | default: 'Search products' }}"
+                          autocomplete="off"
+                          class="header-compact-drawer__search-input"
+                        >
+                        <input type="hidden" name="options[prefix]" value="last">
+                        <input type="hidden" name="type" value="product">
+                      </div>
+                    </form>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            {%- endcomment -%}
 
             <!-- Navigation Links List with Chevrons & Accordion Dropdowns -->
             <ul class="header-compact-drawer__links" role="list">
