@@ -147,7 +147,7 @@
         "show_track_order": true,
         "track_order_link": "https://app.ehandler.in/track-awb",
         "track_order_color": "#000000",
-        "show_customer": true,
+        "show_customer": false,
         "customer_color": "#000000",
         "show_wishlist": true,
         "show_wishlist_number": true,
