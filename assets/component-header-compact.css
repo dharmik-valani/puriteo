@@ -419,8 +419,10 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   font-size: 0;
 }
 
-.header-compact__account:has(#kp-login-button-header-logo) > a.header__icon--account,
-.header-compact__account:has(#svgkp) > a.header__icon--account {
+.header-compact__account:has(> #kp-login-button-header-logo) > a.header__icon--account,
+.header-compact__account:has(> #svgkp) > a.header__icon--account,
+.header-compact__icons:has(> #kp-login-button-header-logo) > .header-compact__account > a.header__icon--account,
+.header-compact__icons:has(> #svgkp) > .header-compact__account > a.header__icon--account {
   display: none !important;
 }
 
