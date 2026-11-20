@@ -167,7 +167,7 @@
       object-fit: cover;
       border-radius: {{ img_radius }}px !important;
     }
-    #shopify-section-{{ section.id }} .as-image-banner .col-6:has(.asbaneift_img) {
+    #shopify-section-{{ section.id }} .as-image-banner .asbaneift_col {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -223,7 +223,7 @@
     <div class="container-1170 aspading">
       <div class="row">
         {%- if banner_img != blank and banner_img != '' -%}
-          <div class="col-6">
+          <div class="col-6 asbaneift_col">
             <img class="asbaneift_img" src="{{ banner_img | img_url: 'master' }}" alt="{{ b_title | default: current_product.title | escape }}" loading="lazy">
           </div>
         {%- endif -%}
