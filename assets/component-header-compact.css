@@ -378,15 +378,17 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   color: var(--hc-icons-hover, #1e3b2b) !important;
 }
 
-/* Outline icons only. Theme SVGs use .header-compact__icon-svg */
+/* Strict Outline Rules: Remove black fill completely, dark border only */
 .header-compact__icons .header-compact__icon-svg,
-.header-compact-mobile__icons .header-compact__icon-svg {
-  width: var(--hc-icons-size, 22px) !important;
-  height: var(--hc-icons-size, 22px) !important;
+.header-compact__icons .header-compact__icon-link svg,
+.header-compact-mobile__icons .header-compact__icon-svg,
+.header-compact-mobile__icons .header-compact__icon-link svg {
+  width: 22px !important;
+  height: 22px !important;
   fill: none !important;
-  stroke: var(--hc-icons-color, #111111) !important;
+  stroke: #111111 !important;
   stroke-width: 2 !important;
-  color: var(--hc-icons-color, #111111) !important;
+  color: #111111 !important;
   display: block;
 }
 
@@ -395,27 +397,24 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
 .header-compact__icons .header-compact__icon-svg rect,
 .header-compact__icons .header-compact__icon-svg line,
 .header-compact__icons .header-compact__icon-svg polyline,
+.header-compact__icons .header-compact__icon-link svg path,
+.header-compact__icons .header-compact__icon-link svg circle,
+.header-compact__icons .header-compact__icon-link svg rect,
+.header-compact__icons .header-compact__icon-link svg line,
+.header-compact__icons .header-compact__icon-link svg polyline,
 .header-compact-mobile__icons .header-compact__icon-svg path,
 .header-compact-mobile__icons .header-compact__icon-svg circle,
 .header-compact-mobile__icons .header-compact__icon-svg rect,
 .header-compact-mobile__icons .header-compact__icon-svg line,
-.header-compact-mobile__icons .header-compact__icon-svg polyline {
+.header-compact-mobile__icons .header-compact__icon-svg polyline,
+.header-compact-mobile__icons .header-compact__icon-link svg path,
+.header-compact-mobile__icons .header-compact__icon-link svg circle,
+.header-compact-mobile__icons .header-compact__icon-link svg rect,
+.header-compact-mobile__icons .header-compact__icon-link svg line,
+.header-compact-mobile__icons .header-compact__icon-link svg polyline {
   fill: none !important;
-  stroke: var(--hc-icons-color, #111111) !important;
+  stroke: #111111 !important;
   stroke-width: 2 !important;
-}
-
-/* Customer Account Link */
-.header-compact-wrapper .customer-links {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.header-compact-wrapper .customer-links .icon,
-.header-compact-wrapper .customer-links svg {
-  width: var(--hc-icons-size, 22px);
-  height: var(--hc-icons-size, 22px);
 }
 
 /* Cart & Wishlist Count Bubbles matching Reference Image 3 */
