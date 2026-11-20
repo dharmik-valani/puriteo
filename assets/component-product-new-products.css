@@ -2586,7 +2586,7 @@ npp-offers,
 .product-new-products .product-form__radio:checked+.product-form__label.npp-pack-card {
   border-color: var(--pack-accent-color, #1b3a6e) !important;
   border-width: 2px !important;
-  background: #f0f5fc !important;
+  background: var(--pack-active-bg, #f0f5fc) !important;
   box-shadow: 0 3px 12px rgba(27, 58, 110, 0.12) !important;
   padding: calc(var(--pack-card-padding-y, 10px) - 1.5px) calc(var(--pack-card-padding-x, 8px) - 1.5px) !important;
 }
