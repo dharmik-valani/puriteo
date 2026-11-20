@@ -430,10 +430,8 @@
               >
                 <a
                   href="{{ routes.account_login_url }}"
-                  class="header-compact__icon-link header-compact__icon--account header__icon--account link link--text focus-inset"
+                  class="header__icon header__icon--account link link--text"
                   {% if is_contained %}data-open-auth-sidebar{% endif %}
-                  aria-label="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
-                  title="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
                 >
                   {%- if customer and customer.has_avatar? -%}
                     <account-icon>
