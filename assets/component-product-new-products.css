@@ -2489,16 +2489,17 @@ npp-offers,
 .product-new-products .npp-pack-card__subtitle {
   font-size: var(--pack-subtitle-font-size, 10px) !important;
   color: var(--pack-subtitle-color, #8a9bb2) !important;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.2;
   margin-bottom: 0;
   display: block;
   word-break: break-word;
 }
 
-/* Pricing: strictly in one line with reduced compact size */
+/* Pack card price: sale price first, compare price below */
 .product-new-products .npp-pack-card__prices {
   display: flex !important;
+  flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
   gap: var(--pack-card-item-gap, 4px) !important;
@@ -2848,6 +2849,7 @@ npp-offers,
 
   .product-new-products .npp-pack-card__prices {
     display: flex !important;
+    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     gap: var(--pack-card-item-gap-mb, 4px) !important;
