@@ -37,22 +37,6 @@
     }
   {% endif %}
 
-  /* KwikPass account icon & theme account fallback — match header-basic */
-  #shopify-section-{{ section.id }} #kp-login-button-header-logo,
-  #shopify-section-{{ section.id }} #kp-login-button-header-logo svg,
-  #shopify-section-{{ section.id }} #kp-login-button-header-logo-mobile,
-  #shopify-section-{{ section.id }} #kp-login-button-header-logo-mobile svg,
-  #shopify-section-{{ section.id }} #svgkp,
-  #shopify-section-{{ section.id }} .header__icon--account svg,
-  #shopify-section-{{ section.id }} .customer-links svg,
-  #shopify-section-{{ section.id }} .header-compact__account svg,
-  #shopify-section-{{ section.id }} .header-compact-mobile__account svg {
-    width: {{ section.settings.icons_size | default: 22 }}px !important;
-    height: {{ section.settings.icons_size | default: 22 }}px !important;
-    min-width: {{ section.settings.icons_size | default: 22 }}px !important;
-    min-height: {{ section.settings.icons_size | default: 22 }}px !important;
-  }
-
   #shopify-section-{{ section.id }} .header-compact-wrapper {
     --hc-bg: {% if section.settings.header_bg_gradient != blank %}{{ section.settings.header_bg_gradient }}{% else %}{{ section.settings.header_bg }}{% endif %};
     --hc-border-bottom-color: {{ section.settings.header_border_bottom | default: 'transparent' }};
@@ -848,20 +832,18 @@
       if (!window.__headerCompactAccountBound) {
         window.__headerCompactAccountBound = true;
         document.addEventListener('click', function(event) {
-          var trigger = event.target.closest('[data-compact-account], .header__icon--account');
+          var trigger = event.target.closest('.header__icon--account');
           if (!trigger) return;
 
           var kp = document.getElementById('kp-login-button-header-logo') || document.getElementById('kp-login-button-header-logo-mobile');
           if (typeof window.handleKpAndShopifyLogin === 'function') {
             event.preventDefault();
-            event.stopPropagation();
             window.handleKpAndShopifyLogin();
           } else if (kp && !kp.contains(event.target)) {
             event.preventDefault();
-            event.stopPropagation();
             kp.click();
           }
-        }, true);
+        });
       }
 
       // Desktop Megamenu Hover Interaction with Debounce Buffer
