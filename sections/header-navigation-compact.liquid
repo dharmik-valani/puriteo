@@ -27,61 +27,9 @@
     body.menu_open #shopify-section-{{ section.id }},
     body.menu-open #shopify-section-{{ section.id }},
     body:has(.header-compact-drawer.is-open) #shopify-section-{{ section.id }} {
-      z-index: 100000 !important;
+      z-index: 1000002 !important;
     }
   {% endif %}
-
-  /* KwikPass / GoKwik account icon — match cart & wishlist 22px-25px (overrides base.css svg 1rem) */
-  #shopify-section-{{ section.id }} #kp-login-button-header-logo,
-  #shopify-section-{{ section.id }} #kp-login-button-header-logo svg,
-  #shopify-section-{{ section.id }} #svgkp,
-  #shopify-section-{{ section.id }} .customer-links svg,
-  #shopify-section-{{ section.id }} .header__icon--account svg {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    min-height: 24px !important;
-    max-width: 25px !important;
-    max-height: 25px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    vertical-align: middle !important;
-  }
-  #shopify-section-{{ section.id }} .customer-links {
-    margin: 0 !important;
-    padding: 0 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    line-height: 1 !important;
-  }
-  #shopify-section-{{ section.id }} .customer-links a.header__icon--account {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 26px !important;
-    height: 26px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    color: {{ section.settings.customer_color | default: '#111111' }} !important;
-    text-decoration: none !important;
-    line-height: 1 !important;
-  }
-  #shopify-section-{{ section.id }} #kp-login-button-header-logo {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    line-height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  #shopify-section-{{ section.id }} #kp-login-button-header-logo svg path,
-  #shopify-section-{{ section.id }} #svgkp path {
-    fill: revert !important;
-    stroke: revert !important;
-    stroke-width: revert !important;
-  }
 
   {% if section.settings.enable_header_shadow %}
     #shopify-section-{{ section.id }} .header-compact-wrapper {
@@ -468,7 +416,38 @@
               </a>
             {%- endif -%}
 
-            <!-- 2. Wishlist Icon -->
+            <!-- 2. Customer Account Icon (KwikPass replaces .header__icon--account) -->
+            {%- if shop.customer_accounts_enabled and section.settings.show_customer -%}
+              {%- liquid
+                assign is_contained = false
+                if routes.account_login_url contains '/account/login'
+                  assign is_contained = true
+                endif
+              -%}
+              <div class="header-compact__account header__icon customer-links" style="--text-color: {{ section.settings.customer_color }}">
+                <a
+                  href="{{ routes.account_login_url }}"
+                  class="header__icon header__icon--account header-compact__icon-link header-compact__icon--account link link--text focus-inset"
+                  {% if is_contained %}data-open-auth-sidebar{% endif %}
+                  aria-label="{{ 'customer.account_fallback' | t }}"
+                  title="{{ 'customer.account_fallback' | t }}"
+                >
+                  {%- if customer and customer.has_avatar? -%}
+                    <account-icon>{{ customer | avatar }}</account-icon>
+                  {%- else -%}
+                    <svg class="header-compact__icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="7" r="4"></circle>
+                      <path d="M5.5 21a6.5 6.5 0 0 1 13 0h-13z"></path>
+                    </svg>
+                  {%- endif -%}
+                  <span class="visually-hidden">
+                    {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
+                  </span>
+                </a>
+              </div>
+            {%- endif -%}
+
+            <!-- 3. Wishlist Icon -->
             {%- if settings.show_wishlist and section.settings.show_wishlist -%}
               <a
                 href="{% if settings.link_wishlist != blank %}{{ settings.link_wishlist }}{% else %}{{ pages['wish-list'].url }}{% endif %}"
@@ -486,42 +465,6 @@
                   </span>
                 {%- endif -%}
               </a>
-            {%- endif -%}
-
-            <!-- 3. Customer Account / GoKwik Icon (Directly before Cart) -->
-            {%- if shop.customer_accounts_enabled and section.settings.show_customer -%}
-              {%- liquid
-                assign is_contained = false
-                if routes.account_login_url contains '/account/login'
-                  assign is_contained = true
-                endif
-              -%}
-              <div class="header__icon customer-links header-compact__customer" style="--text-color: {{ section.settings.customer_color | default: '#111111' }}">
-                <a
-                  href="{{ routes.account_login_url }}"
-                  class="header__icon header__icon--account header-compact__icon-link link link--text focus-inset"
-                  {% if is_contained %}data-open-auth-sidebar{% endif %}
-                  aria-label="{{ 'customer.account_fallback' | t }}"
-                  title="{{ 'customer.account_fallback' | t }}"
-                >
-                  {%- if customer and customer.has_avatar? -%}
-                    <account-icon>
-                      {{ customer | avatar }}
-                    </account-icon>
-                  {%- else -%}
-                    {% render 'icon-account-2' %}
-                  {%- endif -%}
-                  <span class="visually-hidden">
-                    {%- liquid
-                      if customer
-                        echo 'customer.account_fallback' | t
-                      else
-                        echo 'customer.log_in' | t
-                      endif
-                    -%}
-                  </span>
-                </a>
-              </div>
             {%- endif -%}
 
             <!-- 4. Cart Icon with Count Bubble -->
@@ -597,42 +540,35 @@
 
         <!-- Mobile Right Icons -->
         <div class="header-compact-mobile__icons">
-          <!-- Customer Account / GoKwik Icon (Right before Cart) -->
           {%- if shop.customer_accounts_enabled and section.settings.show_customer -%}
             {%- liquid
-              assign is_contained = false
+              assign is_contained_mobile = false
               if routes.account_login_url contains '/account/login'
-                assign is_contained = true
+                assign is_contained_mobile = true
               endif
             -%}
-            <div class="header__icon customer-links header-compact__customer" style="--text-color: {{ section.settings.customer_color | default: '#111111' }}">
+            <div class="header-compact__account header__icon customer-links" style="--text-color: {{ section.settings.customer_color }}">
               <a
                 href="{{ routes.account_login_url }}"
-                class="header__icon header__icon--account header-compact__icon-link link link--text focus-inset"
-                {% if is_contained %}data-open-auth-sidebar{% endif %}
+                class="header__icon header__icon--account header-compact__icon-link header-compact__icon--account link link--text focus-inset"
+                {% if is_contained_mobile %}data-open-auth-sidebar{% endif %}
                 aria-label="{{ 'customer.account_fallback' | t }}"
                 title="{{ 'customer.account_fallback' | t }}"
               >
                 {%- if customer and customer.has_avatar? -%}
-                  <account-icon>
-                    {{ customer | avatar }}
-                  </account-icon>
+                  <account-icon>{{ customer | avatar }}</account-icon>
                 {%- else -%}
-                  {% render 'icon-account-2' %}
+                  <svg class="header-compact__icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="7" r="4"></circle>
+                    <path d="M5.5 21a6.5 6.5 0 0 1 13 0h-13z"></path>
+                  </svg>
                 {%- endif -%}
                 <span class="visually-hidden">
-                  {%- liquid
-                    if customer
-                      echo 'customer.account_fallback' | t
-                    else
-                      echo 'customer.log_in' | t
-                    endif
-                  -%}
+                  {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
                 </span>
               </a>
             </div>
           {%- endif -%}
-
           {%- if section.settings.show_cart -%}
             <a
               href="{{ routes.cart_url }}"
