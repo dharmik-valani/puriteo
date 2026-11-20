@@ -416,21 +416,14 @@
               </a>
             {%- endif -%}
 
-            <!-- 2. Customer Account Icon (KwikPass replaces .header__icon--account) -->
+            <!-- 2. Customer Account. One .header__icon--account only, so KwikPass binds a single button. -->
             {%- if shop.customer_accounts_enabled and section.settings.show_customer -%}
-              {%- liquid
-                assign is_contained = false
-                if routes.account_login_url contains '/account/login'
-                  assign is_contained = true
-                endif
-              -%}
-              <div class="header-compact__account header__icon customer-links" style="--text-color: {{ section.settings.customer_color }}">
+              <div class="header-compact__account customer-links" style="--text-color: {{ section.settings.customer_color }}">
                 <a
-                  href="{{ routes.account_login_url }}"
+                  href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
                   class="header__icon header__icon--account header-compact__icon-link header-compact__icon--account link link--text focus-inset"
-                  {% if is_contained %}data-open-auth-sidebar{% endif %}
-                  aria-label="{{ 'customer.account_fallback' | t }}"
-                  title="{{ 'customer.account_fallback' | t }}"
+                  aria-label="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
+                  title="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
                 >
                   {%- if customer and customer.has_avatar? -%}
                     <account-icon>{{ customer | avatar }}</account-icon>
@@ -541,33 +534,21 @@
         <!-- Mobile Right Icons -->
         <div class="header-compact-mobile__icons">
           {%- if shop.customer_accounts_enabled and section.settings.show_customer -%}
-            {%- liquid
-              assign is_contained_mobile = false
-              if routes.account_login_url contains '/account/login'
-                assign is_contained_mobile = true
-              endif
-            -%}
-            <div class="header-compact__account header__icon customer-links" style="--text-color: {{ section.settings.customer_color }}">
-              <a
-                href="{{ routes.account_login_url }}"
-                class="header__icon header__icon--account header-compact__icon-link header-compact__icon--account link link--text focus-inset"
-                {% if is_contained_mobile %}data-open-auth-sidebar{% endif %}
-                aria-label="{{ 'customer.account_fallback' | t }}"
-                title="{{ 'customer.account_fallback' | t }}"
-              >
-                {%- if customer and customer.has_avatar? -%}
-                  <account-icon>{{ customer | avatar }}</account-icon>
-                {%- else -%}
-                  <svg class="header-compact__icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="7" r="4"></circle>
-                    <path d="M5.5 21a6.5 6.5 0 0 1 13 0h-13z"></path>
-                  </svg>
-                {%- endif -%}
-                <span class="visually-hidden">
-                  {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
-                </span>
-              </a>
-            </div>
+            <a
+              href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+              class="header-compact__icon-link header-compact__icon--account header-compact__account-mobile focus-inset"
+              data-compact-account
+              aria-label="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
+              title="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
+            >
+              <svg class="header-compact__icon-svg header-compact__account-fallback" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="7" r="4"></circle>
+                <path d="M5.5 21a6.5 6.5 0 0 1 13 0h-13z"></path>
+              </svg>
+              <span class="visually-hidden">
+                {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
+              </span>
+            </a>
           {%- endif -%}
           {%- if section.settings.show_cart -%}
             <a
@@ -814,6 +795,19 @@
   (function() {
     function initHeaderCompact() {
       var sectionId = '{{ section.id }}';
+
+      if (!window.__headerCompactAccountBound) {
+        window.__headerCompactAccountBound = true;
+        document.addEventListener('click', function(event) {
+          var trigger = event.target.closest('[data-compact-account]');
+          if (!trigger) return;
+          var kp = document.getElementById('kp-login-button-header-logo');
+          if (!kp) return;
+          event.preventDefault();
+          event.stopPropagation();
+          kp.click();
+        }, true);
+      }
 
       // Desktop Megamenu Hover Interaction with Debounce Buffer
       var megamenuItems = document.querySelectorAll(
