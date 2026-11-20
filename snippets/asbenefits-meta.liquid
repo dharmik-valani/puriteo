@@ -73,6 +73,10 @@
   assign bullet_color = section.settings.benefits_bullet_color | default: '#1b3a6e'
   assign list_color = section.settings.benefits_list_color | default: '#333333'
   assign img_radius = section.settings.benefits_image_radius | default: 10
+  assign img_width = section.settings.benefits_image_width | default: 100
+  assign img_width_mobile = section.settings.benefits_image_width_mobile | default: 100
+  assign img_height = section.settings.benefits_image_height | default: 480
+  assign img_height_mobile = section.settings.benefits_image_height_mobile | default: 360
 -%}
 
 {%- if has_benefits_section -%}
@@ -157,10 +161,16 @@
       font-weight: 400;
     }
     #shopify-section-{{ section.id }} .asbaneift_img {
-      height: 100%;
-      width: 100%;
+      height: {{ img_height }}px;
+      width: {{ img_width }}%;
+      max-width: 100%;
       object-fit: cover;
       border-radius: {{ img_radius }}px !important;
+    }
+    #shopify-section-{{ section.id }} .as-image-banner .col-6:has(.asbaneift_img) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     #shopify-section-{{ section.id }} .aspading {
       padding-left: 80px !important;
@@ -175,6 +185,11 @@
       }
       #shopify-section-{{ section.id }} .as-image-banner .col-6 {
         width: 100%;
+      }
+      #shopify-section-{{ section.id }} .asbaneift_img {
+        width: {{ img_width_mobile }}%;
+        height: {{ img_height_mobile }}px;
+        margin-inline: auto;
       }
       #shopify-section-{{ section.id }} .as_benefit_title h2 {
         font-size: 20px;
