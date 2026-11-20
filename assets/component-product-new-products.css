@@ -2813,7 +2813,7 @@ npp-offers,
 
   .product-new-products .npp-pack-card__badge {
     top: -8px;
-    font-size: var(--pack-badge-font-size-mb, 8px);
+    font-size: var(--pack-badge-font-size-mb, 8px) !important;
     padding: 2px 5px;
     border-radius: 10px;
   }
@@ -2894,14 +2894,14 @@ npp-offers,
   }
 
   .product-new-products .npp-pack-card__savings {
-    font-size: var(--pack-savings-font-size-mb, 8px);
+    font-size: var(--pack-savings-font-size-mb, 8px) !important;
     padding: 1.5px 4px;
     border-radius: 3px;
     margin-bottom: 0 !important;
   }
 
   .product-new-products .npp-pack-card__tax {
-    font-size: var(--pack-tax-font-size-mb, 7px);
+    font-size: var(--pack-tax-font-size-mb, 7px) !important;
   }
 
   .product-new-products .npp-pack-side-arrow {
