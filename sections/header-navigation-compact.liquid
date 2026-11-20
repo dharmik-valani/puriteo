@@ -814,13 +814,19 @@
       if (!window.__headerCompactAccountBound) {
         window.__headerCompactAccountBound = true;
         document.addEventListener('click', function(event) {
-          var trigger = event.target.closest('[data-compact-account]');
+          var trigger = event.target.closest('[data-compact-account], .header__icon--account');
           if (!trigger) return;
-          var kp = document.getElementById('kp-login-button-header-logo');
-          if (!kp) return;
-          event.preventDefault();
-          event.stopPropagation();
-          kp.click();
+
+          var kp = document.getElementById('kp-login-button-header-logo') || document.getElementById('kp-login-button-header-logo-mobile');
+          if (typeof window.handleKpAndShopifyLogin === 'function') {
+            event.preventDefault();
+            event.stopPropagation();
+            window.handleKpAndShopifyLogin();
+          } else if (kp && !kp.contains(event.target)) {
+            event.preventDefault();
+            event.stopPropagation();
+            kp.click();
+          }
         }, true);
       }
 
@@ -1095,8 +1101,9 @@
     }
 
     document.addEventListener('shopify:section:load', function(e) {
-      if (e.detail.sectionId === '{{ section.id }}') {
+      if (e.detail.sectionId === '{{ section.id }}' || (e.detail.sectionId && e.detail.sectionId.indexOf('header_navigation_compact') > -1)) {
         initHeaderCompact();
+        window.dispatchEvent(new Event('update-dom'));
       }
     });
   })();
