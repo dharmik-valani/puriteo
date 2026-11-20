@@ -416,31 +416,7 @@
               </a>
             {%- endif -%}
 
-            <!-- 2. Customer Account. One .header__icon--account only, so KwikPass binds a single button. -->
-            {%- if shop.customer_accounts_enabled and section.settings.show_customer -%}
-              <div class="header-compact__account customer-links" style="--text-color: {{ section.settings.customer_color }}">
-                <a
-                  href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
-                  class="header__icon header__icon--account header-compact__icon-link header-compact__icon--account link link--text focus-inset"
-                  aria-label="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
-                  title="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
-                >
-                  {%- if customer and customer.has_avatar? -%}
-                    <account-icon>{{ customer | avatar }}</account-icon>
-                  {%- else -%}
-                    <svg class="header-compact__icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                      <circle cx="12" cy="7" r="4"></circle>
-                      <path d="M5.5 21a6.5 6.5 0 0 1 13 0h-13z"></path>
-                    </svg>
-                  {%- endif -%}
-                  <span class="visually-hidden">
-                    {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
-                  </span>
-                </a>
-              </div>
-            {%- endif -%}
-
-            <!-- 3. Wishlist Icon -->
+            <!-- 2. Wishlist Icon (Left of Account / Cart) -->
             {%- if settings.show_wishlist and section.settings.show_wishlist -%}
               <a
                 href="{% if settings.link_wishlist != blank %}{{ settings.link_wishlist }}{% else %}{{ pages['wish-list'].url }}{% endif %}"
@@ -458,6 +434,35 @@
                   </span>
                 {%- endif -%}
               </a>
+            {%- endif -%}
+
+            <!-- 3. Customer Account / GoKwik KwikPass Icon (Directly left of Cart icon matching Gokwik theme) -->
+            {%- if shop.customer_accounts_enabled and section.settings.show_customer -%}
+              {%- liquid
+                assign is_contained = false
+                if routes.account_login_url contains '/account/login'
+                  assign is_contained = true
+                endif
+              -%}
+              <div class="header__icon customer-links header-compact__account" style="--text-color: {{ section.settings.customer_color }}">
+                <a
+                  href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+                  class="header__icon header__icon--account header-compact__icon-link link link--text focus-inset"
+                  {% if is_contained %}data-open-auth-sidebar{% endif %}
+                  data-compact-account
+                  aria-label="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
+                  title="{% if customer %}{{ 'customer.account_fallback' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}"
+                >
+                  {%- if customer and customer.has_avatar? -%}
+                    <account-icon>{{ customer | avatar }}</account-icon>
+                  {%- else -%}
+                    {% render 'icon-account-2' %}
+                  {%- endif -%}
+                  <span class="visually-hidden">
+                    {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
+                  </span>
+                </a>
+              </div>
             {%- endif -%}
 
             <!-- 4. Cart Icon with Count Bubble -->
