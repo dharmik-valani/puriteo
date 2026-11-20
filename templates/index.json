@@ -376,10 +376,10 @@
             "enable_underline": true,
             "font_size_link": 36,
             "button_slide": "",
-            "link": "shopify://collections/protein-powder",
+            "link": "shopify://collections/bogo-offers",
             "button_style": "button_1",
             "button_slide_2": "",
-            "link_2": "shopify://collections/protein-powder",
+            "link_2": "shopify://collections/bogo-offers",
             "min_width_banner_button": 270,
             "color_button": "#ffffff",
             "border_button": "#232323",
@@ -1065,7 +1065,7 @@
             "show_cta_arrow": true,
             "cta_arrow_bg": "#111111",
             "cta_arrow_color": "#ffffff",
-            "link": "shopify://collections/new-arrivals"
+            "link": "shopify://collections/bogo-offers"
           }
         },
         "product_gif_EEhHkU": {
