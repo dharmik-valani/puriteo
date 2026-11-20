@@ -992,6 +992,7 @@
         }
         #ProductSection-{{ section.id }}.product-new-products .npp-pack-card__prices {
             display: flex !important;
+            flex-direction: column !important;
             align-items: center !important;
             justify-content: center !important;
             gap: var(--pack-card-item-gap-mb, 4px) !important;
@@ -1607,6 +1608,7 @@
         }
         #ProductSection-{{ section.id }}.product-new-products .npp-pack-card__prices {
             display: flex !important;
+            flex-direction: column !important;
             align-items: center !important;
             justify-content: center !important;
             gap: var(--pack-card-item-gap, 4px) !important;
@@ -3101,6 +3103,7 @@
                                                 --variant-group-gap-mb: {{ variant_group_gap_mb }}px;
                                                 --pack-columns: {{ block.settings.pack_card_columns | default: 3 }};
                                                 --pack-accent-color: {{ block.settings.pack_card_accent_color | default: '#1b3a6e' }};
+                                                --pack-active-bg: {{ block.settings.pack_card_active_bg | default: '#f0f5fc' }};
                                                 --pack-badge-bg: {{ block.settings.pack_card_badge_bg | default: '#1b3a6e' }};
                                                 --pack-badge-color: {{ block.settings.pack_card_badge_color | default: '#ffffff' }};
                                                 --pack-savings-bg: {{ block.settings.pack_card_savings_bg | default: '#16a34a' }};

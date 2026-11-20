@@ -2489,16 +2489,17 @@ npp-offers,
 .product-new-products .npp-pack-card__subtitle {
   font-size: var(--pack-subtitle-font-size, 10px) !important;
   color: var(--pack-subtitle-color, #8a9bb2) !important;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.2;
   margin-bottom: 0;
   display: block;
   word-break: break-word;
 }
 
-/* Pricing: strictly in one line with reduced compact size */
+/* Pack card price: sale price first, compare price below */
 .product-new-products .npp-pack-card__prices {
   display: flex !important;
+  flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
   gap: var(--pack-card-item-gap, 4px) !important;
@@ -2540,7 +2541,7 @@ npp-offers,
   font-size: var(--pack-compare-price-font-size, 10px) !important;
   color: var(--pack-compare-price-color, #94a3b8) !important;
   text-decoration: line-through !important;
-  font-weight: 500 !important;
+  font-weight: 700 !important;
   white-space: nowrap !important;
   line-height: 1 !important;
   display: inline-flex !important;
@@ -2585,7 +2586,7 @@ npp-offers,
 .product-new-products .product-form__radio:checked+.product-form__label.npp-pack-card {
   border-color: var(--pack-accent-color, #1b3a6e) !important;
   border-width: 2px !important;
-  background: #f0f5fc !important;
+  background: var(--pack-active-bg, #f0f5fc) !important;
   box-shadow: 0 3px 12px rgba(27, 58, 110, 0.12) !important;
   padding: calc(var(--pack-card-padding-y, 10px) - 1.5px) calc(var(--pack-card-padding-x, 8px) - 1.5px) !important;
 }
@@ -2812,7 +2813,7 @@ npp-offers,
 
   .product-new-products .npp-pack-card__badge {
     top: -8px;
-    font-size: var(--pack-badge-font-size-mb, 8px);
+    font-size: var(--pack-badge-font-size-mb, 8px) !important;
     padding: 2px 5px;
     border-radius: 10px;
   }
@@ -2842,12 +2843,13 @@ npp-offers,
   }
 
   .product-new-products .npp-pack-card__subtitle {
-    font-size: var(--pack-subtitle-font-size-mb, 9px);
+    font-size: var(--pack-subtitle-font-size-mb, 9px) !important;
     margin-bottom: 0;
   }
 
   .product-new-products .npp-pack-card__prices {
     display: flex !important;
+    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     gap: var(--pack-card-item-gap-mb, 4px) !important;
@@ -2892,14 +2894,14 @@ npp-offers,
   }
 
   .product-new-products .npp-pack-card__savings {
-    font-size: var(--pack-savings-font-size-mb, 8px);
+    font-size: var(--pack-savings-font-size-mb, 8px) !important;
     padding: 1.5px 4px;
     border-radius: 3px;
     margin-bottom: 0 !important;
   }
 
   .product-new-products .npp-pack-card__tax {
-    font-size: var(--pack-tax-font-size-mb, 7px);
+    font-size: var(--pack-tax-font-size-mb, 7px) !important;
   }
 
   .product-new-products .npp-pack-side-arrow {
