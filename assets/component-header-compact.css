@@ -406,9 +406,9 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   stroke-width: 2 !important;
 }
 
-/* KwikPass account button — same slot as the other header icons.
-   KwikPass replaces .header__icon--account with #kp-login-button-header-logo > #svgkp.
-   base.css sets svg to 1rem; keep the bolt at the header icon size and leave its fill alone. */
+/* KwikPass adds #kp-login-button-header-logo beside the theme account link.
+   Hide the theme person icon once that button exists, so the editor and the
+   storefront both show a single bolt. base.css sizes svg to 1rem. */
 .header-compact-wrapper .header-compact__account,
 .header-compact-wrapper .customer-links {
   display: inline-flex;
@@ -417,6 +417,18 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   margin-left: 0;
   line-height: 0;
   font-size: 0;
+}
+
+.header-compact__account:has(#kp-login-button-header-logo) > a.header__icon--account,
+.header-compact__account:has(#svgkp) > a.header__icon--account {
+  display: none !important;
+}
+
+.header-compact__account .header__icon--account:has(#kp-login-button-header-logo) > .header-compact__icon-svg,
+.header-compact__account .header__icon--account:has(#svgkp) > .header-compact__icon-svg,
+.header-compact__account .header__icon--account:has(#kp-login-button-header-logo) > account-icon,
+.header-compact__account .header__icon--account:has(#svgkp) > account-icon {
+  display: none !important;
 }
 
 .header-compact-wrapper #kp-login-button-header-logo,
@@ -433,6 +445,10 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   line-height: 0;
   background: transparent;
   border: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
 }
 
 .header-compact-wrapper #kp-login-button-header-logo svg,
@@ -444,8 +460,8 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   max-width: var(--hc-icons-size, 22px) !important;
   max-height: var(--hc-icons-size, 22px) !important;
   display: block !important;
-  stroke: none !important;
-  stroke-width: 0 !important;
+  cursor: pointer;
+  pointer-events: auto;
 }
 
 /* Cart & Wishlist Count Bubbles matching Reference Image 3 */
