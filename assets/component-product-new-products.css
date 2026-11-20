@@ -2843,7 +2843,7 @@ npp-offers,
   }
 
   .product-new-products .npp-pack-card__subtitle {
-    font-size: var(--pack-subtitle-font-size-mb, 9px);
+    font-size: var(--pack-subtitle-font-size-mb, 9px) !important;
     margin-bottom: 0;
   }
 
