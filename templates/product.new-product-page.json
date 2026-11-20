@@ -207,7 +207,7 @@
             "show_pack_carousel_arrows": true,
             "pack_arrow_position": "sides",
             "pack_card_width": 150,
-            "pack_card_width_mb": 140,
+            "pack_card_width_mb": 120,
             "pack_card_height": 200,
             "pack_card_height_mb": 200,
             "pack_card_columns": 3,
