@@ -417,6 +417,96 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   stroke-width: 2 !important;
 }
 
+/* Customer Account / GoKwik KwikPass Integration */
+.header-compact-wrapper .customer-links,
+.header-compact-wrapper .header-compact__account,
+.header-compact-wrapper .header-compact-mobile__account {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.header-compact-wrapper .customer-links a.header__icon--account,
+.header-compact-wrapper .header-compact__account a.header__icon--account,
+.header-compact-wrapper .header-compact-mobile__account a.header__icon--account {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 0 !important;
+  text-decoration: none !important;
+}
+
+/* Hide theme account fallback when KwikPass / GoKwik icon is injected */
+.header-compact-wrapper .customer-links:has(#kp-login-button-header-logo) > a.header__icon--account,
+.header-compact-wrapper .customer-links:has(#svgkp) > a.header__icon--account,
+.header-compact-wrapper .customer-links:has(.header--icon) > a.header__icon--account,
+.header-compact-wrapper .header-compact__icons:has(#kp-login-button-header-logo) .header-compact__account > a.header__icon--account,
+.header-compact-wrapper .header-compact__icons:has(#svgkp) .header-compact__account > a.header__icon--account,
+.header-compact-wrapper .header-compact__icons:has(.header--icon) .header-compact__account > a.header__icon--account,
+.header-compact-wrapper .header-compact-mobile__icons:has(#kp-login-button-header-logo-mobile) .header-compact-mobile__account > a.header__icon--account,
+.header-compact-wrapper .header-compact-mobile__icons:has(.header--icon--mobile) .header-compact-mobile__account > a.header__icon--account,
+.header-compact-wrapper .customer-links a.header__icon--account:has(#svgkp) > svg,
+.header-compact-wrapper .customer-links a.header__icon--account:has(#svgkp) > .icon,
+.header-compact-wrapper .customer-links a.header__icon--account:has(#kp-login-button-header-logo) > svg,
+.header-compact-wrapper .customer-links a.header__icon--account:has(#kp-login-button-header-logo) > .icon {
+  display: none !important;
+}
+
+/* Sizing for customer links and injected KwikPass buttons */
+.header-compact-wrapper .customer-links svg,
+.header-compact-wrapper .customer-links .icon,
+.header-compact-wrapper .header__icon--account svg,
+.header-compact-wrapper .header__icon--account .icon,
+.header-compact-wrapper .header-compact__account svg,
+.header-compact-wrapper .header-compact-mobile__account svg,
+.header-compact-wrapper #kp-login-button-header-logo,
+.header-compact-wrapper #kp-login-button-header-logo svg,
+.header-compact-wrapper #kp-login-button-header-logo-mobile,
+.header-compact-wrapper #kp-login-button-header-logo-mobile svg,
+.header-compact-wrapper #svgkp,
+.header-compact-wrapper .header--icon svg,
+.header-compact-wrapper .header--icon--mobile svg {
+  width: var(--hc-icons-size, 22px) !important;
+  height: var(--hc-icons-size, 22px) !important;
+  min-width: var(--hc-icons-size, 22px) !important;
+  min-height: var(--hc-icons-size, 22px) !important;
+  max-width: 25px !important;
+  max-height: 25px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+}
+
+.header-compact-wrapper #kp-login-button-header-logo,
+.header-compact-wrapper #kp-login-button-header-logo-mobile,
+.header-compact-wrapper .header--icon,
+.header-compact-wrapper .header--icon--mobile {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  line-height: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: auto !important;
+}
+
+/* Retain original fills/strokes of KwikPass bolt and logo */
+.header-compact-wrapper #kp-login-button-header-logo svg *,
+.header-compact-wrapper #kp-login-button-header-logo-mobile svg *,
+.header-compact-wrapper #svgkp *,
+.header-compact-wrapper .header--icon svg *,
+.header-compact-wrapper .header--icon--mobile svg * {
+  stroke: unset;
+  fill: unset;
+}
+
 /* Cart & Wishlist Count Bubbles matching Reference Image 3 */
 .header-compact__badge {
   position: absolute;
