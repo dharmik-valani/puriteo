@@ -418,7 +418,7 @@
 
             <!-- 2. Customer Account Icon -->
             {%- if shop.customer_accounts_enabled and section.settings.show_customer -%}
-              {% if routes.account_login_url contains '/account/login' %}
+f              {% if routes.account_login_url contains '/account/login' %}
                 {% assign is_contained = true %}
               {% else %}
                 {% assign is_contained = false %}
