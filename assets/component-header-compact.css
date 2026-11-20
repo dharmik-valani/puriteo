@@ -378,6 +378,13 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
   color: var(--hc-icons-hover, #1e3b2b) !important;
 }
 
+.header-compact__icons .customer-links .icon {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  top: -1px;
+}
+
 /* Strict Outline Rules: Remove black fill completely, dark border only */
 .header-compact__icons .header-compact__icon-svg,
 .header-compact__icons .header-compact__icon-link svg,
