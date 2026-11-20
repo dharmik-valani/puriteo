@@ -1432,6 +1432,17 @@ body:has(.header-compact-drawer.is-open) .header-compact-wrapper {
     width: var(--hc-icons-size-mobile, 22px);
     height: var(--hc-icons-size-mobile, 22px);
   }
+
+  .header-compact__icons .customer-links {
+  margin-left: 0;
+}
+
+.header-compact__icons .customer-links .icon {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  top: -1px;
+}
 }
 
 /* --------------------------------------------------------------------------
