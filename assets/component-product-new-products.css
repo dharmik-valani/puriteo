@@ -2541,7 +2541,7 @@ npp-offers,
   font-size: var(--pack-compare-price-font-size, 10px) !important;
   color: var(--pack-compare-price-color, #94a3b8) !important;
   text-decoration: line-through !important;
-  font-weight: 500 !important;
+  font-weight: 700 !important;
   white-space: nowrap !important;
   line-height: 1 !important;
   display: inline-flex !important;
