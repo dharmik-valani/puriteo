@@ -942,34 +942,6 @@
     "strip_banner_homepage": {
       "type": "strip-banner",
       "blocks": {
-        "product_gif_1": {
-          "type": "product_gif",
-          "settings": {
-            "show_left_image": true,
-            "left_image": "shopify://shop_images/efc79a4b-72a1-48ac-afe5-5e102fb42f57.png",
-            "product": "",
-            "left_alt": "Product",
-            "show_right_image": true,
-            "right_image": "shopify://shop_images/diwali-diya-decoration-for-the-right-side-banner.png",
-            "right_alt": "Lifestyle",
-            "show_pill": true,
-            "pill_text_1": "Diwali Sale Is LIVE! ",
-            "pill_text_1_color": "#e91e8c",
-            "pill_text_2": "",
-            "pill_text_2_color": "#e91e8c",
-            "pill_background": "#ffffff",
-            "pill_glow_color": "#f7a8c8",
-            "show_sparkles": false,
-            "show_secondary_text": true,
-            "secondary_text": "Buy 1, Get 1 FREE!",
-            "secondary_text_color": "#111111",
-            "secondary_text_style": "normal",
-            "show_cta_arrow": true,
-            "cta_arrow_bg": "#111111",
-            "cta_arrow_color": "#ffffff",
-            "link": "shopify://collections/bogo-offers"
-          }
-        },
         "product_gif_EEhHkU": {
           "type": "product_gif",
           "settings": {
@@ -1029,7 +1001,6 @@
         }
       },
       "block_order": [
-        "product_gif_1",
         "product_gif_EEhHkU",
         "product_gif_FhiYh4"
       ],
